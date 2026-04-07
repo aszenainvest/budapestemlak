@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
-import { draftMode } from 'next/headers'
+import { cookies, draftMode } from 'next/headers'
 import React, { cache } from 'react'
 import { homeStatic } from '@/endpoints/seed/home-static'
 
@@ -91,8 +91,11 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   return generateMeta({ doc: page })
 }
 
+
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
+  const cookieStore = await cookies()
+  const locale = cookieStore.get('payload-locale')?.value || 'tr'
 
   const payload = await getPayload({ config: configPromise })
 
@@ -102,6 +105,7 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
     limit: 1,
     pagination: false,
     overrideAccess: draft,
+    locale: locale as any,
     where: {
       slug: {
         equals: slug,

@@ -112,10 +112,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    settings: Setting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    settings: SettingsSelect<false> | SettingsSelect<true>;
   };
   locale: 'tr' | 'en' | 'ar';
   widgets: {
@@ -201,7 +203,22 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (
+    | ProjectCardsBlock
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+    | BannerBlock
+    | CodeBlock
+    | PricingBlock
+    | GalleryBlock
+    | TestimonialsBlock
+    | FAQBlock
+    | StatsBlock
+    | StepsBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -438,6 +455,27 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectCardsBlock".
+ */
+export interface ProjectCardsBlock {
+  title?: string | null;
+  projects?:
+    | {
+        year?: string | null;
+        type?: string | null;
+        title: string;
+        location?: string | null;
+        description?: string | null;
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'projectCards';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -783,6 +821,156 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BannerBlock".
+ */
+export interface BannerBlock {
+  style: 'info' | 'warning' | 'error' | 'success';
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'banner';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CodeBlock".
+ */
+export interface CodeBlock {
+  language?: ('typescript' | 'javascript' | 'css') | null;
+  code: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'code';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingBlock".
+ */
+export interface PricingBlock {
+  plans?:
+    | {
+        name: string;
+        price: string;
+        description?: string | null;
+        features?:
+          | {
+              feature: string;
+              id?: string | null;
+            }[]
+          | null;
+        cta?: {
+          label?: string | null;
+          link?: string | null;
+        };
+        isPopular?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'pricing';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock".
+ */
+export interface GalleryBlock {
+  images?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  columns?: ('2' | '3' | '4') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gallery';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock".
+ */
+export interface TestimonialsBlock {
+  testimonials?:
+    | {
+        quote: string;
+        author: string;
+        role?: string | null;
+        avatar?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonials';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock".
+ */
+export interface FAQBlock {
+  title?: string | null;
+  questions?:
+    | {
+        question: string;
+        answer: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock".
+ */
+export interface StatsBlock {
+  stats?:
+    | {
+        value: string;
+        label: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'stats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock".
+ */
+export interface StepsBlock {
+  steps?:
+    | {
+        title: string;
+        description: string;
+        icon?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'steps';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1084,11 +1272,20 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        projectCards?: T | ProjectCardsBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        banner?: T | BannerBlockSelect<T>;
+        code?: T | CodeBlockSelect<T>;
+        pricing?: T | PricingBlockSelect<T>;
+        gallery?: T | GalleryBlockSelect<T>;
+        testimonials?: T | TestimonialsBlockSelect<T>;
+        faq?: T | FAQBlockSelect<T>;
+        stats?: T | StatsBlockSelect<T>;
+        steps?: T | StepsBlockSelect<T>;
       };
   meta?:
     | T
@@ -1103,6 +1300,26 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectCardsBlock_select".
+ */
+export interface ProjectCardsBlockSelect<T extends boolean = true> {
+  title?: T;
+  projects?:
+    | T
+    | {
+        year?: T;
+        type?: T;
+        title?: T;
+        location?: T;
+        description?: T;
+        image?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1185,6 +1402,136 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BannerBlock_select".
+ */
+export interface BannerBlockSelect<T extends boolean = true> {
+  style?: T;
+  content?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CodeBlock_select".
+ */
+export interface CodeBlockSelect<T extends boolean = true> {
+  language?: T;
+  code?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PricingBlock_select".
+ */
+export interface PricingBlockSelect<T extends boolean = true> {
+  plans?:
+    | T
+    | {
+        name?: T;
+        price?: T;
+        description?: T;
+        features?:
+          | T
+          | {
+              feature?: T;
+              id?: T;
+            };
+        cta?:
+          | T
+          | {
+              label?: T;
+              link?: T;
+            };
+        isPopular?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GalleryBlock_select".
+ */
+export interface GalleryBlockSelect<T extends boolean = true> {
+  images?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  columns?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsBlock_select".
+ */
+export interface TestimonialsBlockSelect<T extends boolean = true> {
+  testimonials?:
+    | T
+    | {
+        quote?: T;
+        author?: T;
+        role?: T;
+        avatar?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQBlock_select".
+ */
+export interface FAQBlockSelect<T extends boolean = true> {
+  title?: T;
+  questions?:
+    | T
+    | {
+        question?: T;
+        answer?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatsBlock_select".
+ */
+export interface StatsBlockSelect<T extends boolean = true> {
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StepsBlock_select".
+ */
+export interface StepsBlockSelect<T extends boolean = true> {
+  steps?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        icon?: T;
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
@@ -1691,6 +2038,47 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  brandName?: string | null;
+  logo?: (number | null) | Media;
+  favicon?: (number | null) | Media;
+  primaryColor?: string | null;
+  secondaryColor?: string | null;
+  accentColor?: string | null;
+  backgroundColor?: string | null;
+  textColor?: string | null;
+  textMutedColor?: string | null;
+  successColor?: string | null;
+  warningColor?: string | null;
+  errorColor?: string | null;
+  baseFontSize?: number | null;
+  baseLineHeight?: string | null;
+  fonts?: {
+    headingFont?: string | null;
+    bodyFont?: string | null;
+  };
+  containerMaxWidth?: string | null;
+  baseSpacing?: number | null;
+  gridGutterMobile?: string | null;
+  gridGutterDesktop?: string | null;
+  radius?: {
+    sm?: string | null;
+    md?: string | null;
+    lg?: string | null;
+  };
+  shadows?: {
+    sm?: string | null;
+    md?: string | null;
+    lg?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -1737,6 +2125,53 @@ export interface FooterSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  brandName?: T;
+  logo?: T;
+  favicon?: T;
+  primaryColor?: T;
+  secondaryColor?: T;
+  accentColor?: T;
+  backgroundColor?: T;
+  textColor?: T;
+  textMutedColor?: T;
+  successColor?: T;
+  warningColor?: T;
+  errorColor?: T;
+  baseFontSize?: T;
+  baseLineHeight?: T;
+  fonts?:
+    | T
+    | {
+        headingFont?: T;
+        bodyFont?: T;
+      };
+  containerMaxWidth?: T;
+  baseSpacing?: T;
+  gridGutterMobile?: T;
+  gridGutterDesktop?: T;
+  radius?:
+    | T
+    | {
+        sm?: T;
+        md?: T;
+        lg?: T;
+      };
+  shadows?:
+    | T
+    | {
+        sm?: T;
+        md?: T;
+        lg?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections_widget".
  */
 export interface CollectionsWidget {
@@ -1766,42 +2201,6 @@ export interface TaskSchedulePublish {
     user?: (number | null) | User;
   };
   output?: unknown;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "BannerBlock".
- */
-export interface BannerBlock {
-  style: 'info' | 'warning' | 'error' | 'success';
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'banner';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CodeBlock".
- */
-export interface CodeBlock {
-  language?: ('typescript' | 'javascript' | 'css') | null;
-  code: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'code';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

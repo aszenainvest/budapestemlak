@@ -1,6 +1,7 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
+import { cookies } from 'next/headers'
 
 import type { Footer } from '@/payload-types'
 
@@ -9,7 +10,9 @@ import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 
 export async function Footer() {
-  const footerData: Footer = await getCachedGlobal('footer', 1)()
+  const cookieStore = await cookies()
+  const locale = cookieStore.get('payload-locale')?.value || 'tr'
+  const footerData: Footer = await getCachedGlobal('footer', 1)(locale)
 
   const navItems = footerData?.navItems || []
 

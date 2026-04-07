@@ -23,6 +23,7 @@ export const Categories: CollectionConfig = {
       localized: true,
     },
     slugField({
+      localized: true,
       position: undefined,
     }),
   ],

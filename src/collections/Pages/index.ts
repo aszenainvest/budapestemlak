@@ -7,6 +7,15 @@ import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { Banner } from '../../blocks/Banner/config'
+import { Code } from '../../blocks/Code/config'
+import { Pricing } from '../../blocks/Pricing/config'
+import { Gallery } from '../../blocks/Gallery/config'
+import { Testimonials } from '../../blocks/Testimonials/config'
+import { FAQ } from '../../blocks/FAQ/config'
+import { Stats } from '../../blocks/Stats/config'
+import { Steps } from '../../blocks/Steps/config'
+import { ProjectCards } from '../../blocks/ProjectCards/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -73,7 +82,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              blocks: [ProjectCards, CallToAction, Content, MediaBlock, Archive, FormBlock, Banner, Code, Pricing, Gallery, Testimonials, FAQ, Stats, Steps],
               required: true,
               localized: true,
               admin: {
@@ -119,7 +128,9 @@ export const Pages: CollectionConfig<'pages'> = {
         position: 'sidebar',
       },
     },
-    slugField(),
+    slugField({
+      localized: true,
+    }),
   ],
   hooks: {
     afterChange: [revalidatePage],
