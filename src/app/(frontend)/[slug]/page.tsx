@@ -66,8 +66,14 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const { hero, layout } = page
 
+  const payload = await getPayload({ config: configPromise })
+  const settings = await payload.findGlobal({
+    slug: 'settings',
+  })
+
   return (
-    <article className="pt-16 pb-24">
+    <article className="pb-24">
+
       <PageClient />
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
@@ -75,7 +81,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       {draft && <LivePreviewListener />}
 
       <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
+      <RenderBlocks blocks={layout} settings={settings} />
     </article>
   )
 }

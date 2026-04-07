@@ -204,6 +204,7 @@ export interface Page {
     media?: (number | null) | Media;
   };
   layout: (
+    | HeroSectionBlock
     | ProjectCardsBlock
     | CallToActionBlock
     | ContentBlock
@@ -455,6 +456,39 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSectionBlock".
+ */
+export interface HeroSectionBlock {
+  tagline?: string | null;
+  titlePart1: string;
+  titlePart2?: string | null;
+  description: string;
+  cta: {
+    type?: ('reference' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: number | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: number | Post;
+        } | null);
+    url?: string | null;
+    label: string;
+    /**
+     * Choose how the link should be rendered.
+     */
+    appearance?: ('default' | 'outline') | null;
+  };
+  image: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroSection';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1272,6 +1306,7 @@ export interface PagesSelect<T extends boolean = true> {
   layout?:
     | T
     | {
+        heroSection?: T | HeroSectionBlockSelect<T>;
         projectCards?: T | ProjectCardsBlockSelect<T>;
         cta?: T | CallToActionBlockSelect<T>;
         content?: T | ContentBlockSelect<T>;
@@ -1300,6 +1335,29 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroSectionBlock_select".
+ */
+export interface HeroSectionBlockSelect<T extends boolean = true> {
+  tagline?: T;
+  titlePart1?: T;
+  titlePart2?: T;
+  description?: T;
+  cta?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        url?: T;
+        label?: T;
+        appearance?: T;
+      };
+  image?: T;
+  id?: T;
+  blockName?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2054,26 +2112,6 @@ export interface Setting {
   successColor?: string | null;
   warningColor?: string | null;
   errorColor?: string | null;
-  baseFontSize?: number | null;
-  baseLineHeight?: string | null;
-  fonts?: {
-    headingFont?: string | null;
-    bodyFont?: string | null;
-  };
-  containerMaxWidth?: string | null;
-  baseSpacing?: number | null;
-  gridGutterMobile?: string | null;
-  gridGutterDesktop?: string | null;
-  radius?: {
-    sm?: string | null;
-    md?: string | null;
-    lg?: string | null;
-  };
-  shadows?: {
-    sm?: string | null;
-    md?: string | null;
-    lg?: string | null;
-  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2140,32 +2178,6 @@ export interface SettingsSelect<T extends boolean = true> {
   successColor?: T;
   warningColor?: T;
   errorColor?: T;
-  baseFontSize?: T;
-  baseLineHeight?: T;
-  fonts?:
-    | T
-    | {
-        headingFont?: T;
-        bodyFont?: T;
-      };
-  containerMaxWidth?: T;
-  baseSpacing?: T;
-  gridGutterMobile?: T;
-  gridGutterDesktop?: T;
-  radius?:
-    | T
-    | {
-        sm?: T;
-        md?: T;
-        lg?: T;
-      };
-  shadows?:
-    | T
-    | {
-        sm?: T;
-        md?: T;
-        lg?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

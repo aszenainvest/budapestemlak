@@ -29,20 +29,26 @@ export const Logo = (props: Props) => {
       <img
         alt={brandName || 'Logo'}
         src={logo.url}
-        width={logo.width || 193}
-        height={logo.height || 34}
+        width={120}
+        height={32}
         loading={loading}
         fetchPriority={priority}
-        className={clsx('max-w-[200px] h-auto object-contain', className)}
+        className={clsx('w-auto h-8 lg:h-10 object-contain', className)}
       />
+
     )
   }
 
   return (
-    <div className={clsx('text-2xl font-bold tracking-tight text-black dark:text-white', className)}>
-      {brandName || 'CMS'}
+    <div className={clsx('text-base font-extrabold tracking-tighter shrink-0', className)} style={{ color: 'var(--primary)' }}>
+      {brandName || 'Aszena Invest'}
     </div>
   )
 }
+
+
+
+
+
 
 export default Logo

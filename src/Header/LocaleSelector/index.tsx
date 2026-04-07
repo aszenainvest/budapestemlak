@@ -1,9 +1,7 @@
 'use client'
 import React from 'react'
-import { Globe } from 'lucide-react'
 import { cn } from '@/utilities/ui'
-import { useRouter, usePathname } from 'next/navigation'
-import { setLocaleAction } from './actions'
+import { usePathname } from 'next/navigation'
 
 const locales = [
   { label: 'TR', value: 'tr' },
@@ -11,7 +9,7 @@ const locales = [
   { label: 'AR', value: 'ar' },
 ]
 
-export const LocaleSelector: React.FC = () => {
+export const LocaleSelector: React.FC<{ isDark?: boolean }> = ({ isDark }) => {
   const pathname = usePathname()
   const [currentLocale, setCurrentLocale] = React.useState('tr')
 
@@ -21,25 +19,29 @@ export const LocaleSelector: React.FC = () => {
   }, [])
 
   return (
-    <div className="flex items-center gap-1.5 p-1 bg-black/[0.03] dark:bg-white/[0.05] rounded-full border border-border/50 backdrop-blur-sm">
-      <Globe className="size-3.5 text-muted-foreground ml-2 mr-1" />
-      {locales.map((locale) => {
+    <div className="flex items-center">
+      {locales.map((locale, index) => {
         const isActive = currentLocale === locale.value
         return (
-          <a
-            key={locale.value}
-            href={`/api/set-locale?locale=${locale.value}&path=${pathname}`}
-            className={cn(
-              "px-3 py-1 text-xs font-bold rounded-full transition-all duration-200 no-underline",
-              isActive 
-                ? "bg-primary text-secondary shadow-lg scale-105" 
-                : "text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/10"
+          <React.Fragment key={locale.value}>
+            <a
+              href={`/api/set-locale?locale=${locale.value}&path=${pathname}`}
+              className={cn(
+                "text-[10px] font-bold tracking-widest transition-all duration-200 no-underline px-2",
+                isActive 
+                  ? (isDark ? "text-white" : "text-[var(--primary)] text-lg scale-110") 
+                  : (isDark ? "text-white/40 hover:text-white" : "text-[var(--text-muted)] hover:text-[var(--primary)]")
+              )}
+            >
+              {locale.label}
+            </a>
+            {index < locales.length - 1 && (
+              <span className={cn("opacity-30 text-[10px]", isDark ? "text-white" : "text-[var(--text-muted)]")}>|</span>
             )}
-          >
-            {locale.label}
-          </a>
+          </React.Fragment>
         )
       })}
     </div>
   )
 }
+

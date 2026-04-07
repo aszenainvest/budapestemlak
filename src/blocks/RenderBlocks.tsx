@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react'
+import { cn } from '@/utilities/ui'
 
-import type { Page } from '@/payload-types'
+import type { Page, Setting } from '@/payload-types'
 
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
@@ -16,6 +17,7 @@ import { FAQBlock } from '@/blocks/FAQ/Component'
 import { StatsBlock } from '@/blocks/Stats/Component'
 import { StepsBlock } from '@/blocks/Steps/Component'
 import { ProjectCardsBlock } from '@/blocks/ProjectCards/Component'
+import { HeroSectionBlock } from '@/blocks/HeroSection/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -32,12 +34,14 @@ const blockComponents = {
   stats: StatsBlock,
   steps: StepsBlock,
   projectCards: ProjectCardsBlock,
+  heroSection: HeroSectionBlock,
 }
 
 export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
+  settings?: Setting
 }> = (props) => {
-  const { blocks } = props
+  const { blocks, settings } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -52,9 +56,13 @@ export const RenderBlocks: React.FC<{
 
             if (Block) {
               return (
-                <div className="my-16" key={index}>
-                  {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                  <Block {...block} disableInnerContainer />
+                <div
+                  className={cn(index === 0 && blockType === 'heroSection' ? '' : 'my-16')}
+                  key={index}
+                >
+                  {(Block as any) && (
+                    <Block {...block} settings={settings} />
+                  )}
                 </div>
               )
             }

@@ -16,7 +16,10 @@ import { FAQ } from '../../blocks/FAQ/config'
 import { Stats } from '../../blocks/Stats/config'
 import { Steps } from '../../blocks/Steps/config'
 import { ProjectCards } from '../../blocks/ProjectCards/config'
+import { HeroSection } from '../../blocks/HeroSection/config'
+
 import { hero } from '@/heros/config'
+
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
@@ -82,7 +85,8 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [ProjectCards, CallToAction, Content, MediaBlock, Archive, FormBlock, Banner, Code, Pricing, Gallery, Testimonials, FAQ, Stats, Steps],
+              blocks: [HeroSection, ProjectCards, CallToAction, Content, MediaBlock, Archive, FormBlock, Banner, Code, Pricing, Gallery, Testimonials, FAQ, Stats, Steps],
+
               required: true,
               localized: true,
               admin: {
