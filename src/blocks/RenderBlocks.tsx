@@ -18,6 +18,8 @@ import { StatsBlock } from '@/blocks/Stats/Component'
 import { StepsBlock } from '@/blocks/Steps/Component'
 import { ProjectCardsBlock } from '@/blocks/ProjectCards/Component'
 import { HeroSectionBlock } from '@/blocks/HeroSection/Component'
+import { FeatureGridBlock } from '@/blocks/FeatureGrid/Component'
+import { ArtisticShowcaseBlock } from '@/blocks/ArtisticShowcase/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -35,6 +37,8 @@ const blockComponents = {
   steps: StepsBlock,
   projectCards: ProjectCardsBlock,
   heroSection: HeroSectionBlock,
+  featureGrid: FeatureGridBlock,
+  artisticShowcase: ArtisticShowcaseBlock,
 }
 
 export const RenderBlocks: React.FC<{
@@ -52,7 +56,7 @@ export const RenderBlocks: React.FC<{
           const { blockType } = block
 
           if (blockType && blockType in blockComponents) {
-            const Block = blockComponents[blockType]
+            const Block: any = blockComponents[blockType]
 
             if (Block) {
               return (

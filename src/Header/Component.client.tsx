@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { Globe, Moon, Sun, Menu, X } from 'lucide-react'
+import { Globe, Moon, Sun } from 'lucide-react'
 import { useTheme } from '@/providers/Theme'
 import type { Header, Setting } from '@/payload-types'
 import { Logo } from '@/components/Logo/Logo'
@@ -82,13 +82,16 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
         >
           {/* Logo */}
           <div className="flex-none">
-            <Link href="/" className="inline-block hover:scale-105 transition-transform max-w-[100px]">
+            <Link href="/" className="inline-block hover:scale-105 transition-transform max-w-[160px]">
               <Logo
                 brandName={settings?.brandName}
                 logo={settings?.logo}
                 loading="eager"
                 priority="high"
-                className={isDark ? "!text-white" : "!text-black"}
+                className={cn(
+                  isDark ? "!text-white" : "!text-black",
+                  "!h-10 lg:!h-12"
+                )}
               />
             </Link>
           </div>

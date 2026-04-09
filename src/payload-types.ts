@@ -218,7 +218,9 @@ export interface Page {
     | TestimonialsBlock
     | FAQBlock
     | StatsBlock
+    | FeatureGridBlock
     | StepsBlock
+    | ArtisticShowcaseBlock
   )[];
   meta?: {
     title?: string | null;
@@ -462,6 +464,7 @@ export interface User {
  * via the `definition` "HeroSectionBlock".
  */
 export interface HeroSectionBlock {
+  style: 'style1' | 'style2' | 'style3';
   tagline?: string | null;
   titlePart1: string;
   titlePart2?: string | null;
@@ -974,6 +977,8 @@ export interface FAQBlock {
  * via the `definition` "StatsBlock".
  */
 export interface StatsBlock {
+  title?: string | null;
+  description?: string | null;
   stats?:
     | {
         value: string;
@@ -985,6 +990,32 @@ export interface StatsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'stats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureGridBlock".
+ */
+export interface FeatureGridBlock {
+  tagline?: string | null;
+  /**
+   * Choose how many columns to display for standard features.
+   */
+  columns?: ('2' | '3' | '4') | null;
+  title: string;
+  features?:
+    | {
+        type: 'image-covered' | 'icon-text' | 'solid-color' | 'wide-neutral';
+        title: string;
+        description?: string | null;
+        icon?: ('building' | 'users' | 'shield' | 'award' | 'check') | null;
+        image?: (number | null) | Media;
+        bottomLink?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featureGrid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1002,6 +1033,24 @@ export interface StepsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'steps';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArtisticShowcaseBlock".
+ */
+export interface ArtisticShowcaseBlock {
+  title: string;
+  tagline?: string | null;
+  items: {
+    title: string;
+    description?: string | null;
+    image: number | Media;
+    link?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'artisticShowcase';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1320,7 +1369,9 @@ export interface PagesSelect<T extends boolean = true> {
         testimonials?: T | TestimonialsBlockSelect<T>;
         faq?: T | FAQBlockSelect<T>;
         stats?: T | StatsBlockSelect<T>;
+        featureGrid?: T | FeatureGridBlockSelect<T>;
         steps?: T | StepsBlockSelect<T>;
+        artisticShowcase?: T | ArtisticShowcaseBlockSelect<T>;
       };
   meta?:
     | T
@@ -1341,6 +1392,7 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "HeroSectionBlock_select".
  */
 export interface HeroSectionBlockSelect<T extends boolean = true> {
+  style?: T;
   tagline?: T;
   titlePart1?: T;
   titlePart2?: T;
@@ -1566,12 +1618,36 @@ export interface FAQBlockSelect<T extends boolean = true> {
  * via the `definition` "StatsBlock_select".
  */
 export interface StatsBlockSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
   stats?:
     | T
     | {
         value?: T;
         label?: T;
         description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureGridBlock_select".
+ */
+export interface FeatureGridBlockSelect<T extends boolean = true> {
+  tagline?: T;
+  columns?: T;
+  title?: T;
+  features?:
+    | T
+    | {
+        type?: T;
+        title?: T;
+        description?: T;
+        icon?: T;
+        image?: T;
+        bottomLink?: T;
         id?: T;
       };
   id?: T;
@@ -1588,6 +1664,25 @@ export interface StepsBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         icon?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ArtisticShowcaseBlock_select".
+ */
+export interface ArtisticShowcaseBlockSelect<T extends boolean = true> {
+  title?: T;
+  tagline?: T;
+  items?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        link?: T;
         id?: T;
       };
   id?: T;
@@ -2071,26 +2166,33 @@ export interface Header {
  */
 export interface Footer {
   id: number;
-  navItems?:
+  columns?:
     | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: number | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: number | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
+        label: string;
+        navItems?:
+          | {
+              link: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label: string;
+              };
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
+  copyright?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2143,20 +2245,27 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
-  navItems?:
+  columns?:
     | T
     | {
-        link?:
+        label?: T;
+        navItems?:
           | T
           | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
             };
         id?: T;
       };
+  copyright?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

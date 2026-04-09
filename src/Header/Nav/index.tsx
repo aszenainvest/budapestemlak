@@ -2,7 +2,6 @@
 import React, { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import type { Header as HeaderType } from '@/payload-types'
-import { CMSLink } from '@/components/Link'
 import { cn } from '@/utilities/ui'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'

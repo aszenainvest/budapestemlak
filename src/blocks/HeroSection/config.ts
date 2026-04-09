@@ -10,6 +10,17 @@ export const HeroSection: Block = {
   },
   fields: [
     {
+      name: 'style',
+      type: 'select',
+      defaultValue: 'style1',
+      options: [
+        { label: 'Style 1 - Classic Split', value: 'style1' },
+        { label: 'Style 2 - Minimal Center', value: 'style2' },
+        { label: 'Style 3 - Modern Abstract', value: 'style3' },
+      ],
+      required: true,
+    },
+    {
       name: 'tagline',
       type: 'text',
       label: 'Tagline (e.g. Institutional Excellence)',

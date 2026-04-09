@@ -5,11 +5,23 @@ export const Stats: Block = {
   interfaceName: 'StatsBlock',
   fields: [
     {
+      name: 'title',
+      type: 'text',
+      localized: true,
+      label: 'Main Title',
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      localized: true,
+      label: 'Main Description',
+    },
+    {
       name: 'stats',
       type: 'array',
       label: 'Statistics',
       minRows: 1,
-      maxRows: 4,
+      maxRows: 6,
       fields: [
         {
           name: 'value',
