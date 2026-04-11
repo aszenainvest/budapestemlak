@@ -25,7 +25,7 @@ export const LocaleSelector: React.FC<{ isDark?: boolean }> = ({ isDark }) => {
         return (
           <React.Fragment key={locale.value}>
             <a
-              href={`/api/set-locale?locale=${locale.value}&path=${pathname}`}
+              href={`/api/set-locale?locale=${locale.value}&path=/`}
               className={cn(
                 "text-[10px] font-bold tracking-widest transition-all duration-200 no-underline px-2",
                 isActive 

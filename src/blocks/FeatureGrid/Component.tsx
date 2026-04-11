@@ -87,7 +87,7 @@ export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, f
         </div>
 
         {/* Grid Layout - Asymmetrical */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-[300px]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 auto-rows-auto md:auto-rows-[300px]">
           {features?.map((feature, i) => {
             const Icon = feature.icon ? iconMap[feature.icon as keyof typeof iconMap] : null
             
@@ -120,7 +120,7 @@ export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, f
                 whileHover={{ y: -8 }}
                 className={cn(
                   gridClasses,
-                  "relative rounded-2xl overflow-hidden group flex flex-col justify-end p-8 transition-all duration-500",
+                  "relative rounded-2xl overflow-hidden group flex flex-col justify-end p-6 md:p-8 transition-all duration-500 min-h-[280px] md:min-h-0",
                   "shadow-none hover:shadow-2xl hover:shadow-[var(--secondary)]/10",
                   feature.type === 'image-covered' ? "text-white" : 
                   feature.type === 'solid-color' ? "bg-[var(--primary)] text-white" :
@@ -141,7 +141,7 @@ export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, f
                 )}
 
                 {/* Content */}
-                <div className="relative z-10 flex flex-col gap-4 h-full pt-10">
+                <div className="relative z-10 flex flex-col gap-3 md:gap-4 h-full pt-10">
                    {/* Icon for non-image types */}
                    {feature.type !== 'image-covered' && Icon && (
                      <div className={cn(

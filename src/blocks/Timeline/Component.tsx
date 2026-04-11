@@ -18,7 +18,7 @@ export const TimelineBlock: React.FC<TimelineBlockType> = ({ title, items }) => 
         {/* Mobile Vertical Line */}
         <div className="absolute left-8 top-0 bottom-0 w-px bg-gray-100 md:hidden" />
 
-        <div className="space-y-16 lg:space-y-24">
+        <div className="space-y-12 md:space-y-24">
           {items?.map((item, index) => (
             <div 
               key={index} 
@@ -27,22 +27,22 @@ export const TimelineBlock: React.FC<TimelineBlockType> = ({ title, items }) => 
               }`}
             >
               {/* Dot on line */}
-              <div className="absolute left-[31px] md:left-1/2 md:-translate-x-1/2 w-3 h-3 rounded-full bg-[var(--secondary)] z-10 border-4 border-white shadow-xl ring-2 ring-[var(--secondary)]/20" />
+              <div className="absolute left-[26px] md:left-1/2 md:-translate-x-1/2 w-3 h-3 rounded-full bg-[var(--secondary)] z-10 border-4 border-white shadow-xl ring-2 ring-[var(--secondary)]/20" />
 
               {/* Content Panel */}
-              <div className="w-full md:w-[45%] pl-16 md:pl-0">
+              <div className="w-full md:w-[45%] pl-14 md:pl-0">
                 <div 
-                  className={`p-8 rounded-3xl border border-gray-100/50 shadow-sm hover:shadow-xl transition-all duration-500 bg-white group cursor-default`}
+                  className={`p-6 md:p-8 rounded-3xl border border-gray-100/50 shadow-sm hover:shadow-xl transition-all duration-500 bg-white group cursor-default`}
                 >
-                  <span className="inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-[var(--secondary)]/10 text-[var(--secondary)] mb-6">
+                  <span className="inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-[var(--secondary)]/10 text-[var(--secondary)] mb-4 md:mb-6">
                     {item.year}
                   </span>
                   
-                  <h3 className="text-2xl font-bold mb-4 text-[var(--primary)] group-hover:text-[var(--secondary)] transition-colors duration-300 capitalize">
+                  <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-[var(--primary)] group-hover:text-[var(--secondary)] transition-colors duration-300 capitalize">
                     {item.title}
                   </h3>
                   
-                  <p className="text-gray-500 text-sm leading-relaxed mb-6">
+                  <p className="text-gray-500 text-sm leading-relaxed mb-4 md:mb-6">
                     {item.description}
                   </p>
 

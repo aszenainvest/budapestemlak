@@ -38,23 +38,23 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
   }, [projects, filter, enableFiltering])
 
   return (
-    <div className="container py-10 mx-auto px-4 md:px-0">
+    <div className="container py-10 mx-auto px-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
         {title && (
           <h2
-            className="text-4xl md:text-5xl font-bold tracking-tight"
+            className="text-3xl md:text-5xl font-bold tracking-tight"
             style={{ color: 'var(--primary)' }}
           >
             {title}
           </h2>
         )}
 
-        {/* Dynamic Filter Tabs */}
+        {/* Dynamic Filter Tabs - Scrollable on mobile */}
         {enableFiltering && availableCategories.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
             <button
               onClick={() => setFilter('all')}
-              className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+              className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
                 filter === 'all'
                   ? 'bg-[var(--primary)] text-white shadow-lg'
                   : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
@@ -66,7 +66,7 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
               <button
                 key={cat.id}
                 onClick={() => setFilter(cat.id)}
-                className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+                className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
                   filter === cat.id
                     ? 'bg-[var(--primary)] text-white shadow-lg'
                     : 'bg-gray-100 text-gray-500 hover:bg-gray-200'

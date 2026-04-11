@@ -98,7 +98,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
           </div>
 
           {/* Desktop Nav */}
-          <div className="hidden xl:flex flex-1 justify-center px-4">
+          <div className="hidden 2xl:flex flex-1 justify-center px-4">
             <HeaderNav data={data} forceTheme={effectiveTheme} />
           </div>
 
@@ -125,7 +125,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
             {/* Mobile Burger */}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="xl:hidden p-2 relative z-50 overflow-hidden"
+              className="2xl:hidden p-2 relative z-50 overflow-hidden"
             >
               <div className="w-6 h-4 relative flex flex-col justify-between items-end">
                 <motion.span 
@@ -153,7 +153,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[45] bg-white/80 dark:bg-black/80 backdrop-blur-3xl lg:hidden flex flex-col items-center justify-center"
+            className="fixed inset-0 z-[45] bg-white/95 dark:bg-black/95 backdrop-blur-3xl 2xl:hidden flex flex-col items-center pt-24 pb-12 overflow-y-auto"
           >
              <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--secondary)]/10 blur-[120px] rounded-full animate-pulse" />
@@ -161,7 +161,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
              </div>
 
              <div className="relative z-10 w-full px-10">
-                <nav className="flex flex-col gap-10">
+                <nav className="flex flex-col gap-6 py-8">
                   {data?.navItems?.map(({ link }, i) => {
                     const { type, reference, url, label } = link || {}
                     const href =
@@ -180,7 +180,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
                       >
                         <Link
                           href={href || '#'}
-                          className="text-4xl md:text-6xl font-black text-[var(--primary)] hover:text-[var(--secondary)] transition-colors tracking-tighter block text-center"
+                          className="text-2xl md:text-4xl font-black text-[var(--primary)] hover:text-[var(--secondary)] transition-colors tracking-tighter block text-center py-2"
                         >
                           {label}
                         </Link>
@@ -194,7 +194,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
                transition={{ delay: 0.5 }}
-               className="absolute bottom-12 flex flex-col items-center gap-8"
+               className="mt-auto flex flex-col items-center gap-8 pb-8"
              >
                 <LocaleSelector />
                 <button onClick={toggleTheme} className="text-sm font-bold tracking-widest uppercase">

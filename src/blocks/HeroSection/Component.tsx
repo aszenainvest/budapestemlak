@@ -68,7 +68,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tighter"
+                className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tighter"
               >
                 <span className="block">{titlePart1}</span>
                 {titlePart2 && (
@@ -210,7 +210,7 @@ const HeroStyle2: React.FC<HeroSectionType> = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="text-6xl md:text-8xl lg:text-9xl font-black text-white leading-none tracking-tight"
+            className="text-4xl md:text-8xl lg:text-9xl font-black text-white leading-none tracking-tight"
           >
             {titlePart1}{' '}
             {titlePart2 && (
@@ -286,7 +286,7 @@ const HeroStyle3: React.FC<HeroSectionType> = ({
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-6xl md:text-7xl lg:text-8xl font-black text-white leading-[0.85] tracking-tighter"
+            className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.85] tracking-tighter"
           >
             {titlePart1}
             <br />

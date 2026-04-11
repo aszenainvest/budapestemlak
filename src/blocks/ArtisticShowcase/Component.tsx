@@ -13,7 +13,7 @@ export const ArtisticShowcaseBlock: React.FC<ArtisticShowcaseProps> = ({ title, 
     <section className="py-10 bg-[#0a0a0a] overflow-hidden">
       <div className="container px-6">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 md:mb-20 gap-8">
           <div className="max-w-2xl">
             {tagline && (
               <motion.span
@@ -30,7 +30,7 @@ export const ArtisticShowcaseBlock: React.FC<ArtisticShowcaseProps> = ({ title, 
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-none"
+              className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-[0.9] md:leading-none"
             >
               {title}
             </motion.h2>
@@ -50,7 +50,7 @@ export const ArtisticShowcaseBlock: React.FC<ArtisticShowcaseProps> = ({ title, 
         </div>
 
         {/* Artistic Grid - Interactive Panels */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 h-[600px]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-4 h-auto md:h-[600px]">
           {items?.map((item, i) => (
             <motion.div
               key={i}
@@ -61,7 +61,7 @@ export const ArtisticShowcaseBlock: React.FC<ArtisticShowcaseProps> = ({ title, 
                 opacity: hoveredIndex !== null && hoveredIndex !== i ? 0.4 : 1,
               }}
               className={cn(
-                "relative h-full transition-all duration-700 ease-[0.16,1,0.3,1] overflow-hidden rounded-3xl cursor-pointer group",
+                "relative transition-all duration-700 ease-[0.16,1,0.3,1] overflow-hidden rounded-3xl cursor-pointer group min-h-[400px] md:min-h-0",
                 hoveredIndex === i ? "col-span-12 md:col-span-6" : "col-span-12 md:col-span-3"
               )}
               style={{ display: 'flex' }}

@@ -46,10 +46,10 @@ export async function Footer() {
           {/* Brand Info */}
           <div className="md:col-span-4 lg:col-span-4">
             <Link href="/" className="inline-block mb-8">
-              <Logo 
-                width={footerData?.logoWidth || 100} 
-                logo={settingsData?.logo} 
-                brandName={settingsData?.brandName} 
+              <Logo
+                width={footerData?.logoWidth || 100}
+                logo={settingsData?.logo}
+                brandName={settingsData?.brandName}
               />
             </Link>
             <p className="text-gray-500 text-sm leading-relaxed font-light max-w-sm">
