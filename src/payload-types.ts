@@ -221,6 +221,8 @@ export interface Page {
     | FeatureGridBlock
     | StepsBlock
     | ArtisticShowcaseBlock
+    | TimelineBlock
+    | MapBlock
   )[];
   meta?: {
     title?: string | null;
@@ -499,10 +501,13 @@ export interface HeroSectionBlock {
  */
 export interface ProjectCardsBlock {
   title?: string | null;
+  allFilterLabel?: string | null;
+  enableFiltering?: boolean | null;
   projects?:
     | {
         year?: string | null;
         type?: string | null;
+        categories?: (number | Category)[] | null;
         title: string;
         location?: string | null;
         description?: string | null;
@@ -1007,7 +1012,37 @@ export interface FeatureGridBlock {
         type: 'image-covered' | 'icon-text' | 'solid-color' | 'wide-neutral';
         title: string;
         description?: string | null;
-        icon?: ('building' | 'users' | 'shield' | 'award' | 'check') | null;
+        icon?:
+          | (
+              | 'building'
+              | 'users'
+              | 'shield'
+              | 'award'
+              | 'check'
+              | 'star'
+              | 'heart'
+              | 'zap'
+              | 'target'
+              | 'briefcase'
+              | 'globe'
+              | 'map-pin'
+              | 'lightbulb'
+              | 'trending-up'
+              | 'phone'
+              | 'mail'
+              | 'clock'
+              | 'leaf'
+              | 'settings'
+              | 'monitor'
+              | 'hammer'
+              | 'hard-hat'
+              | 'wrench'
+              | 'truck'
+              | 'bar-chart'
+              | 'compass'
+              | 'tool'
+            )
+          | null;
         image?: (number | null) | Media;
         bottomLink?: string | null;
         id?: string | null;
@@ -1051,6 +1086,42 @@ export interface ArtisticShowcaseBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'artisticShowcase';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock".
+ */
+export interface TimelineBlock {
+  title?: string | null;
+  items?:
+    | {
+        year: string;
+        title: string;
+        description?: string | null;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'timeline';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MapBlock".
+ */
+export interface MapBlock {
+  title?: string | null;
+  /**
+   * Google Haritalar > Paylaş > Harita yerleştir kısmındaki "src" değerini buraya yapıştırın.
+   */
+  mapUrl: string;
+  useFullWidth?: boolean | null;
+  addressTitle?: string | null;
+  addressDetail?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'map';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1372,6 +1443,8 @@ export interface PagesSelect<T extends boolean = true> {
         featureGrid?: T | FeatureGridBlockSelect<T>;
         steps?: T | StepsBlockSelect<T>;
         artisticShowcase?: T | ArtisticShowcaseBlockSelect<T>;
+        timeline?: T | TimelineBlockSelect<T>;
+        map?: T | MapBlockSelect<T>;
       };
   meta?:
     | T
@@ -1417,11 +1490,14 @@ export interface HeroSectionBlockSelect<T extends boolean = true> {
  */
 export interface ProjectCardsBlockSelect<T extends boolean = true> {
   title?: T;
+  allFilterLabel?: T;
+  enableFiltering?: T;
   projects?:
     | T
     | {
         year?: T;
         type?: T;
+        categories?: T;
         title?: T;
         location?: T;
         description?: T;
@@ -1685,6 +1761,37 @@ export interface ArtisticShowcaseBlockSelect<T extends boolean = true> {
         link?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineBlock_select".
+ */
+export interface TimelineBlockSelect<T extends boolean = true> {
+  title?: T;
+  items?:
+    | T
+    | {
+        year?: T;
+        title?: T;
+        description?: T;
+        image?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MapBlock_select".
+ */
+export interface MapBlockSelect<T extends boolean = true> {
+  title?: T;
+  mapUrl?: T;
+  useFullWidth?: T;
+  addressTitle?: T;
+  addressDetail?: T;
   id?: T;
   blockName?: T;
 }
@@ -2154,6 +2261,26 @@ export interface Header {
           url?: string | null;
           label?: string | null;
         };
+        subItems?:
+          | {
+              link?: {
+                type?: ('reference' | 'custom') | null;
+                newTab?: boolean | null;
+                reference?:
+                  | ({
+                      relationTo: 'pages';
+                      value: number | Page;
+                    } | null)
+                  | ({
+                      relationTo: 'posts';
+                      value: number | Post;
+                    } | null);
+                url?: string | null;
+                label?: string | null;
+              };
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -2252,6 +2379,20 @@ export interface HeaderSelect<T extends boolean = true> {
               reference?: T;
               url?: T;
               label?: T;
+            };
+        subItems?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
             };
         id?: T;
       };

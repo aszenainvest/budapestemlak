@@ -20,6 +20,8 @@ import { ProjectCardsBlock } from '@/blocks/ProjectCards/Component'
 import { HeroSectionBlock } from '@/blocks/HeroSection/Component'
 import { FeatureGridBlock } from '@/blocks/FeatureGrid/Component'
 import { ArtisticShowcaseBlock } from '@/blocks/ArtisticShowcase/Component'
+import { TimelineBlock } from '@/blocks/Timeline/Component'
+import { MapComponent } from '@/blocks/Map/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -39,6 +41,8 @@ const blockComponents = {
   heroSection: HeroSectionBlock,
   featureGrid: FeatureGridBlock,
   artisticShowcase: ArtisticShowcaseBlock,
+  timeline: TimelineBlock,
+  map: MapComponent,
 }
 
 export const RenderBlocks: React.FC<{

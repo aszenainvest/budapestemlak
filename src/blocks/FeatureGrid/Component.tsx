@@ -3,7 +3,12 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
-import { Building2, Users2, ShieldCheck, Award, CheckCircle2, ArrowRight, MapPin } from 'lucide-react'
+import { 
+  Building2, Users2, ShieldCheck, Award, CheckCircle2, ArrowRight, MapPin,
+  Star, Heart, Zap, Target, Briefcase, Globe, MapPin as MapPinIcon, Lightbulb,
+  TrendingUp, Phone, Mail, Clock, Leaf, Settings, Monitor, Hammer, HardHat,
+  Wrench, Truck, BarChart3, Compass, Layout
+} from 'lucide-react'
 import type { FeatureGridBlock as FeatureGridProps } from '@/payload-types'
 
 const iconMap = {
@@ -12,6 +17,28 @@ const iconMap = {
   shield: ShieldCheck,
   award: Award,
   check: CheckCircle2,
+  star: Star,
+  heart: Heart,
+  zap: Zap,
+  target: Target,
+  briefcase: Briefcase,
+  globe: Globe,
+  'map-pin': MapPinIcon,
+  lightbulb: Lightbulb,
+  'trending-up': TrendingUp,
+  phone: Phone,
+  mail: Mail,
+  clock: Clock,
+  leaf: Leaf,
+  settings: Settings,
+  monitor: Monitor,
+  hammer: Hammer,
+  'hard-hat': HardHat,
+  wrench: Wrench,
+  truck: Truck,
+  'bar-chart': BarChart3,
+  compass: Compass,
+  tool: Layout,
 }
 
 export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, features, columns = '3' }) => {
@@ -98,7 +125,7 @@ export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, f
                   feature.type === 'image-covered' ? "text-white" : 
                   feature.type === 'solid-color' ? "bg-[var(--primary)] text-white" :
                   feature.type === 'wide-neutral' ? "bg-gray-50 text-[var(--primary)] border border-gray-100" :
-                  "bg-white border border-gray-100 text-[var(--primary)] items-start justify-center"
+                  "bg-slate-50/50 border border-gray-100 text-[var(--primary)] items-start justify-center"
                 )}
               >
                 {/* Background for image type */}

@@ -81,29 +81,30 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
           )}
         >
           {/* Logo */}
-          <div className="flex-none">
-            <Link href="/" className="inline-block hover:scale-105 transition-transform max-w-[160px]">
+          <div className="flex-none pr-4">
+            <Link href="/" className="inline-block hover:scale-105 transition-transform">
               <Logo
                 brandName={settings?.brandName}
                 logo={settings?.logo}
                 loading="eager"
                 priority="high"
+                width={120}
                 className={cn(
                   isDark ? "!text-white" : "!text-black",
-                  "!h-10 lg:!h-12"
+                  "!h-10 lg:!h-10"
                 )}
               />
             </Link>
           </div>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:block absolute left-1/2 -translate-x-1/2">
+          <div className="hidden xl:flex flex-1 justify-center px-4">
             <HeaderNav data={data} forceTheme={effectiveTheme} />
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 lg:gap-5">
-            <div className="hidden md:flex items-center gap-4">
+          <div className="flex-none flex items-center gap-3 lg:gap-4 ml-auto">
+            <div className="hidden md:flex items-center gap-2 lg:gap-4">
                <LocaleSelector isDark={isDark} />
                <div className="h-4 w-px bg-current opacity-10" />
                <motion.button 
@@ -124,7 +125,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
             {/* Mobile Burger */}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 relative z-50 overflow-hidden"
+              className="xl:hidden p-2 relative z-50 overflow-hidden"
             >
               <div className="w-6 h-4 relative flex flex-col justify-between items-end">
                 <motion.span 
@@ -161,21 +162,31 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
 
              <div className="relative z-10 w-full px-10">
                 <nav className="flex flex-col gap-10">
-                  {data?.navItems?.map(({ link }, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1, type: 'spring' }}
-                    >
-                      <Link 
-                        href={link.url || '#'} 
-                        className="text-4xl md:text-6xl font-black text-[var(--primary)] hover:text-[var(--secondary)] transition-colors tracking-tighter block text-center"
+                  {data?.navItems?.map(({ link }, i) => {
+                    const { type, reference, url, label } = link || {}
+                    const href =
+                      type === 'reference' && typeof reference?.value === 'object' && reference.value?.slug
+                        ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
+                            reference.value.slug
+                          }`
+                        : url
+
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.1, type: 'spring' }}
                       >
-                        {link.label}
-                      </Link>
-                    </motion.div>
-                  ))}
+                        <Link
+                          href={href || '#'}
+                          className="text-4xl md:text-6xl font-black text-[var(--primary)] hover:text-[var(--secondary)] transition-colors tracking-tighter block text-center"
+                        >
+                          {label}
+                        </Link>
+                      </motion.div>
+                    )
+                  })}
                 </nav>
              </div>
 

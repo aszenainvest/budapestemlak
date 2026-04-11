@@ -12,11 +12,20 @@ export const Header: GlobalConfig = {
     {
       name: 'navItems',
       type: 'array',
-      localized: true,
       fields: [
         link({
           appearances: false,
         }),
+        {
+          name: 'subItems',
+          type: 'array',
+          label: 'Sub-Menu Items (Dropdown)',
+          fields: [
+            link({
+              appearances: false,
+            }),
+          ],
+        },
       ],
       admin: {
         initCollapsed: true,

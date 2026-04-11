@@ -6,6 +6,7 @@ import React from 'react'
 import RichText from '@/components/RichText'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
+import { CardPostData } from '@/components/Card'
 
 export const ArchiveBlock: React.FC<
   ArchiveBlockProps & {
@@ -16,7 +17,7 @@ export const ArchiveBlock: React.FC<
 
   const limit = limitFromProps || 3
 
-  let posts: Post[] = []
+  let posts: CardPostData[] = []
 
   if (populateBy === 'collection') {
     const payload = await getPayload({ config: configPromise })
@@ -30,6 +31,13 @@ export const ArchiveBlock: React.FC<
       collection: 'posts',
       depth: 1,
       limit,
+      select: {
+        title: true,
+        slug: true,
+        categories: true,
+        meta: true,
+        publishedAt: true,
+      },
       ...(flattenedCategories && flattenedCategories.length > 0
         ? {
             where: {
@@ -53,7 +61,7 @@ export const ArchiveBlock: React.FC<
   }
 
   return (
-    <div className="my-16" id={`block-${id}`}>
+    <div className="my-16 py-2" id={`block-${id}`}>
       {introContent && (
         <div className="container mb-16">
           <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />

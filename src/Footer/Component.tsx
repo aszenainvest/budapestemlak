@@ -30,9 +30,9 @@ export async function Footer() {
   const cookieStore = await cookies()
   const locale = cookieStore.get('payload-locale')?.value || 'tr'
 
-  const footerData = (await getCachedGlobal('footer', 1)(locale)) as Footer
-  const headerData = (await getCachedGlobal('header', 1)(locale)) as Header
-  const settingsData = (await getCachedGlobal('settings', 1)(locale)) as Setting
+  const footerData = (await getCachedGlobal('footer', 3)(locale)) as Footer
+  const headerData = (await getCachedGlobal('header', 3)(locale)) as Header
+  const settingsData = (await getCachedGlobal('settings', 3)(locale)) as Setting
 
   const showHeaderNav = footerData?.syncWithHeader
   const columns = showHeaderNav

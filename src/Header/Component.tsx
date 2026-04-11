@@ -11,8 +11,8 @@ export async function Header() {
 
   // Fetch header and settings in parallel for speed
   const [headerData, settingsData] = await Promise.all([
-    getCachedGlobal('header', 1)(locale),
-    getCachedGlobal('settings', 1)(locale),
+    getCachedGlobal('header', 3)(locale),
+    getCachedGlobal('settings', 3)(locale),
   ])
 
   return <HeaderClient data={headerData} settings={settingsData} />

@@ -34,7 +34,6 @@ export const Footer: GlobalConfig = {
     {
       name: 'columns',
       type: 'array',
-      localized: true,
       admin: {
         condition: (data) => !data.syncWithHeader,
       },
@@ -43,6 +42,7 @@ export const Footer: GlobalConfig = {
           name: 'label',
           type: 'text',
           required: true,
+          localized: true,
         },
         {
           name: 'navItems',
