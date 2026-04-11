@@ -9,6 +9,7 @@ interface Props {
   priority?: 'auto' | 'high' | 'low'
   brandName?: string | null
   logo?: Media | number | null
+  width?: number | null
 }
 
 export const Logo = (props: Props) => {
@@ -17,7 +18,8 @@ export const Logo = (props: Props) => {
     priority: priorityFromProps, 
     className,
     brandName,
-    logo
+    logo,
+    width
   } = props
 
   const loading = loadingFromProps || 'lazy'
@@ -29,11 +31,12 @@ export const Logo = (props: Props) => {
       <img
         alt={brandName || 'Logo'}
         src={logo.url}
-        width={120}
+        width={width || 120}
         height={32}
         loading={loading}
         fetchPriority={priority}
-        className={clsx('w-auto h-8 lg:h-10 object-contain', className)}
+        className={clsx('object-contain', !width && 'w-auto h-8 lg:h-10', className)}
+        style={width ? { width: `${width}px`, height: 'auto' } : {}}
       />
 
     )

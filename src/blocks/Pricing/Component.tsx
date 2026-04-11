@@ -19,7 +19,7 @@ export const PricingBlock: React.FC<PricingBlockProps> = ({ plans }) => {
   if (!plans || plans.length === 0) return null
 
   return (
-    <div className="container py-24 sm:py-32">
+    <div className="container py-10 sm:py-16">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {plans.map((plan, i) => (
           <div

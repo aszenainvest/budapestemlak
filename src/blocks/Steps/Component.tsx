@@ -16,7 +16,7 @@ export const StepsBlock: React.FC<StepsBlockProps> = ({ steps }) => {
   if (!steps || steps.length === 0) return null
 
   return (
-    <div className="container py-24 sm:py-32">
+    <div className="container py-10 sm:py-16">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
         {steps.map((step, i) => (
           <div key={i} className="relative pl-16 group">

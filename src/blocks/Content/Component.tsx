@@ -18,7 +18,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
   }
 
   return (
-    <section className="container">
+    <section className="container py-10">
       <motion.div 
         initial="hidden"
         whileInView="visible"

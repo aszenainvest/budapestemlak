@@ -4,7 +4,7 @@ import { Media } from '@/components/Media'
 
 export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, projects }) => {
   return (
-    <div className="container py-24 mx-auto px-4 md:px-0">
+    <div className="container py-10 mx-auto px-4 md:px-0">
       {title && (
         <h2 className="text-4xl md:text-5xl font-bold mb-16 tracking-tight" style={{ color: 'var(--primary)' }}>
           {title}

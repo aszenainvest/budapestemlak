@@ -19,7 +19,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
   const logo = settings?.logo
 
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black py-20">
+    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black py-8">
       {/* Background Image - Gemi/Tekne Hareketine Benzeyen Çok Hafif Animasyon */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {image && typeof image === 'object' && (
@@ -177,7 +177,7 @@ const HeroStyle2: React.FC<HeroSectionType> = ({
   cta,
 }) => {
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-[#050505] py-20">
+    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-[#050505] py-8">
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--secondary)]/10 blur-[120px] rounded-full animate-pulse" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[var(--secondary)]/5 blur-[120px] rounded-full animate-pulse delay-1000" />

@@ -49,7 +49,7 @@ export const HeroSection: Block = {
       name: 'description',
       type: 'textarea',
       label: 'Description',
-      required: true,
+      required: false,
       localized: true,
     },
     link({

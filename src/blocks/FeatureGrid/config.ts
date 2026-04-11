@@ -33,7 +33,7 @@ export const FeatureGrid: Block = {
       type: 'text',
       localized: true,
       label: 'Title',
-      required: true,
+      required: false,
     },
     {
       name: 'features',

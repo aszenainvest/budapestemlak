@@ -111,7 +111,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
             width: '50%',
           },
           label: 'Label',
-          required: true,
+          required: false,
           localized: true,
         },
       ],

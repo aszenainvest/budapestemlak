@@ -45,18 +45,21 @@ type Args = {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
-  const { slug = 'ana-sayfa' } = await paramsPromise
-  // Decode to support slugs with special characters
-  const decodedSlug = decodeURIComponent(slug)
-  const url = '/' + decodedSlug
+  const params = await paramsPromise
+  const { slug } = params
+  const isHome = !slug
+  const decodedSlug = decodeURIComponent(slug || 'ana-sayfa')
+  const url = '/' + (slug ? decodedSlug : '')
+
   let page: RequiredDataFromCollectionSlug<'pages'> | null
 
   page = await queryPageBySlug({
+    isHome,
     slug: decodedSlug,
   })
 
   // Remove this code once your website is seeded
-  if (!page && slug === 'ana-sayfa') {
+  if (!page && isHome) {
     page = homeStatic
   }
 
@@ -80,17 +83,20 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       {draft && <LivePreviewListener />}
 
-      <RenderHero {...hero} />
+      {!(hero?.type === 'lowImpact' && !isHome) && <RenderHero {...hero} />}
       <RenderBlocks blocks={layout} settings={settings} />
     </article>
   )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = 'ana-sayfa' } = await paramsPromise
-  // Decode to support slugs with special characters
-  const decodedSlug = decodeURIComponent(slug)
+  const params = await paramsPromise
+  const { slug } = params
+  const isHome = !slug
+  const decodedSlug = decodeURIComponent(slug || 'ana-sayfa')
+
   const page = await queryPageBySlug({
+    isHome,
     slug: decodedSlug,
   })
 
@@ -98,7 +104,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 }
 
 
-const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug: string }) => {
   const { isEnabled: draft } = await draftMode()
   const cookieStore = await cookies()
   const locale = cookieStore.get('payload-locale')?.value || 'tr'
@@ -113,9 +119,17 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
     overrideAccess: draft,
     locale: locale as any,
     where: {
-      slug: {
-        equals: slug,
-      },
+      ...(isHome
+        ? {
+            'slug.tr': {
+              equals: 'ana-sayfa',
+            },
+          }
+        : {
+            slug: {
+              equals: slug,
+            },
+          }),
     },
   })
 

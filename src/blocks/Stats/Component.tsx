@@ -20,7 +20,7 @@ export const StatsBlock: React.FC<StatsBlockProps> = ({ stats, title, descriptio
   if (!stats || stats.length === 0) return null
 
   return (
-    <section className="py-24 sm:py-32 bg-gray-50/50">
+    <section className="py-10 sm:py-16 bg-gray-50/50">
       <div className="container px-6">
         {/* Başlık Grubu */}
         {(title || description) && (

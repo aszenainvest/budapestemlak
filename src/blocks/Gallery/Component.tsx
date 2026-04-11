@@ -22,7 +22,7 @@ export const GalleryBlock: React.FC<GalleryBlockProps> = ({ images, columns = '3
   }[columns || '3']
 
   return (
-    <div className="container py-24 sm:py-32">
+    <div className="container py-10 sm:py-16">
       <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${gridCols}`}>
         {images.map((item, i) => {
           const img = typeof item.image === 'object' ? item.image : null

@@ -61,7 +61,7 @@ export const RenderBlocks: React.FC<{
             if (Block) {
               return (
                 <div
-                  className={cn(index === 0 && blockType === 'heroSection' ? '' : 'my-16')}
+                  className={cn(index === 0 && blockType === 'heroSection' ? '' : 'my-0')}
                   key={index}
                 >
                   {(Block as any) && (

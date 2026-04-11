@@ -179,7 +179,7 @@ export interface Page {
     } | null;
     links?:
       | {
-          link: {
+          link?: {
             type?: ('reference' | 'custom') | null;
             newTab?: boolean | null;
             reference?:
@@ -192,7 +192,7 @@ export interface Page {
                   value: number | Post;
                 } | null);
             url?: string | null;
-            label: string;
+            label?: string | null;
             /**
              * Choose how the link should be rendered.
              */
@@ -468,8 +468,8 @@ export interface HeroSectionBlock {
   tagline?: string | null;
   titlePart1: string;
   titlePart2?: string | null;
-  description: string;
-  cta: {
+  description?: string | null;
+  cta?: {
     type?: ('reference' | 'custom') | null;
     newTab?: boolean | null;
     reference?:
@@ -482,7 +482,7 @@ export interface HeroSectionBlock {
           value: number | Post;
         } | null);
     url?: string | null;
-    label: string;
+    label?: string | null;
     /**
      * Choose how the link should be rendered.
      */
@@ -536,7 +536,7 @@ export interface CallToActionBlock {
   } | null;
   links?:
     | {
-        link: {
+        link?: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
           reference?:
@@ -549,7 +549,7 @@ export interface CallToActionBlock {
                 value: number | Post;
               } | null);
           url?: string | null;
-          label: string;
+          label?: string | null;
           /**
            * Choose how the link should be rendered.
            */
@@ -599,7 +599,7 @@ export interface ContentBlock {
                 value: number | Post;
               } | null);
           url?: string | null;
-          label: string;
+          label?: string | null;
           /**
            * Choose how the link should be rendered.
            */
@@ -1001,7 +1001,7 @@ export interface FeatureGridBlock {
    * Choose how many columns to display for standard features.
    */
   columns?: ('2' | '3' | '4') | null;
-  title: string;
+  title?: string | null;
   features?:
     | {
         type: 'image-covered' | 'icon-text' | 'solid-color' | 'wide-neutral';
@@ -2139,7 +2139,7 @@ export interface Header {
   id: number;
   navItems?:
     | {
-        link: {
+        link?: {
           type?: ('reference' | 'custom') | null;
           newTab?: boolean | null;
           reference?:
@@ -2152,7 +2152,7 @@ export interface Header {
                 value: number | Post;
               } | null);
           url?: string | null;
-          label: string;
+          label?: string | null;
         };
         id?: string | null;
       }[]
@@ -2166,12 +2166,18 @@ export interface Header {
  */
 export interface Footer {
   id: number;
+  description: string;
+  logoWidth?: number | null;
+  /**
+   * If enabled, the footer will display the same navigation items as the header.
+   */
+  syncWithHeader?: boolean | null;
   columns?:
     | {
         label: string;
         navItems?:
           | {
-              link: {
+              link?: {
                 type?: ('reference' | 'custom') | null;
                 newTab?: boolean | null;
                 reference?:
@@ -2184,7 +2190,7 @@ export interface Footer {
                       value: number | Post;
                     } | null);
                 url?: string | null;
-                label: string;
+                label?: string | null;
               };
               id?: string | null;
             }[]
@@ -2192,6 +2198,19 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
+  socialLinks?:
+    | {
+        platform: 'instagram' | 'linkedin' | 'twitter' | 'facebook' | 'youtube' | 'other';
+        label?: string | null;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  contacts?: {
+    address?: string | null;
+    phone?: string | null;
+    email?: string | null;
+  };
   copyright?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -2245,6 +2264,9 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
+  description?: T;
+  logoWidth?: T;
+  syncWithHeader?: T;
   columns?:
     | T
     | {
@@ -2264,6 +2286,21 @@ export interface FooterSelect<T extends boolean = true> {
               id?: T;
             };
         id?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  contacts?:
+    | T
+    | {
+        address?: T;
+        phone?: T;
+        email?: T;
       };
   copyright?: T;
   updatedAt?: T;

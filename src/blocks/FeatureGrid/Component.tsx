@@ -32,7 +32,7 @@ export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, f
   const baseSpan = colSpanMap[columns as keyof typeof colSpanMap] || 4
 
   return (
-    <section className="py-24 bg-white overflow-hidden">
+    <section className="py-10 bg-white overflow-hidden">
       <div className="container px-6">
         {/* Header */}
         <div className="text-center mb-16">
