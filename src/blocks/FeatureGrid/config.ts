@@ -31,9 +31,13 @@ export const FeatureGrid: Block = {
     {
       name: 'title',
       type: 'text',
+      required: true,
       localized: true,
-      label: 'Title',
-      required: false,
+    },
+    {
+      name: 'subtitle',
+      type: 'text',
+      localized: true,
     },
     {
       name: 'features',

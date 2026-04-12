@@ -19,12 +19,13 @@ export const HeroSection: Block = {
         { label: 'Style 3 - Modern Abstract', value: 'style3' },
       ],
       required: true,
+      localized: false,
     },
     {
       name: 'tagline',
       type: 'text',
       label: 'Tagline (e.g. Institutional Excellence)',
-      localized: true,
+      localized: false,
     },
     {
       type: 'row',
@@ -34,6 +35,7 @@ export const HeroSection: Block = {
           type: 'text',
           label: 'Title Part 1 (Primary Color)',
           required: true,
+          localized: true,
           admin: { width: '50%' },
         },
         {
@@ -41,6 +43,7 @@ export const HeroSection: Block = {
           type: 'text',
           label: 'Title Part 2 (Secondary Color)',
           required: false,
+          localized: true,
           admin: { width: '50%' },
         },
       ],

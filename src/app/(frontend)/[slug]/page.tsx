@@ -28,7 +28,7 @@ export async function generateStaticParams() {
 
   const params = pages.docs
     ?.filter((doc) => {
-      return doc.slug !== 'ana-sayfa'
+      return doc.slug !== 'ana-sayfa' && doc.slug !== 'home'
     })
     .map(({ slug }) => {
       return { slug }
@@ -48,7 +48,10 @@ export default async function Page({ params: paramsPromise }: Args) {
   const params = await paramsPromise
   const { slug } = params
   const isHome = !slug
-  const decodedSlug = decodeURIComponent(slug || 'ana-sayfa')
+  const cookieStore = await cookies()
+  const locale = cookieStore.get('payload-locale')?.value || 'tr'
+  const homeSlug = locale === 'tr' ? 'ana-sayfa' : 'home'
+  const decodedSlug = decodeURIComponent(slug || homeSlug)
   const url = '/' + (slug ? decodedSlug : '')
 
   let page: RequiredDataFromCollectionSlug<'pages'> | null
@@ -93,7 +96,10 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const params = await paramsPromise
   const { slug } = params
   const isHome = !slug
-  const decodedSlug = decodeURIComponent(slug || 'ana-sayfa')
+  const cookieStore = await cookies()
+  const locale = cookieStore.get('payload-locale')?.value || 'tr'
+  const homeSlug = locale === 'tr' ? 'ana-sayfa' : 'home'
+  const decodedSlug = decodeURIComponent(slug || homeSlug)
 
   const page = await queryPageBySlug({
     isHome,
@@ -121,8 +127,8 @@ const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug:
     where: {
       ...(isHome
         ? {
-            'slug.tr': {
-              equals: 'ana-sayfa',
+            slug: {
+              equals: locale === 'tr' ? 'ana-sayfa' : 'home',
             },
           }
         : {

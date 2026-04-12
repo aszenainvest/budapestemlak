@@ -21,11 +21,15 @@ async function getGlobal(slug: Global, depth = 0, locale?: any) {
 /**
  * Returns a unstable_cache function mapped with the cache tag for the slug
  */
-export const getCachedGlobal = (slug: Global, depth = 0) =>
-  unstable_cache(
-    async (locale?: any) => getGlobal(slug, depth, locale),
-    [slug], // Arguments are auto-appended to key by Next.js
-    {
-      tags: [`global_${slug}`],
-    },
-  )
+export const getCachedGlobal = (slug: Global, depth = 0) => {
+  return async (locale?: any) => {
+    const cachedFn = unstable_cache(
+      async () => getGlobal(slug, depth, locale),
+      [slug, locale || 'tr'],
+      {
+        tags: [`global_${slug}`],
+      },
+    )
+    return cachedFn()
+  }
+}

@@ -1006,7 +1006,8 @@ export interface FeatureGridBlock {
    * Choose how many columns to display for standard features.
    */
   columns?: ('2' | '3' | '4') | null;
-  title?: string | null;
+  title: string;
+  subtitle?: string | null;
   features?:
     | {
         type: 'image-covered' | 'icon-text' | 'solid-color' | 'wide-neutral';
@@ -1715,6 +1716,7 @@ export interface FeatureGridBlockSelect<T extends boolean = true> {
   tagline?: T;
   columns?: T;
   title?: T;
+  subtitle?: T;
   features?:
     | T
     | {

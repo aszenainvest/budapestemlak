@@ -92,7 +92,7 @@ export const Pages: CollectionConfig<'pages'> = {
               blocks: [HeroSection, ProjectCards, CallToAction, Content, MediaBlock, Archive, FormBlock, Banner, Code, Pricing, Gallery, Testimonials, FAQ, Stats, FeatureGrid, Steps, ArtisticShowcase, Timeline, MapBlock],
 
               required: true,
-              localized: false,
+              localized: true,
               admin: {
                 initCollapsed: true,
               },

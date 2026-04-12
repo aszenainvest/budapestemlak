@@ -13,11 +13,13 @@ export const ArtisticShowcase: Block = {
       type: 'text',
       required: true,
       label: 'Main Title',
+      localized: true,
     },
     {
       name: 'tagline',
       type: 'text',
       label: 'Small Tagline',
+      localized: true,
     },
     {
       name: 'items',
