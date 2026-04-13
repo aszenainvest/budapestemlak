@@ -4,6 +4,8 @@ import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { slugField } from 'payload'
 
+import { ensureUniqueSlug } from '../hooks/ensureUniqueSlug'
+
 export const Categories: CollectionConfig = {
   slug: 'categories',
   access: {
@@ -27,4 +29,7 @@ export const Categories: CollectionConfig = {
       position: undefined,
     }),
   ],
+  hooks: {
+    beforeChange: [ensureUniqueSlug('categories')],
+  },
 }

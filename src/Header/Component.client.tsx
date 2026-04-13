@@ -11,6 +11,7 @@ import { cn } from '@/utilities/ui'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { getHrefFromCMSLink } from '@/utilities/getHrefFromCMSLink'
 
 interface HeaderClientProps {
   data: Header
@@ -163,13 +164,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
              <div className="relative z-10 w-full px-10">
                 <nav className="flex flex-col gap-6 py-8">
                   {data?.navItems?.map(({ link }, i) => {
-                    const { type, reference, url, label } = link || {}
-                    const href =
-                      type === 'reference' && typeof reference?.value === 'object' && reference.value?.slug
-                        ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
-                            reference.value.slug
-                          }`
-                        : url
+                    const label = link?.label
+                    const href = getHrefFromCMSLink(link)
 
                     return (
                       <motion.div

@@ -9,6 +9,7 @@ import Link from 'next/link'
 import type { Theme } from '@/providers/Theme/types'
 
 import { MoreHorizontal } from 'lucide-react'
+import { getHrefFromCMSLink } from '@/utilities/getHrefFromCMSLink'
 
 export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceTheme?: Theme | null }> = ({ data, mobile, forceTheme }) => {
   const rawNavItems = data?.navItems || []
@@ -46,13 +47,8 @@ export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceThem
       onMouseLeave={() => setHoveredIndex(null)}
     >
       {navItems.map(({ link, subItems }, i) => {
-        const { type, reference, url, label } = link || {}
-        const href =
-          (type === 'reference' && typeof reference?.value === 'object' && reference.value?.slug
-            ? `${reference?.relationTo !== 'pages' ? `/${reference?.relationTo}` : ''}/${
-                reference.value.slug
-              }`
-            : (url as string)) || ''
+        const { label } = link || {}
+        const href = getHrefFromCMSLink(link)
             
         const hasSubItems = subItems && subItems.length > 0
         const isActive = pathname === href || (href !== '' && href !== '/' && pathname.startsWith(href))
@@ -103,11 +99,8 @@ export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceThem
                     )}
                   >
                     {subItems.map((sub, subIdx) => {
-                      const { type: sType, reference: sRef, url: sUrl, label: sLabel } = sub.link || {}
-                      const sHref =
-                        sType === 'reference' && typeof sRef?.value === 'object' && sRef.value?.slug
-                          ? `${sRef?.relationTo !== 'pages' ? `/${sRef?.relationTo}` : ''}/${sRef.value.slug}`
-                          : sUrl
+                      const sLabel = sub.link?.label
+                      const sHref = getHrefFromCMSLink(sub.link)
 
                       return (
                         <Link

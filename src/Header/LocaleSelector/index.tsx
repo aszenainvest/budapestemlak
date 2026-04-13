@@ -4,14 +4,14 @@ import { cn } from '@/utilities/ui'
 import { usePathname } from 'next/navigation'
 
 const locales = [
-  { label: 'TR', value: 'tr' },
   { label: 'EN', value: 'en' },
+  { label: 'TR', value: 'tr' },
   { label: 'AR', value: 'ar' },
 ]
 
 export const LocaleSelector: React.FC<{ isDark?: boolean }> = ({ isDark }) => {
   const pathname = usePathname()
-  const [currentLocale, setCurrentLocale] = React.useState('tr')
+  const [currentLocale, setCurrentLocale] = React.useState('en')
 
   React.useEffect(() => {
     const match = document.cookie.match(/(^| )payload-locale=([^;]+)/)

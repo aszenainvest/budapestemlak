@@ -26,15 +26,15 @@ export async function generateStaticParams() {
     },
   })
 
-  const params = pages.docs
-    ?.filter((doc) => {
-      return doc.slug !== 'ana-sayfa' && doc.slug !== 'home'
-    })
-    .map(({ slug }) => {
-      return { slug }
-    })
+  const docs = pages.docs ?? []
 
-  return params
+  return docs
+    .filter((doc) => {
+      const slug = doc.slug
+      if (typeof slug !== 'string' || slug.length === 0) return false
+      return slug !== 'ana-sayfa' && slug !== 'home'
+    })
+    .map((doc) => ({ slug: doc.slug as string }))
 }
 
 type Args = {
@@ -49,7 +49,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { slug } = params
   const isHome = !slug
   const cookieStore = await cookies()
-  const locale = cookieStore.get('payload-locale')?.value || 'tr'
+  const locale = cookieStore.get('payload-locale')?.value || 'en'
   const homeSlug = locale === 'tr' ? 'ana-sayfa' : 'home'
   const decodedSlug = decodeURIComponent(slug || homeSlug)
   const url = '/' + (slug ? decodedSlug : '')
@@ -97,7 +97,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug } = params
   const isHome = !slug
   const cookieStore = await cookies()
-  const locale = cookieStore.get('payload-locale')?.value || 'tr'
+  const locale = cookieStore.get('payload-locale')?.value || 'en'
   const homeSlug = locale === 'tr' ? 'ana-sayfa' : 'home'
   const decodedSlug = decodeURIComponent(slug || homeSlug)
 
@@ -106,20 +106,23 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     slug: decodedSlug,
   })
 
-  return generateMeta({ doc: page })
+  const path =
+    !page?.slug ? '/' : page.slug === 'home' || page.slug === 'ana-sayfa' ? '/' : `/${page.slug}`
+  return generateMeta({ doc: page, path })
 }
 
 
 const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug: string }) => {
   const { isEnabled: draft } = await draftMode()
   const cookieStore = await cookies()
-  const locale = cookieStore.get('payload-locale')?.value || 'tr'
+  const locale = cookieStore.get('payload-locale')?.value || 'en'
 
   const payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
     collection: 'pages',
     draft,
+    depth: 4,
     limit: 1,
     pagination: false,
     overrideAccess: draft,

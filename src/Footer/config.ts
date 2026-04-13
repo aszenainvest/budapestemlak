@@ -32,6 +32,23 @@ export const Footer: GlobalConfig = {
       },
     },
     {
+      name: 'navigationColumnLabel',
+      type: 'text',
+      label: 'Navigation column title (when synced with header)',
+      defaultValue: 'Navigation',
+      localized: true,
+      admin: {
+        condition: (data) => Boolean(data?.syncWithHeader),
+      },
+    },
+    {
+      name: 'contactColumnLabel',
+      type: 'text',
+      label: 'Contact column title',
+      defaultValue: 'Contact',
+      localized: true,
+    },
+    {
       name: 'columns',
       type: 'array',
       localized: true,

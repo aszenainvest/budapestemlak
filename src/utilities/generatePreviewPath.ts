@@ -3,6 +3,7 @@ import { PayloadRequest, CollectionSlug } from 'payload'
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
   posts: '/posts',
   pages: '',
+  properties: '/properties',
 }
 
 type Props = {
@@ -20,10 +21,13 @@ export const generatePreviewPath = ({ collection, slug }: Props) => {
   // Encode to support slugs with special characters
   const encodedSlug = encodeURIComponent(slug)
 
+  const prefix = collectionPrefixMap[collection] ?? ''
+  const previewPath = prefix ? `${prefix}/${encodedSlug}` : `/${encodedSlug}`
+
   const encodedParams = new URLSearchParams({
     slug: encodedSlug,
     collection,
-    path: `${collectionPrefixMap[collection]}/${encodedSlug}`,
+    path: previewPath,
     previewSecret: process.env.PREVIEW_SECRET || '',
   })
 

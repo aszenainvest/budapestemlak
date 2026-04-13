@@ -3,11 +3,36 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
-import { 
-  Building2, Users2, ShieldCheck, Award, CheckCircle2, ArrowRight, MapPin,
-  Star, Heart, Zap, Target, Briefcase, Globe, MapPin as MapPinIcon, Lightbulb,
-  TrendingUp, Phone, Mail, Clock, Leaf, Settings, Monitor, Hammer, HardHat,
-  Wrench, Truck, BarChart3, Compass, Layout
+import {
+  Building2,
+  Users2,
+  ShieldCheck,
+  Award,
+  CheckCircle2,
+  ArrowRight,
+  MapPin,
+  Star,
+  Heart,
+  Zap,
+  Target,
+  Briefcase,
+  Globe,
+  MapPin as MapPinIcon,
+  Lightbulb,
+  TrendingUp,
+  Phone,
+  Mail,
+  Clock,
+  Leaf,
+  Settings,
+  Monitor,
+  Hammer,
+  HardHat,
+  Wrench,
+  Truck,
+  BarChart3,
+  Compass,
+  Layout,
 } from 'lucide-react'
 import type { FeatureGridBlock as FeatureGridProps } from '@/payload-types'
 
@@ -59,56 +84,47 @@ export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, f
   const baseSpan = colSpanMap[columns as keyof typeof colSpanMap] || 4
 
   return (
-    <section className="py-10 bg-white overflow-hidden">
+    <section className="overflow-hidden bg-white py-10">
       <div className="container px-6">
-        {/* Header */}
-        <div className="text-center mb-16">
+        <div className="mb-16 text-center">
           {tagline && (
-            <motion.span 
+            <motion.span
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-[10px] font-bold tracking-[0.3em] text-[var(--secondary)] uppercase block mb-3"
+              className="mb-3 block text-[10px] font-bold tracking-[0.3em] text-[var(--secondary)] uppercase"
             >
               {tagline}
             </motion.span>
           )}
           {title && (
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-4xl md:text-6xl font-black text-[var(--primary)] tracking-tighter"
+              className="text-4xl font-black tracking-tighter text-[var(--primary)] md:text-6xl"
             >
               {title}
             </motion.h2>
           )}
         </div>
 
-        {/* Grid Layout - Asymmetrical */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 auto-rows-auto md:auto-rows-[300px]">
+        <div className="grid auto-rows-auto grid-cols-1 gap-6 md:grid-cols-12 md:gap-8">
           {features?.map((feature, i) => {
             const Icon = feature.icon ? iconMap[feature.icon as keyof typeof iconMap] : null
-            
-            // Layout mapping based on feature type
+
             let span = baseSpan
-            let rowSpan = ""
-            
             if (feature.type === 'image-covered') {
               span = Math.min(12, baseSpan * 2)
-              rowSpan = "md:row-span-2"
-            }
-            if (feature.type === 'solid-color') {
-              span = baseSpan
-              rowSpan = "md:row-span-2"
             }
             if (feature.type === 'wide-neutral') {
               span = Math.min(12, baseSpan * 2)
-              rowSpan = ""
             }
 
-            const gridClasses = cn(spanClasses[span], rowSpan)
+            const gridClasses = cn(spanClasses[span])
+            const isImageCovered = feature.type === 'image-covered'
+            const isWideNeutral = feature.type === 'wide-neutral'
 
             return (
               <motion.div
@@ -120,73 +136,102 @@ export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, f
                 whileHover={{ y: -8 }}
                 className={cn(
                   gridClasses,
-                  "relative rounded-2xl overflow-hidden group flex flex-col justify-end p-6 md:p-8 transition-all duration-500 min-h-[280px] md:min-h-0",
-                  "shadow-none hover:shadow-2xl hover:shadow-[var(--secondary)]/10",
-                  feature.type === 'image-covered' ? "text-white" : 
-                  feature.type === 'solid-color' ? "bg-[var(--primary)] text-white" :
-                  feature.type === 'wide-neutral' ? "bg-gray-50 text-[var(--primary)] border border-gray-100" :
-                  "bg-slate-50/50 border border-gray-100 text-[var(--primary)] items-start justify-center"
+                  'group relative flex flex-col overflow-hidden rounded-2xl transition-all duration-500',
+                  'shadow-none hover:shadow-2xl hover:shadow-[var(--secondary)]/10',
+                  isImageCovered && 'min-h-[12rem] justify-end p-6 text-white md:p-8',
+                  feature.type === 'solid-color' &&
+                    'justify-start bg-[var(--primary)] p-6 text-white md:p-8',
+                  isWideNeutral &&
+                    'justify-start border border-gray-100 bg-gray-50 p-6 text-[var(--primary)] md:p-8',
+                  feature.type === 'icon-text' &&
+                    'items-stretch justify-start border border-gray-100 bg-slate-50/50 p-6 text-[var(--primary)] md:p-8',
                 )}
               >
-                {/* Background for image type */}
-                {feature.type === 'image-covered' && feature.image && (
+                {isImageCovered && feature.image && (
                   <>
-                    <Media 
-                      resource={feature.image} 
-                      fill 
-                      className="object-cover z-0 transition-transform duration-700 group-hover:scale-105" 
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--primary)]/90 via-[var(--primary)]/40 to-transparent z-[1]" />
+                    <div className="pointer-events-none absolute inset-0 z-0">
+                      <Media
+                        resource={feature.image}
+                        fill
+                        pictureClassName="block h-full w-full"
+                        imgClassName="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-t from-[var(--primary)]/90 via-[var(--primary)]/40 to-transparent" />
                   </>
                 )}
 
-                {/* Content */}
-                <div className="relative z-10 flex flex-col gap-3 md:gap-4 h-full pt-10">
-                   {/* Icon for non-image types */}
-                   {feature.type !== 'image-covered' && Icon && (
-                     <div className={cn(
-                       "p-3 rounded-lg w-fit",
-                       feature.type === 'solid-color' ? "bg-white/10" : "bg-[var(--secondary)]/10 text-[var(--secondary)]"
-                     )}>
-                       <Icon size={24} />
-                     </div>
-                   )}
-
-                   {/* Title for image type often has an extra icon like MapPin */}
-                   {feature.type === 'image-covered' && (
-                     <MapPin size={20} className="text-[var(--secondary)] mb-2" />
-                   )}
-
-                   <div>
-                      <h3 className={cn(
-                        "text-2xl font-black tracking-tight mb-2",
-                        feature.type === 'image-covered' ? "text-white" : 
-                        feature.type === 'solid-color' ? "text-white" : "text-[var(--primary)]"
-                      )}>
-                        {feature.title}
-                      </h3>
-                      {feature.description && (
-                        <p className={cn(
-                          "text-sm leading-relaxed opacity-80 max-w-[90%]",
-                          feature.type === 'image-covered' || feature.type === 'solid-color' ? "font-light" : "font-normal"
-                        )}>
-                          {feature.description}
-                        </p>
+                <div
+                  className={cn(
+                    'relative z-10 flex min-h-0 w-full min-w-0 flex-col gap-3 md:gap-4',
+                    isImageCovered && 'mt-auto',
+                    feature.type === 'icon-text' && feature.bottomLink && 'min-h-[1px] flex-1',
+                  )}
+                >
+                  {feature.type !== 'image-covered' && Icon && (
+                    <div
+                      className={cn(
+                        'w-fit shrink-0 rounded-lg p-3',
+                        feature.type === 'solid-color'
+                          ? 'bg-white/10'
+                          : 'bg-[var(--secondary)]/10 text-[var(--secondary)]',
                       )}
-                   </div>
+                    >
+                      <Icon size={24} />
+                    </div>
+                  )}
 
-                   {/* Optional Bottom Link for Icon-Text type */}
-                   {feature.type === 'icon-text' && feature.bottomLink && (
-                     <button className="mt-auto flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-[var(--primary)] hover:text-[var(--secondary)] transition-colors group/btn">
-                        {feature.bottomLink}
-                        <ArrowRight size={14} className="transition-transform group-hover/btn:translate-x-1" />
-                     </button>
-                   )}
+                  {isImageCovered && (
+                    <MapPin size={20} className="mb-1 shrink-0 text-[var(--secondary)]" />
+                  )}
 
-                   {/* Kurumsal Güven (wide-neutral) subtle watermark-like icon */}
-                   {feature.type === 'wide-neutral' && (
-                     <ShieldCheck size={120} className="absolute -right-4 top-1/2 -translate-y-1/2 opacity-[0.03] rotate-12" />
-                   )}
+                  <div className={cn('min-w-0', isWideNeutral && 'pr-16 md:pr-24')}>
+                    <h3
+                      className={cn(
+                        'mb-2 text-2xl font-black tracking-tight break-words text-pretty',
+                        isImageCovered
+                          ? 'text-white'
+                          : feature.type === 'solid-color'
+                            ? 'text-white'
+                            : 'text-[var(--primary)]',
+                      )}
+                    >
+                      {feature.title}
+                    </h3>
+                    {feature.description && (
+                      <p
+                        className={cn(
+                          'max-w-full text-sm leading-relaxed break-words hyphens-auto text-pretty opacity-80',
+                          feature.type === 'image-covered' || feature.type === 'solid-color'
+                            ? 'font-light'
+                            : 'font-normal',
+                        )}
+                      >
+                        {feature.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {feature.type === 'icon-text' && feature.bottomLink && (
+                    <button
+                      type="button"
+                      className="mt-auto flex shrink-0 items-center gap-2 text-left text-[10px] font-black tracking-widest text-[var(--primary)] uppercase transition-colors group/btn hover:text-[var(--secondary)]"
+                    >
+                      {feature.bottomLink}
+                      <ArrowRight
+                        size={14}
+                        className="transition-transform group-hover/btn:translate-x-1"
+                      />
+                    </button>
+                  )}
+
+                  {isWideNeutral && (
+                    <ShieldCheck
+                      size={120}
+                      className="pointer-events-none absolute top-1/2 -right-4 max-md:h-20 max-md:w-20 -translate-y-1/2 rotate-12 opacity-[0.03]"
+                      aria-hidden
+                    />
+                  )}
                 </div>
               </motion.div>
             )

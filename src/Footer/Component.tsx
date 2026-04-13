@@ -1,7 +1,7 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
-import { cookies } from 'next/headers'
+import { cookies, draftMode } from 'next/headers'
 import type { Footer, Header, Setting } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
@@ -28,15 +28,16 @@ const iconMap = {
 
 export async function Footer() {
   const cookieStore = await cookies()
-  const locale = cookieStore.get('payload-locale')?.value || 'tr'
+  const locale = cookieStore.get('payload-locale')?.value || 'en'
+  const { isEnabled: draft } = await draftMode()
 
   const footerData = (await getCachedGlobal('footer', 3)(locale)) as Footer
-  const headerData = (await getCachedGlobal('header', 3)(locale)) as Header
+  const headerData = (await getCachedGlobal('header', 3, { overrideAccess: true, draft })(locale)) as Header
   const settingsData = (await getCachedGlobal('settings', 3)(locale)) as Setting
 
   const showHeaderNav = footerData?.syncWithHeader
   const columns = showHeaderNav
-    ? [{ label: 'Navigasyon', navItems: headerData?.navItems }]
+    ? [{ label: footerData?.navigationColumnLabel || 'Navigation', navItems: headerData?.navItems }]
     : footerData?.columns || []
 
   return (
@@ -80,7 +81,7 @@ export async function Footer() {
               {/* Dynamic Contact Column */}
               <div className="flex flex-col gap-6">
                 <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--primary)]">
-                  İletişim
+                  {footerData?.contactColumnLabel || 'Contact'}
                 </h4>
                 <div className="flex flex-col gap-4">
                   {footerData?.contacts?.address && (

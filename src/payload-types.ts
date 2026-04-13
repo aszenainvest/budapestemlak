@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     pages: Page;
     posts: Post;
+    properties: Property;
     media: Media;
     categories: Category;
     users: User;
@@ -91,6 +92,7 @@ export interface Config {
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    properties: PropertiesSelect<false> | PropertiesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -108,7 +110,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('tr' | 'en' | 'ar') | ('tr' | 'en' | 'ar')[];
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'tr' | 'ar') | ('en' | 'tr' | 'ar')[];
   globals: {
     header: Header;
     footer: Footer;
@@ -119,7 +121,7 @@ export interface Config {
     footer: FooterSelect<false> | FooterSelect<true>;
     settings: SettingsSelect<false> | SettingsSelect<true>;
   };
-  locale: 'tr' | 'en' | 'ar';
+  locale: 'en' | 'tr' | 'ar';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -190,6 +192,10 @@ export interface Page {
               | ({
                   relationTo: 'posts';
                   value: number | Post;
+                } | null)
+              | ({
+                  relationTo: 'properties';
+                  value: number | Property;
                 } | null);
             url?: string | null;
             label?: string | null;
@@ -463,6 +469,70 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "properties".
+ */
+export interface Property {
+  id: number;
+  title: string;
+  /**
+   * Use a blank line between paragraphs. Line breaks within a paragraph are preserved.
+   */
+  summary?: string | null;
+  price?: number | null;
+  currency?: ('USD' | 'EUR' | 'GBP' | 'TRY') | null;
+  listingType?: ('sale' | 'rent') | null;
+  location?: string | null;
+  /**
+   * Optional link to open maps or embed.
+   */
+  mapUrl?: string | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  areaSqm?: number | null;
+  yearBuilt?: number | null;
+  features?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  mainImage?: (number | null) | Media;
+  gallery?: (number | Media)[] | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  publishedAt?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "HeroSectionBlock".
  */
 export interface HeroSectionBlock {
@@ -482,6 +552,10 @@ export interface HeroSectionBlock {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'properties';
+          value: number | Property;
         } | null);
     url?: string | null;
     label?: string | null;
@@ -512,6 +586,10 @@ export interface ProjectCardsBlock {
         location?: string | null;
         description?: string | null;
         image: number | Media;
+        /**
+         * Select a property to open its detail page when the card is clicked. Leave empty if the card should not navigate.
+         */
+        property?: (number | null) | Property;
         id?: string | null;
       }[]
     | null;
@@ -552,6 +630,10 @@ export interface CallToActionBlock {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'properties';
+                value: number | Property;
               } | null);
           url?: string | null;
           label?: string | null;
@@ -602,6 +684,10 @@ export interface ContentBlock {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'properties';
+                value: number | Property;
               } | null);
           url?: string | null;
           label?: string | null;
@@ -1144,6 +1230,10 @@ export interface Redirect {
       | ({
           relationTo: 'posts';
           value: number | Post;
+        } | null)
+      | ({
+          relationTo: 'properties';
+          value: number | Property;
         } | null);
     url?: string | null;
   };
@@ -1321,6 +1411,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'posts';
         value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'properties';
+        value: number | Property;
       } | null)
     | ({
         relationTo: 'media';
@@ -1503,6 +1597,7 @@ export interface ProjectCardsBlockSelect<T extends boolean = true> {
         location?: T;
         description?: T;
         image?: T;
+        property?: T;
         id?: T;
       };
   id?: T;
@@ -1822,6 +1917,45 @@ export interface PostsSelect<T extends boolean = true> {
         id?: T;
         name?: T;
       };
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "properties_select".
+ */
+export interface PropertiesSelect<T extends boolean = true> {
+  title?: T;
+  summary?: T;
+  price?: T;
+  currency?: T;
+  listingType?: T;
+  location?: T;
+  mapUrl?: T;
+  bedrooms?: T;
+  bathrooms?: T;
+  areaSqm?: T;
+  yearBuilt?: T;
+  features?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  mainImage?: T;
+  gallery?: T;
+  content?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
+  publishedAt?: T;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -2259,6 +2393,10 @@ export interface Header {
             | ({
                 relationTo: 'posts';
                 value: number | Post;
+              } | null)
+            | ({
+                relationTo: 'properties';
+                value: number | Property;
               } | null);
           url?: string | null;
           label?: string | null;
@@ -2276,6 +2414,10 @@ export interface Header {
                   | ({
                       relationTo: 'posts';
                       value: number | Post;
+                    } | null)
+                  | ({
+                      relationTo: 'properties';
+                      value: number | Property;
                     } | null);
                 url?: string | null;
                 label?: string | null;
@@ -2301,6 +2443,8 @@ export interface Footer {
    * If enabled, the footer will display the same navigation items as the header.
    */
   syncWithHeader?: boolean | null;
+  navigationColumnLabel?: string | null;
+  contactColumnLabel?: string | null;
   columns?:
     | {
         label: string;
@@ -2317,6 +2461,10 @@ export interface Footer {
                   | ({
                       relationTo: 'posts';
                       value: number | Post;
+                    } | null)
+                  | ({
+                      relationTo: 'properties';
+                      value: number | Property;
                     } | null);
                 url?: string | null;
                 label?: string | null;
@@ -2362,6 +2510,19 @@ export interface Setting {
   successColor?: string | null;
   warningColor?: string | null;
   errorColor?: string | null;
+  /**
+   * Paste Meta Pixel, Google Tag Manager (head), or other tags meant for the document head. Remove to disable.
+   */
+  headScripts?: string | null;
+  /**
+   * Paste GTM noscript, body pixels, or other snippets that belong at the end of the body. Remove to disable.
+   */
+  bodyScripts?: string | null;
+  whatsappEnabled?: boolean | null;
+  /**
+   * Example: 441234567890 or 905551234567 (no + or spaces).
+   */
+  whatsappPhone?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2410,6 +2571,8 @@ export interface FooterSelect<T extends boolean = true> {
   description?: T;
   logoWidth?: T;
   syncWithHeader?: T;
+  navigationColumnLabel?: T;
+  contactColumnLabel?: T;
   columns?:
     | T
     | {
@@ -2467,6 +2630,10 @@ export interface SettingsSelect<T extends boolean = true> {
   successColor?: T;
   warningColor?: T;
   errorColor?: T;
+  headScripts?: T;
+  bodyScripts?: T;
+  whatsappEnabled?: T;
+  whatsappPhone?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

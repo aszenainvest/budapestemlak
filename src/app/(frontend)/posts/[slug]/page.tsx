@@ -28,11 +28,9 @@ export async function generateStaticParams() {
     },
   })
 
-  const params = posts.docs.map(({ slug }) => {
-    return { slug }
-  })
-
-  return params
+  return (posts.docs ?? [])
+    .filter((doc) => typeof doc.slug === 'string' && doc.slug.length > 0)
+    .map((doc) => ({ slug: doc.slug as string }))
 }
 
 type Args = {
@@ -83,7 +81,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const decodedSlug = decodeURIComponent(slug)
   const post = await queryPostBySlug({ slug: decodedSlug })
 
-  return generateMeta({ doc: post })
+  return generateMeta({ doc: post, path: post?.slug ? `/posts/${post.slug}` : '/posts' })
 }
 
 const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {

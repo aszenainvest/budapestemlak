@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { revalidateSettings } from '../hooks/revalidateSettings'
 
 export const Settings: GlobalConfig = {
   slug: 'settings',
@@ -125,9 +126,58 @@ export const Settings: GlobalConfig = {
             },
           ],
         },
+        {
+          label: 'Tracking & chat',
+          fields: [
+            {
+              name: 'headScripts',
+              type: 'textarea',
+              label: 'Scripts in <head>',
+              admin: {
+                description:
+                  'Paste Meta Pixel, Google Tag Manager (head), or other tags meant for the document head. Remove to disable.',
+                rows: 12,
+              },
+            },
+            {
+              name: 'bodyScripts',
+              type: 'textarea',
+              label: 'Scripts before </body>',
+              admin: {
+                description:
+                  'Paste GTM noscript, body pixels, or other snippets that belong at the end of the body. Remove to disable.',
+                rows: 12,
+              },
+            },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'whatsappEnabled',
+                  type: 'checkbox',
+                  label: 'Show WhatsApp floating button',
+                  defaultValue: false,
+                  admin: { width: '50%' },
+                },
+                {
+                  name: 'whatsappPhone',
+                  type: 'text',
+                  label: 'WhatsApp number (digits only, with country code)',
+                  admin: {
+                    width: '50%',
+                    description: 'Example: 441234567890 or 905551234567 (no + or spaces).',
+                  },
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],
+  hooks: {
+    afterChange: [revalidateSettings],
+  },
 }
 
 

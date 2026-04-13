@@ -6,13 +6,25 @@ import { unstable_cache } from 'next/cache'
 
 type Global = keyof Config['globals']
 
-async function getGlobal(slug: Global, depth = 0, locale?: any) {
+export type FindGlobalForLayoutOptions = {
+  draft?: boolean
+  overrideAccess?: boolean
+}
+
+async function getGlobal(
+  slug: Global,
+  depth = 0,
+  locale?: string,
+  options?: FindGlobalForLayoutOptions,
+) {
   const payload = await getPayload({ config: configPromise })
 
   const global = await payload.findGlobal({
     slug,
     depth,
-    locale,
+    locale: (locale || 'en') as Config['locale'],
+    draft: options?.draft,
+    overrideAccess: options?.overrideAccess,
   })
 
   return global
@@ -21,11 +33,13 @@ async function getGlobal(slug: Global, depth = 0, locale?: any) {
 /**
  * Returns a unstable_cache function mapped with the cache tag for the slug
  */
-export const getCachedGlobal = (slug: Global, depth = 0) => {
-  return async (locale?: any) => {
+export const getCachedGlobal = (slug: Global, depth = 0, options?: FindGlobalForLayoutOptions) => {
+  return async (locale?: string) => {
+    const draftKey = options?.draft ? '1' : '0'
+    const accessKey = options?.overrideAccess ? '1' : '0'
     const cachedFn = unstable_cache(
-      async () => getGlobal(slug, depth, locale),
-      [slug, locale || 'tr'],
+      async () => getGlobal(slug, depth, locale, options),
+      [slug, String(depth), locale || 'en', draftKey, accessKey],
       {
         tags: [`global_${slug}`],
       },

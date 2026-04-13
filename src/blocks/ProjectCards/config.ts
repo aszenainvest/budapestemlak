@@ -90,6 +90,16 @@ export const ProjectCards: Block = {
           label: 'Project Image',
           required: true,
         },
+        {
+          name: 'property',
+          type: 'relationship',
+          relationTo: 'properties',
+          label: 'Link to property detail',
+          admin: {
+            description:
+              'Select a property to open its detail page when the card is clicked. Leave empty if the card should not navigate.',
+          },
+        },
       ],
     },
   ],
