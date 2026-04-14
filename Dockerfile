@@ -30,6 +30,14 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
+# Payload runs during `next build` (SSG / collect page data). Docker build does not
+# inherit your host env unless you pass ARG/ENV here. Pass real values from CI (Railway:
+# use the same service variables for build, or `docker build --build-arg ...`).
+ARG PAYLOAD_SECRET=build-time-placeholder-minimum-32-chars-long
+ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
+
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
