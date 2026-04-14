@@ -7,9 +7,22 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 import { redirects } from './redirects'
 
-const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : process.env.__NEXT_PRIVATE_ORIGIN || 'http://localhost:3000'
+/** Base URL for Next/Image remotePatterns (must match browser origin in production). */
+function resolvePublicOrigin(): string {
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  }
+  if (process.env.NEXT_PUBLIC_SERVER_URL) {
+    return process.env.NEXT_PUBLIC_SERVER_URL.replace(/\/$/, '')
+  }
+  // Railway sets this when the service has a public URL (no manual NEXT_PUBLIC_* needed for hostname)
+  if (process.env.RAILWAY_PUBLIC_DOMAIN) {
+    return `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
+  }
+  return process.env.__NEXT_PRIVATE_ORIGIN || 'http://localhost:3000'
+}
+
+const NEXT_PUBLIC_SERVER_URL = resolvePublicOrigin()
 
 const nextConfig: NextConfig = {
   // Required for Docker (see Dockerfile COPY .next/standalone)
