@@ -273,7 +273,7 @@ export const seed = async ({
             ],
           },
         ],
-        copyright: `© ${new Date().getFullYear()} Aszena Invest. Tüm hakları saklıdır.`,
+        copyright: `© ${new Date().getFullYear()} Aszena Invest. All rights reserved.`,
       },
     }),
   ])

@@ -8,7 +8,7 @@ export const FAQ: Block = {
       name: 'title',
       type: 'text',
       label: 'Main Title',
-      defaultValue: 'Sıkça Sorulan Sorular',
+      defaultValue: 'Frequently asked questions',
     },
     {
       name: 'questions',

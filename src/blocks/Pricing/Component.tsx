@@ -35,7 +35,7 @@ export const PricingBlock: React.FC<PricingBlockProps> = ({ plans }) => {
                 <h3 className="text-lg font-semibold leading-8">{plan.name}</h3>
                 {plan.isPopular && (
                   <p className="rounded-full bg-primary px-2.5 py-1 text-xs font-semibold leading-5 text-white">
-                    Popüler
+                    Popular
                   </p>
                 )}
               </div>

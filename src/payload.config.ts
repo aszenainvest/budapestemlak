@@ -64,25 +64,25 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
+    /**
+     * Drizzle `push` runs ALTER TYPE … ADD VALUE for locales. If `_locales` already
+     * contains `tr`/`ar` from an earlier sync, Postgres errors on duplicate values.
+     * Keep push off when the DB matches your config; turn on only when you intentionally
+     * need a one-off schema sync: `PAYLOAD_DATABASE_PUSH=true pnpm dev`
+     */
+    push: process.env.PAYLOAD_DATABASE_PUSH === 'true',
   }),
   collections: [Pages, Posts, Properties, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, Settings],
   localization: {
+    // Keep tr/ar in sync with existing Postgres enum `_locales`. Shrinking to `en` only
+    // breaks `ALTER ... SET DATA TYPE` when rows still hold tr/ar. The frontend forces
+    // English via `resolveFrontendLocale` + `proxy.ts`; cookies are always `en`.
     locales: [
-      {
-        label: 'English',
-        code: 'en',
-      },
-      {
-        label: 'Türkçe',
-        code: 'tr',
-      },
-      {
-        label: 'العربية',
-        code: 'ar',
-        rtl: true,
-      },
+      { label: 'English', code: 'en' },
+      { label: 'Turkish', code: 'tr' },
+      { label: 'Arabic', code: 'ar', rtl: true },
     ],
     defaultLocale: 'en',
     fallback: true,

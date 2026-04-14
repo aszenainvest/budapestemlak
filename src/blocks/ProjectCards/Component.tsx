@@ -183,7 +183,7 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
         })}
         {filteredProjects?.length === 0 && (
           <div className="col-span-full py-20 text-center text-gray-400 font-medium">
-            Bu kategoride henüz proje bulunmuyor.
+            No projects in this category yet.
           </div>
         )}
       </div>

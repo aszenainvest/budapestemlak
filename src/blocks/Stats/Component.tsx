@@ -22,7 +22,7 @@ export const StatsBlock: React.FC<StatsBlockProps> = ({ stats, title, descriptio
   return (
     <section className="py-10 sm:py-16 bg-gray-50/50">
       <div className="container px-6">
-        {/* Başlık Grubu */}
+        {/* Heading */}
         {(title || description) && (
           <div className="mb-16">
             {title && (
@@ -38,7 +38,7 @@ export const StatsBlock: React.FC<StatsBlockProps> = ({ stats, title, descriptio
           </div>
         )}
 
-        {/* İstatistik Kartları */}
+        {/* Stat cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {stats.map((stat, i) => (
             <motion.div
@@ -49,7 +49,7 @@ export const StatsBlock: React.FC<StatsBlockProps> = ({ stats, title, descriptio
               transition={{ delay: i * 0.1, duration: 0.8 }}
               className="bg-white p-10 rounded-xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] border border-gray-100 flex flex-col items-start gap-4 relative overflow-hidden group hover:shadow-xl transition-all duration-500"
             >
-              {/* Üst Renkli Bar */}
+              {/* Top accent bar */}
               <div className="absolute top-0 left-0 w-full h-1.5 bg-[var(--secondary)] transform -translate-x-1 group-hover:translate-x-0 transition-transform duration-500" />
               
               <div className="flex flex-col gap-1">

@@ -2,21 +2,46 @@
 
 import React, { useEffect, useRef } from 'react'
 
+/**
+ * Append CMS-provided HTML so that <script> tags actually run (innerHTML/script injection does not).
+ */
 function injectHtml(html: string | null | undefined, target: 'head' | 'body'): () => void {
   if (!html?.trim()) return () => {}
 
   const parent = target === 'head' ? document.head : document.body
-  const container = document.createElement('div')
-  container.innerHTML = html.trim()
-  const appended: ChildNode[] = []
-  while (container.firstChild) {
-    const node = container.firstChild
-    parent.appendChild(node)
-    appended.push(node)
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html.trim(), 'text/html')
+  /** Fragements land in head or body depending on tags; include both. */
+  const rawNodes = [...Array.from(doc.head.childNodes), ...Array.from(doc.body.childNodes)]
+
+  const appended: HTMLElement[] = []
+  const removeAll = () => {
+    appended.forEach((el) => el.parentNode?.removeChild(el))
   }
-  return () => {
-    appended.forEach((n) => n.parentNode?.removeChild(n))
+
+  for (const node of rawNodes) {
+    if (node.nodeType === Node.TEXT_NODE && !node.textContent?.trim()) continue
+
+    if (node.nodeName === 'SCRIPT') {
+      const s = node as HTMLScriptElement
+      const script = document.createElement('script')
+      for (const { name, value } of Array.from(s.attributes)) {
+        script.setAttribute(name, value)
+      }
+      script.textContent = s.textContent
+      parent.appendChild(script)
+      appended.push(script)
+      continue
+    }
+
+    const imported = document.importNode(node, true)
+    if (imported instanceof HTMLElement) {
+      parent.appendChild(imported)
+      appended.push(imported)
+    }
   }
+
+  return removeAll
 }
 
 type Props = {
@@ -57,7 +82,7 @@ export const SiteIntegrations: React.FC<Props> = ({
           href={`https://wa.me/${digits}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="fixed right-6 bottom-6 z-[60] flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105"
+          className="fixed right-6 bottom-6 z-60 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-transform hover:scale-105"
           aria-label="Chat on WhatsApp"
         >
           <svg viewBox="0 0 24 24" className="h-8 w-8 fill-current" aria-hidden>

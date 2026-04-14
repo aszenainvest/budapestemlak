@@ -1,4 +1,5 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import Link from 'next/link'
 import React from 'react'
 import { cookies, draftMode } from 'next/headers'
@@ -28,7 +29,7 @@ const iconMap = {
 
 export async function Footer() {
   const cookieStore = await cookies()
-  const locale = cookieStore.get('payload-locale')?.value || 'en'
+  const locale = resolveFrontendLocale(cookieStore.get('payload-locale')?.value)
   const { isEnabled: draft } = await draftMode()
 
   const footerData = (await getCachedGlobal('footer', 3)(locale)) as Footer

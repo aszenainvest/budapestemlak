@@ -1,0 +1,30 @@
+---
+description: Token-efficient answers and confident navigation of this Payload CMS repo
+alwaysApply: true
+---
+
+# Agent: efficiency and project mastery
+
+## Tokens / responses
+
+- Default: short, direct answers; no redundant summary, repetition, or “tutorial” paragraphs.
+- Do not rewrite Payload’s general documentation at length; this repo already has `AGENTS.md` and `.cursor/rules/`. For depth, point to the relevant rule file or code.
+- Large files: use `grep` / symbol search first, then a targeted `read` (offset/limit). Do not quote the entire file.
+- Unless the user asks to expand, avoid long code blocks and long lists of alternative solutions.
+
+## Where things live in this project
+
+- Entry: `src/payload.config.ts`
+- Schema: `src/collections/`, `src/globals/`, `src/access/`, `src/hooks/`
+- App: `src/app/(payload)/`, `src/app/(frontend)/`
+- Rules: `AGENTS.md` (Payload security and patterns); details in `.cursor/rules/*.mdc`
+
+## After changes (only when relevant to what you touched)
+
+- Collection/global/field schema changed: `pnpm run generate:types`
+- Admin component path added or changed: `pnpm run generate:importmap`
+- Typecheck: `tsc --noEmit`
+
+## Security and Payload
+
+- Stay aligned with `AGENTS.md` and `.cursor/rules/security-critical.mdc` for `overrideAccess`, `req` inside hooks, and access control; do not repeat the same warnings every turn in chat.

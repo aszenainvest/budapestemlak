@@ -13,6 +13,7 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { cookies } from 'next/headers'
 import './globals.css'
 import { getCachedGlobal } from '@/utilities/getGlobals'
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import { getServerSideURL } from '@/utilities/getURL'
 import type { Setting } from '@/payload-types'
 import { generateCSSVariables } from '@/utilities/generateCSSVariables'
@@ -20,7 +21,7 @@ import { SiteIntegrations } from '@/components/SiteIntegrations'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
-  const locale = cookieStore.get('payload-locale')?.value || 'en'
+  const locale = resolveFrontendLocale(cookieStore.get('payload-locale')?.value)
   const settings: Setting = await getCachedGlobal('settings', 1)(locale)
 
   return (

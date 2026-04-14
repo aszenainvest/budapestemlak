@@ -116,7 +116,7 @@ export const FeatureGrid: Block = {
         {
           name: 'bottomLink',
           type: 'text',
-          label: 'Bottom Link Text (e.g. DETAYLI İNCELE)',
+          label: 'Bottom link text (e.g. VIEW DETAILS)',
         }
       ],
     },

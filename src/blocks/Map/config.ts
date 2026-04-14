@@ -20,13 +20,14 @@ export const MapBlock: Block = {
       required: true,
       label: 'Google Maps Embed URL',
       admin: {
-        description: 'Google Haritalar > Paylaş > Harita yerleştir kısmındaki "src" değerini buraya yapıştırın.',
+        description:
+          'Paste the iframe "src" from Google Maps: Share → Embed a map.',
       },
     },
     {
       name: 'useFullWidth',
       type: 'checkbox',
-      label: 'Tam Genişlik Kullan (Full Width)',
+      label: 'Use full width',
       defaultValue: false,
     },
     {
@@ -35,7 +36,7 @@ export const MapBlock: Block = {
         {
           name: 'addressTitle',
           type: 'text',
-          label: 'Address Title (e.g. Merkez Ofis)',
+          label: 'Address title (e.g. Head office)',
           localized: true,
           admin: { width: '50%' },
         },

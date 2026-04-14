@@ -21,7 +21,7 @@ export const FAQBlock: React.FC<FAQBlockProps> = ({ title, questions }) => {
     <div className="container py-10 sm:py-16">
       <div className="mx-auto max-w-4xl">
         <h2 className="text-3xl font-bold tracking-tight text-black dark:text-white sm:text-4xl mb-12 text-center underline decoration-primary underline-offset-8 decoration-4">
-          {title || 'Sıkça Sorulan Sorular'}
+          {title || 'Frequently asked questions'}
         </h2>
         <div className="space-y-4">
           {questions.map((item, i) => (

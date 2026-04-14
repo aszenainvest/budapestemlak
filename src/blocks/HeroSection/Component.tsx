@@ -20,7 +20,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
 
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black py-8">
-      {/* Background Image - Gemi/Tekne Hareketine Benzeyen Çok Hafif Animasyon */}
+      {/* Background image — subtle drift animation */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {image && typeof image === 'object' && (
           <motion.div
@@ -40,7 +40,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
             <Media resource={image} fill className="object-cover opacity-60" priority />
           </motion.div>
         )}
-        {/* Görselin üzerine derinlik katan gradient */}
+        {/* Depth gradient over image */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
       </div>
 
@@ -48,7 +48,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
         <div className="grid lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-8 xl:col-span-7">
             <div className="space-y-8">
-              {/* Tagline - Soldan Gelen Çizgi */}
+              {/* Tagline — line accent */}
               {tagline && (
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
@@ -63,7 +63,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
                 </motion.div>
               )}
 
-              {/* Başlık - Kelime Kelime Çıkan Efekt */}
+              {/* Title */}
               <motion.h1
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -78,7 +78,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
                 )}
               </motion.h1>
 
-              {/* Description - Daha Modern ve Okunaklı */}
+              {/* Description */}
               <motion.p
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
@@ -88,7 +88,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
                 {description}
               </motion.p>
 
-              {/* CTA - Manyetik Efekt Hissi */}
+              {/* CTA */}
               {cta && (
                 <motion.div
                   initial={{ y: 20, opacity: 0 }}
@@ -103,7 +103,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
                   >
                     <span className="absolute inset-0 w-0 h-full transition-all duration-[400ms] ease-out bg-[var(--secondary)] group-hover:w-full"></span>
                     <span className="relative text-black transition-colors duration-300 group-hover:text-white uppercase tracking-widest text-xs">
-                      {cta.label || 'Keşfet'}
+                      {cta.label || 'Explore'}
                     </span>
                   </CMSLink>
                 </motion.div>
@@ -244,7 +244,7 @@ const HeroStyle2: React.FC<HeroSectionType> = ({
                 <div className="absolute inset-0 bg-white" />
                 <div className="absolute inset-0 bg-gradient-to-r from-[var(--secondary)] to-[#d4af37] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <span className="relative z-10 text-black group-hover:text-white font-bold uppercase tracking-[0.2em] text-xs">
-                  {cta.label || 'Başla'}
+                  {cta.label || 'Get started'}
                 </span>
               </CMSLink>
             </motion.div>
@@ -318,7 +318,7 @@ const HeroStyle3: React.FC<HeroSectionType> = ({
                 className="inline-flex items-center gap-4 text-white hover:text-[var(--secondary)] transition-colors group"
               >
                 <span className="text-sm font-bold uppercase tracking-[0.2em] border-b-2 border-white/20 group-hover:border-[var(--secondary)] pb-2 transition-all">
-                  {cta.label || 'Keşfet'}
+                  {cta.label || 'Explore'}
                 </span>
                 <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:border-[var(--secondary)] group-hover:translate-x-2 transition-all">
                   <svg

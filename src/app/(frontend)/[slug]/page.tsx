@@ -10,6 +10,7 @@ import { homeStatic } from '@/endpoints/seed/home-static'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -32,7 +33,7 @@ export async function generateStaticParams() {
     .filter((doc) => {
       const slug = doc.slug
       if (typeof slug !== 'string' || slug.length === 0) return false
-      return slug !== 'ana-sayfa' && slug !== 'home'
+      return slug !== 'home'
     })
     .map((doc) => ({ slug: doc.slug as string }))
 }
@@ -48,9 +49,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const params = await paramsPromise
   const { slug } = params
   const isHome = !slug
-  const cookieStore = await cookies()
-  const locale = cookieStore.get('payload-locale')?.value || 'en'
-  const homeSlug = locale === 'tr' ? 'ana-sayfa' : 'home'
+  const homeSlug = 'home'
   const decodedSlug = decodeURIComponent(slug || homeSlug)
   const url = '/' + (slug ? decodedSlug : '')
 
@@ -96,9 +95,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const params = await paramsPromise
   const { slug } = params
   const isHome = !slug
-  const cookieStore = await cookies()
-  const locale = cookieStore.get('payload-locale')?.value || 'en'
-  const homeSlug = locale === 'tr' ? 'ana-sayfa' : 'home'
+  const homeSlug = 'home'
   const decodedSlug = decodeURIComponent(slug || homeSlug)
 
   const page = await queryPageBySlug({
@@ -107,7 +104,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   })
 
   const path =
-    !page?.slug ? '/' : page.slug === 'home' || page.slug === 'ana-sayfa' ? '/' : `/${page.slug}`
+    !page?.slug ? '/' : page.slug === 'home' ? '/' : `/${page.slug}`
   return generateMeta({ doc: page, path })
 }
 
@@ -115,7 +112,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug: string }) => {
   const { isEnabled: draft } = await draftMode()
   const cookieStore = await cookies()
-  const locale = cookieStore.get('payload-locale')?.value || 'en'
+  const locale = resolveFrontendLocale(cookieStore.get('payload-locale')?.value)
 
   const payload = await getPayload({ config: configPromise })
 
@@ -131,7 +128,7 @@ const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug:
       ...(isHome
         ? {
             slug: {
-              equals: locale === 'tr' ? 'ana-sayfa' : 'home',
+              equals: 'home',
             },
           }
         : {

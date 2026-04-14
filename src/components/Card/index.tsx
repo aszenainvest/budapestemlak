@@ -110,7 +110,7 @@ export const Card: React.FC<{
 
         {/* Action Bar */}
         <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-[var(--primary)]/40">
-           <span className="group-hover:text-[var(--primary)] transition-colors">Yazıyı Oku</span>
+           <span className="group-hover:text-[var(--primary)] transition-colors">Read more</span>
            <div className="p-2 rounded-full bg-gray-50 text-[var(--primary)] group-hover:bg-[var(--secondary)] group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1">
              <ArrowRight size={14} />
            </div>

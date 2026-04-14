@@ -131,7 +131,7 @@ export const Footer: GlobalConfig = {
       name: 'copyright',
       type: 'text',
       localized: true,
-      defaultValue: '© 2024 ASZENA INVEST. TÜM HAKLARI SAKLIDIR.',
+      defaultValue: '© 2024 ASZENA INVEST. ALL RIGHTS RESERVED.',
     },
   ],
   hooks: {

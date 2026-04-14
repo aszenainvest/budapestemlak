@@ -1,22 +1,21 @@
 'use client'
 import React from 'react'
 import { cn } from '@/utilities/ui'
-import { usePathname } from 'next/navigation'
 
-const locales = [
-  { label: 'EN', value: 'en' },
-  { label: 'TR', value: 'tr' },
-  { label: 'AR', value: 'ar' },
-]
+/** Single-locale site: language switcher hidden. */
+const locales = [{ label: 'EN', value: 'en' }] as const
 
 export const LocaleSelector: React.FC<{ isDark?: boolean }> = ({ isDark }) => {
-  const pathname = usePathname()
   const [currentLocale, setCurrentLocale] = React.useState('en')
 
   React.useEffect(() => {
     const match = document.cookie.match(/(^| )payload-locale=([^;]+)/)
     if (match) setCurrentLocale(match[2])
   }, [])
+
+  if (locales.length <= 1) {
+    return null
+  }
 
   return (
     <div className="flex items-center">

@@ -1200,7 +1200,7 @@ export interface TimelineBlock {
 export interface MapBlock {
   title?: string | null;
   /**
-   * Google Haritalar > Paylaş > Harita yerleştir kısmındaki "src" değerini buraya yapıştırın.
+   * Paste the iframe "src" from Google Maps: Share → Embed a map.
    */
   mapUrl: string;
   useFullWidth?: boolean | null;
@@ -2511,11 +2511,11 @@ export interface Setting {
   warningColor?: string | null;
   errorColor?: string | null;
   /**
-   * Paste Meta Pixel, Google Tag Manager (head), or other tags meant for the document head. Remove to disable.
+   * Typical: GTM container snippet (first part), GA4 gtag.js, Meta Pixel base code, site verification meta tags. Paste the exact HTML/JS from the provider. Clear the field to turn off.
    */
   headScripts?: string | null;
   /**
-   * Paste GTM noscript, body pixels, or other snippets that belong at the end of the body. Remove to disable.
+   * Typical: GTM noscript iframe, deferred pixels, live-chat widgets (Intercom, Crisp, Tawk), cookie banners. Paste as a single block or multiple tags. Clear the field to turn off.
    */
   bodyScripts?: string | null;
   whatsappEnabled?: boolean | null;

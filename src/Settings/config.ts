@@ -128,6 +128,10 @@ export const Settings: GlobalConfig = {
         },
         {
           label: 'Tracking & chat',
+          admin: {
+            description:
+              'Paste full snippets from each vendor’s docs (Google Analytics / GA4, Google Tag Manager, Meta Pixel, LinkedIn Insight, TikTok Pixel, Microsoft Clarity, Hotjar, HubSpot, etc.). For GTM, use both the <head> script and the <body> noscript block in the fields below. Chat: Intercom, Crisp, Tawk.to, Zendesk, Drift — usually one script block in “before </body>”.',
+          },
           fields: [
             {
               name: 'headScripts',
@@ -135,8 +139,8 @@ export const Settings: GlobalConfig = {
               label: 'Scripts in <head>',
               admin: {
                 description:
-                  'Paste Meta Pixel, Google Tag Manager (head), or other tags meant for the document head. Remove to disable.',
-                rows: 12,
+                  'Typical: GTM container snippet (first part), GA4 gtag.js, Meta Pixel base code, site verification meta tags. Paste the exact HTML/JS from the provider. Clear the field to turn off.',
+                rows: 14,
               },
             },
             {
@@ -145,8 +149,8 @@ export const Settings: GlobalConfig = {
               label: 'Scripts before </body>',
               admin: {
                 description:
-                  'Paste GTM noscript, body pixels, or other snippets that belong at the end of the body. Remove to disable.',
-                rows: 12,
+                  'Typical: GTM noscript iframe, deferred pixels, live-chat widgets (Intercom, Crisp, Tawk), cookie banners. Paste as a single block or multiple tags. Clear the field to turn off.',
+                rows: 14,
               },
             },
             {

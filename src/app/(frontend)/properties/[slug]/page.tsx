@@ -10,6 +10,7 @@ import React, { cache } from 'react'
 
 import type { Media, Property } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -26,7 +27,7 @@ export async function generateStaticParams() {
       limit: 500,
       overrideAccess: false,
       pagination: false,
-      locale: locale as 'en' | 'tr' | 'ar',
+      locale: locale as 'en',
       select: { slug: true },
     })
     for (const doc of result.docs ?? []) {
@@ -196,8 +197,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 const queryPropertyBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
   const cookieStore = await cookies()
-  const preferred =
-    (cookieStore.get('payload-locale')?.value as 'en' | 'tr' | 'ar' | undefined) || 'en'
+  const preferred = resolveFrontendLocale(cookieStore.get('payload-locale')?.value)
 
   const payload = await getPayload({ config: configPromise })
   const loc = payload.config.localization
@@ -212,7 +212,7 @@ const queryPropertyBySlug = cache(async ({ slug }: { slug: string }) => {
       limit: 1,
       overrideAccess: draft,
       pagination: false,
-      locale: locale as 'en' | 'tr' | 'ar',
+      locale: locale as 'en',
       where: {
         slug: { equals: slug },
       },
