@@ -4,10 +4,10 @@ export function toApiMediaFileUrl(filename: string): string {
 }
 
 /**
- * Path-style S3 URL: https://HOST/BUCKET/object-key
- * If NEXT_PUBLIC_MINIO_PUBLIC_URL is only https://HOST (no path), S3_BUCKET is appended.
- * Wrong: https://HOST/aszena.png → MinIO treats bucket name as "aszena.png" → AccessDenied.
- * Right: https://HOST/aszena/aszena.png (bucket = aszena, key = aszena.png)
+ * Path-style direct bucket URL (scripts / manual tests). Site görüntüleri için kullanmayın:
+ * Payload `toApiMediaFileUrl` tercih edilir (Next/Image aynı origin).
+ *
+ * https://HOST/BUCKET/key — NEXT_PUBLIC_MINIO_PUBLIC_URL yalnızca origin ise S3_BUCKET eklenir.
  */
 export function toPublicMinioObjectUrl(filename: string): string | null {
   const raw = process.env.NEXT_PUBLIC_MINIO_PUBLIC_URL?.trim()
