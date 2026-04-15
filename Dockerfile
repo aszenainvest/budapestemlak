@@ -59,6 +59,10 @@ RUN adduser --system --uid 1001 nextjs
 # Remove this line if you do not have this folder
 COPY --from=builder /app/public ./public
 
+# Payload writes uploads to public/media — must be writable by nextjs.
+# On Railway: add a Volume and mount it at /app/public/media so files survive redeploys.
+RUN mkdir -p ./public/media && chown -R nextjs:nodejs ./public
+
 # Set the correct permission for prerender cache
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
