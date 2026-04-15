@@ -4,6 +4,8 @@ declare global {
       PAYLOAD_SECRET: string
       DATABASE_URL: string
       NEXT_PUBLIC_SERVER_URL: string
+      /** Path-style base for public MinIO reads (bucket in path), no trailing slash */
+      NEXT_PUBLIC_MINIO_PUBLIC_URL?: string
       VERCEL_PROJECT_PRODUCTION_URL: string
       S3_BUCKET?: string
       S3_ACCESS_KEY_ID?: string

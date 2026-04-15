@@ -24,6 +24,30 @@ function resolvePublicOrigin(): string {
 
 const NEXT_PUBLIC_SERVER_URL = resolvePublicOrigin()
 
+/** Next/Image: allow optimized loading from public MinIO host when NEXT_PUBLIC_MINIO_PUBLIC_URL is set. */
+function minioRemotePatterns(): Array<{
+  hostname: string
+  protocol: 'http' | 'https'
+  pathname: string
+  port?: string
+}> {
+  const raw = process.env.NEXT_PUBLIC_MINIO_PUBLIC_URL
+  if (!raw?.trim()) return []
+  try {
+    const u = new URL(raw.trim())
+    return [
+      {
+        protocol: u.protocol.replace(':', '') as 'http' | 'https',
+        hostname: u.hostname,
+        ...(u.port ? { port: u.port } : {}),
+        pathname: '/**',
+      },
+    ]
+  } catch {
+    return []
+  }
+}
+
 const nextConfig: NextConfig = {
   // Required for Docker (see Dockerfile COPY .next/standalone)
   output: 'standalone',
@@ -43,6 +67,7 @@ const nextConfig: NextConfig = {
           protocol: url.protocol.replace(':', '') as 'http' | 'https',
         }
       }),
+      ...minioRemotePatterns(),
     ],
   },
   webpack: (webpackConfig) => {

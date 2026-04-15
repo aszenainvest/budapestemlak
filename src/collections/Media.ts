@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 
-import { isAbsoluteHttpUrl, toApiMediaFileUrl } from '@/utilities/mediaFileUrl'
+import { isAbsoluteHttpUrl, toApiMediaFileUrl, toPublicMinioObjectUrl } from '@/utilities/mediaFileUrl'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -23,6 +23,24 @@ export const Media: CollectionConfig = {
     afterRead: [
       ({ doc }) => {
         if (!doc?.filename || typeof doc.filename !== 'string') return doc
+
+        const direct = toPublicMinioObjectUrl(doc.filename)
+        if (direct) {
+          doc.url = direct
+          if (doc.sizes && typeof doc.sizes === 'object') {
+            for (const key of Object.keys(doc.sizes)) {
+              const size = doc.sizes[key as keyof typeof doc.sizes]
+              if (size && typeof size === 'object' && 'filename' in size && typeof size.filename === 'string') {
+                const u = toPublicMinioObjectUrl(size.filename)
+                if (u) size.url = u
+              }
+            }
+          }
+          const thumbFn = doc.sizes?.thumbnail?.filename
+          doc.thumbnailURL =
+            (typeof thumbFn === 'string' ? toPublicMinioObjectUrl(thumbFn) : null) ?? direct
+          return doc
+        }
 
         if (isAbsoluteHttpUrl(doc.url)) {
           doc.url = toApiMediaFileUrl(doc.filename)
