@@ -13,6 +13,7 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { toApiMediaFileUrl, toPublicMinioObjectUrl } from '@/utilities/mediaFileUrl'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -29,6 +30,11 @@ const s3Enabled =
   Boolean(process.env.S3_ACCESS_KEY_ID) &&
   Boolean(process.env.S3_SECRET_ACCESS_KEY)
 
+/** MinIO Console (/api/v1/buckets/.../download) DB’de kalsa bile; alan afterRead her zaman filename’den URL üretir. */
+function resolveUploadPublicUrl(filename: string): string {
+  return toPublicMinioObjectUrl(filename) ?? toApiMediaFileUrl(filename)
+}
+
 const storagePlugins: Plugin[] = s3Enabled
   ? [
       s3Storage({
@@ -37,7 +43,10 @@ const storagePlugins: Plugin[] = s3Enabled
         // Tarayıcı railway.internal / presigned MinIO URL'lerine gitmesin; dosya CMS /api/media üzerinden aksın
         signedDownloads: false,
         collections: {
-          media: true,
+          media: {
+            signedDownloads: false,
+            generateFileURL: ({ filename }) => resolveUploadPublicUrl(filename),
+          },
         },
         config: {
           credentials: {
