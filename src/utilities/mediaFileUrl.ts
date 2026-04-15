@@ -6,7 +6,10 @@ export function toApiMediaFileUrl(filename: string): string {
 /**
  * Path-style public bucket URL for API `url` fields. Next/Image uses `toApiMediaFileUrl` in ImageMedia instead.
  *
- * https://HOST/BUCKET/key — NEXT_PUBLIC_MINIO_PUBLIC_URL yalnızca origin ise S3_BUCKET eklenir.
+ * https://HOST/BUCKET/key — host-only URL ise yalnızca NEXT_PUBLIC_S3_BUCKET (S3_BUCKET tarayıcıda yok;
+ * SSR ile hydrate farklı URL üretirdi).
+ *
+ * En sorunsuz: `NEXT_PUBLIC_MINIO_PUBLIC_URL=https://host/aszena` (bucket path URL içinde).
  */
 export function toPublicMinioObjectUrl(filename: string): string | null {
   const raw = process.env.NEXT_PUBLIC_MINIO_PUBLIC_URL?.trim()
@@ -14,9 +17,7 @@ export function toPublicMinioObjectUrl(filename: string): string | null {
 
   try {
     const u = new URL(raw)
-    /** Server: S3_BUCKET. Browser (Next/Image): NEXT_PUBLIC_S3_BUCKET aynı değer olmalı. */
-    const bucket =
-      process.env.S3_BUCKET?.trim() || process.env.NEXT_PUBLIC_S3_BUCKET?.trim()
+    const bucket = process.env.NEXT_PUBLIC_S3_BUCKET?.trim()
     const pathSegments = u.pathname.split('/').filter(Boolean)
 
     let base: string

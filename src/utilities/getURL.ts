@@ -15,10 +15,18 @@ export const getServerSideURL = () => {
 }
 
 /**
- * Public site origin (browser, SSR for client components). Railway injects RAILWAY_PUBLIC_DOMAIN.
- * Used so `/_next/image` gets an absolute `url=`, not a relative `/api/...` (standalone fetch can fail).
+ * Same canonical base on SSR and after hydrate. Önce env (NEXT_PUBLIC_SERVER_URL); yoksa
+ * sadece istemcide `window` — aksi halde sunucu Railway domain kullanır, tarayıcı farklı string
+ * üretir, ilk yüklemede `<img src>` yanlış olur.
  */
 export const getClientSideURL = () => {
+  if (process.env.NEXT_PUBLIC_SERVER_URL?.trim()) {
+    return process.env.NEXT_PUBLIC_SERVER_URL.replace(/\/$/, '')
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  }
+
   if (canUseDOM) {
     const protocol = window.location.protocol
     const domain = window.location.hostname
