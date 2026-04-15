@@ -14,7 +14,9 @@ export function toPublicMinioObjectUrl(filename: string): string | null {
 
   try {
     const u = new URL(raw)
-    const bucket = process.env.S3_BUCKET?.trim()
+    /** Server: S3_BUCKET. Browser (Next/Image): NEXT_PUBLIC_S3_BUCKET aynı değer olmalı. */
+    const bucket =
+      process.env.S3_BUCKET?.trim() || process.env.NEXT_PUBLIC_S3_BUCKET?.trim()
     const pathSegments = u.pathname.split('/').filter(Boolean)
 
     let base: string

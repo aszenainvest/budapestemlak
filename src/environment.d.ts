@@ -8,6 +8,8 @@ declare global {
       RAILWAY_PUBLIC_DOMAIN?: string
       /** Path-style base for public MinIO reads (bucket in path), no trailing slash */
       NEXT_PUBLIC_MINIO_PUBLIC_URL?: string
+      /** Same as S3_BUCKET when using host-only NEXT_PUBLIC_MINIO_PUBLIC_URL (needed client-side). */
+      NEXT_PUBLIC_S3_BUCKET?: string
       VERCEL_PROJECT_PRODUCTION_URL: string
       S3_BUCKET?: string
       S3_ACCESS_KEY_ID?: string

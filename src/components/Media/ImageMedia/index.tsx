@@ -10,7 +10,7 @@ import type { Props as MediaProps } from '../types'
 
 import { cssVariables } from '@/cssVariables'
 import { toAbsoluteSiteUrl } from '@/utilities/getURL'
-import { toApiMediaFileUrl } from '@/utilities/mediaFileUrl'
+import { toApiMediaFileUrl, toPublicMinioObjectUrl } from '@/utilities/mediaFileUrl'
 
 const { breakpoints } = cssVariables
 
@@ -21,11 +21,9 @@ const placeholderBlur =
 /**
  * ImageMedia
  *
- * `src` is a full same-origin URL (`https://cms.../api/media/file/...`) via `toAbsoluteSiteUrl`
- * so `/_next/image` can fetch in Docker/Railway (relative `/api/...?v=` often breaks). Cache
- * query removed for this path.
- *
- * Flow: `toApiMediaFileUrl(filename)` → `toAbsoluteSiteUrl` → Next/Image → `/_next/image?url=https%3A%2F%2Fcms.../api/media/file/...`
+ * Prefer direct bucket URL when `NEXT_PUBLIC_MINIO_PUBLIC_URL` (+ optional `NEXT_PUBLIC_S3_BUCKET`)
+ * is set so `/_next/image` fetches MinIO, not CMS. Fallback: same-origin `/api/media/file/...`.
+ * next.config `images.remotePatterns` must match build-time env (see Dockerfile ARGs).
  */
 
 export const ImageMedia: React.FC<MediaProps> = (props) => {
@@ -53,11 +51,11 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     height = fullHeight!
     alt = altFromResource || ''
 
-    // next/image: göreli /api/...?v= standalone optimizer fetch'te kırılıyor -> tam https + sorgusuz
-    const relative =
-      typeof filename === 'string' && filename.length > 0 ? toApiMediaFileUrl(filename) : url || ''
-
-    src = toAbsoluteSiteUrl(relative)
+    if (typeof filename === 'string' && filename.length > 0) {
+      src = toPublicMinioObjectUrl(filename) ?? toAbsoluteSiteUrl(toApiMediaFileUrl(filename))
+    } else {
+      src = toAbsoluteSiteUrl(url || '')
+    }
   }
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)

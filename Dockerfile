@@ -38,6 +38,15 @@ ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
 ARG DATABASE_URL
 ENV DATABASE_URL=${DATABASE_URL}
 
+# Next/Image remotePatterns are baked in at build. Without these, optimization only allows
+# localhost → 400 for https://your-cms.../api/media/file/... in production.
+ARG NEXT_PUBLIC_SERVER_URL
+ENV NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
+ARG NEXT_PUBLIC_MINIO_PUBLIC_URL
+ENV NEXT_PUBLIC_MINIO_PUBLIC_URL=${NEXT_PUBLIC_MINIO_PUBLIC_URL}
+ARG NEXT_PUBLIC_S3_BUCKET
+ENV NEXT_PUBLIC_S3_BUCKET=${NEXT_PUBLIC_S3_BUCKET}
+
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
