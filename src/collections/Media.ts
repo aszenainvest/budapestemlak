@@ -11,12 +11,52 @@ import { fileURLToPath } from 'url'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 
+import { isAbsoluteHttpUrl, toApiMediaFileUrl } from '@/utilities/mediaFileUrl'
+
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
+  hooks: {
+    afterRead: [
+      ({ doc }) => {
+        if (!doc?.filename || typeof doc.filename !== 'string') return doc
+
+        if (isAbsoluteHttpUrl(doc.url)) {
+          doc.url = toApiMediaFileUrl(doc.filename)
+        }
+
+        if (doc.sizes && typeof doc.sizes === 'object') {
+          for (const key of Object.keys(doc.sizes)) {
+            const size = doc.sizes[key as keyof typeof doc.sizes]
+            if (
+              size &&
+              typeof size === 'object' &&
+              'filename' in size &&
+              typeof size.filename === 'string' &&
+              'url' in size &&
+              isAbsoluteHttpUrl(size.url)
+            ) {
+              size.url = toApiMediaFileUrl(size.filename)
+            }
+          }
+        }
+
+        if (isAbsoluteHttpUrl(doc.thumbnailURL)) {
+          const thumb = doc.sizes?.thumbnail
+          const thumbFn =
+            thumb && typeof thumb === 'object' && 'filename' in thumb && typeof thumb.filename === 'string'
+              ? thumb.filename
+              : doc.filename
+          doc.thumbnailURL = toApiMediaFileUrl(thumbFn)
+        }
+
+        return doc
+      },
+    ],
+  },
   access: {
     create: authenticated,
     delete: authenticated,

@@ -34,6 +34,8 @@ const storagePlugins: Plugin[] = s3Enabled
       s3Storage({
         acl: 'public-read',
         bucket: process.env.S3_BUCKET!,
+        // Tarayıcı railway.internal / presigned MinIO URL'lerine gitmesin; dosya CMS /api/media üzerinden aksın
+        signedDownloads: false,
         collections: {
           media: true,
         },
