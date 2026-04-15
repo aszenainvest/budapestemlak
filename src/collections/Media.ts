@@ -11,7 +11,7 @@ import { fileURLToPath } from 'url'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 
-import { toApiMediaFileUrl } from '@/utilities/mediaFileUrl'
+import { toApiMediaFileUrl, toPublicMinioObjectUrl } from '@/utilities/mediaFileUrl'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -24,8 +24,8 @@ export const Media: CollectionConfig = {
       ({ doc }) => {
         if (!doc?.filename || typeof doc.filename !== 'string') return doc
 
-        /** Tek kaynak: filename. Her zaman CMS /api/media/file (S3 proxy) — direkt bucket URL Next/Image ile Railway’de kırılıyor. */
-        const resolve = (name: string) => toApiMediaFileUrl(name)
+        /** Tek kaynak: filename. MinIO public URL (env) varsa doğrudan bucket; yoksa /api/media/file. Next/Image ayrıca proxy kullanır. */
+        const resolve = (name: string) => toPublicMinioObjectUrl(name) ?? toApiMediaFileUrl(name)
 
         doc.url = resolve(doc.filename)
 

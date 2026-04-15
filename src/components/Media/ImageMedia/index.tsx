@@ -9,6 +9,7 @@ import React from 'react'
 import type { Props as MediaProps } from '../types'
 
 import { cssVariables } from '@/cssVariables'
+import { toApiMediaFileUrl } from '@/utilities/mediaFileUrl'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 const { breakpoints } = cssVariables
@@ -64,7 +65,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   let src: StaticImageData | string = srcFromProps || ''
 
   if (!src && resource && typeof resource === 'object') {
-    const { alt: altFromResource, height: fullHeight, url, width: fullWidth } = resource
+    const { alt: altFromResource, filename, height: fullHeight, url, width: fullWidth } = resource
 
     width = fullWidth!
     height = fullHeight!
@@ -72,7 +73,11 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
     const cacheTag = resource.updatedAt
 
-    src = getMediaUrl(url, cacheTag)
+    // next/image: aynı origin /api/media/file — Payload url alanı bucket HTTPS olsa bile optimizer kırılmasın
+    const forOptimizer =
+      typeof filename === 'string' && filename.length > 0 ? toApiMediaFileUrl(filename) : url
+
+    src = getMediaUrl(forOptimizer, cacheTag)
   }
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)

@@ -4,8 +4,7 @@ export function toApiMediaFileUrl(filename: string): string {
 }
 
 /**
- * Path-style direct bucket URL (scripts / manual tests). Site görüntüleri için kullanmayın:
- * Payload `toApiMediaFileUrl` tercih edilir (Next/Image aynı origin).
+ * Path-style public bucket URL for API `url` fields. Next/Image uses `toApiMediaFileUrl` in ImageMedia instead.
  *
  * https://HOST/BUCKET/key — NEXT_PUBLIC_MINIO_PUBLIC_URL yalnızca origin ise S3_BUCKET eklenir.
  */

@@ -13,7 +13,7 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
-import { toApiMediaFileUrl } from '@/utilities/mediaFileUrl'
+import { toApiMediaFileUrl, toPublicMinioObjectUrl } from '@/utilities/mediaFileUrl'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -30,9 +30,9 @@ const s3Enabled =
   Boolean(process.env.S3_ACCESS_KEY_ID) &&
   Boolean(process.env.S3_SECRET_ACCESS_KEY)
 
-/** Her zaman Payload /api/media/file — tarayıcı & _next/image aynı origin; direkt MinIO host optimizer/ssr fetch’te sorun çıkarıyor. */
+/** MinIO public + API’de doğrudan bucket URL; Next/Image bileşeni ayrıca toApiMediaFileUrl kullanır. */
 function resolveUploadPublicUrl(filename: string): string {
-  return toApiMediaFileUrl(filename)
+  return toPublicMinioObjectUrl(filename) ?? toApiMediaFileUrl(filename)
 }
 
 const storagePlugins: Plugin[] = s3Enabled
