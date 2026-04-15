@@ -32,17 +32,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <style dangerouslySetInnerHTML={{ __html: generateCSSVariables(settings) }} />
       </head>
       <body>
+        <Providers>
+          <Header />
+          {children}
+          <Footer />
+        </Providers>
         <SiteIntegrations
           bodyScripts={settings.bodyScripts}
           headScripts={settings.headScripts}
           whatsappEnabled={settings.whatsappEnabled}
           whatsappPhone={settings.whatsappPhone}
         />
-        <Providers>
-          <Header />
-          {children}
-          <Footer />
-        </Providers>
       </body>
     </html>
   )

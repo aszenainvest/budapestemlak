@@ -65,11 +65,10 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none pt-2 lg:pt-4">
+      <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none">
         <motion.header 
           style={{
             width: headerWidth,
-            y: headerY,
             borderRadius: headerRadius,
             backgroundColor: theme === 'dark' ? headerBgDark : headerBg
           }}
