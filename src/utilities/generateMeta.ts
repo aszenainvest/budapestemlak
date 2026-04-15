@@ -5,6 +5,14 @@ import type { Media, Page, Post, Property, Config } from '../payload-types'
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
 
+const joinSite = (serverUrl: string, pathOrAbsolute: string | null | undefined) => {
+  if (!pathOrAbsolute) return serverUrl + '/website-template-OG.webp'
+  if (pathOrAbsolute.startsWith('http://') || pathOrAbsolute.startsWith('https://')) {
+    return pathOrAbsolute
+  }
+  return serverUrl + (pathOrAbsolute.startsWith('/') ? pathOrAbsolute : `/${pathOrAbsolute}`)
+}
+
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
@@ -12,8 +20,8 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
 
   if (image && typeof image === 'object' && 'url' in image) {
     const ogUrl = image.sizes?.og?.url
-
-    url = ogUrl ? serverUrl + ogUrl : serverUrl + image.url
+    const preferred = ogUrl || image.url
+    url = joinSite(serverUrl, preferred || undefined)
   }
 
   return url

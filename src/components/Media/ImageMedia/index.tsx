@@ -9,8 +9,8 @@ import React from 'react'
 import type { Props as MediaProps } from '../types'
 
 import { cssVariables } from '@/cssVariables'
+import { toAbsoluteSiteUrl } from '@/utilities/getURL'
 import { toApiMediaFileUrl } from '@/utilities/mediaFileUrl'
-import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 const { breakpoints } = cssVariables
 
@@ -21,29 +21,11 @@ const placeholderBlur =
 /**
  * ImageMedia
  *
- * This component passes a **relative** `src` (e.g. `/media/...`) to Next.js Image.
- * The `getMediaUrl` utility constructs the full URL by prepending the base URL from env vars
- * (NEXT_PUBLIC_SERVER_URL). Next.js then optimizes this using `remotePatterns` configured
- * in next.config.js — no custom `loader` needed.
+ * `src` is a full same-origin URL (`https://cms.../api/media/file/...`) via `toAbsoluteSiteUrl`
+ * so `/_next/image` can fetch in Docker/Railway (relative `/api/...?v=` often breaks). Cache
+ * query removed for this path.
  *
- * Flow:
- *   1. Resource URL from Payload: `/media/image-123.jpg`
- *   2. getMediaUrl() adds base URL: `https://yourdomain.com/media/image-123.jpg`
- *   3. Next.js Image optimizes via remotePatterns: `/_next/image?url=...&w=1200&q=75`
- *
- * If your storage/plugin returns **external CDN URLs** (e.g. `https://cdn.example.com/...`),
- * choose ONE of the following:
- *   A) Allow the remote host in next.config.js:
- *      images: { remotePatterns: [{ protocol: 'https', hostname: 'cdn.example.com' }] }
- *   B) Provide a **custom loader** for CDN-specific transforms:
- *      const imageLoader: ImageLoader = ({ src, width, quality }) =>
- *        `https://cdn.example.com${src}?w=${width}&q=${quality ?? 75}`
- *      <Image loader={imageLoader} src="/media/hero.jpg" width={1200} height={600} alt="" />
- *   C) Skip optimization:
- *      <Image unoptimized src="https://cdn.example.com/hero.jpg" width={1200} height={600} alt="" />
- *
- * TL;DR: Template uses relative URLs + getMediaUrl() to construct full URLs, then relies on
- * remotePatterns for optimization. Only add `loader` if using external CDNs with custom transforms.
+ * Flow: `toApiMediaFileUrl(filename)` → `toAbsoluteSiteUrl` → Next/Image → `/_next/image?url=https%3A%2F%2Fcms.../api/media/file/...`
  */
 
 export const ImageMedia: React.FC<MediaProps> = (props) => {
@@ -71,13 +53,11 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     height = fullHeight!
     alt = altFromResource || ''
 
-    const cacheTag = resource.updatedAt
+    // next/image: göreli /api/...?v= standalone optimizer fetch'te kırılıyor -> tam https + sorgusuz
+    const relative =
+      typeof filename === 'string' && filename.length > 0 ? toApiMediaFileUrl(filename) : url || ''
 
-    // next/image: aynı origin /api/media/file — Payload url alanı bucket HTTPS olsa bile optimizer kırılmasın
-    const forOptimizer =
-      typeof filename === 'string' && filename.length > 0 ? toApiMediaFileUrl(filename) : url
-
-    src = getMediaUrl(forOptimizer, cacheTag)
+    src = toAbsoluteSiteUrl(relative)
   }
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
