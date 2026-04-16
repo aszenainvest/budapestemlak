@@ -98,7 +98,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
           </div>
 
           {/* Desktop Nav */}
-          <div className="hidden 2xl:flex flex-1 justify-center px-4">
+          <div className="hidden lg:flex flex-1 justify-center px-4">
             <HeaderNav data={data} forceTheme={effectiveTheme} />
           </div>
 
@@ -125,11 +125,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
             {/* Mobile Burger */}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="2xl:hidden p-2 relative z-50 overflow-hidden"
+              className="lg:hidden p-2 relative z-50 overflow-hidden"
             >
               <div className="w-6 h-4 relative flex flex-col justify-between items-end">
                 <motion.span 
-                  animate={mobileMenuOpen ? { rotate: 45, y: 7, width: '100%', backgroundColor: '#000' } : { rotate: 0, y: 0, width: '100%', backgroundColor: isDark ? '#fff' : '#000' }}
+                  animate={mobileMenuOpen ? { rotate: 45, y: 7, width: '100%', backgroundColor: theme === 'dark' ? '#fff' : '#000' } : { rotate: 0, y: 0, width: '100%', backgroundColor: isDark ? '#fff' : '#000' }}
                   className="h-0.5 rounded-full"
                 />
                 <motion.span 
@@ -137,7 +137,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
                   className="h-0.5 rounded-full"
                 />
                 <motion.span 
-                  animate={mobileMenuOpen ? { rotate: -45, y: -7, width: '100%', backgroundColor: '#000' } : { rotate: 0, y: 0, width: '100%', backgroundColor: isDark ? '#fff' : '#000' }}
+                  animate={mobileMenuOpen ? { rotate: -45, y: -7, width: '100%', backgroundColor: theme === 'dark' ? '#fff' : '#000' } : { rotate: 0, y: 0, width: '100%', backgroundColor: isDark ? '#fff' : '#000' }}
                   className="h-0.5 rounded-full"
                 />
               </div>
@@ -153,7 +153,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[45] bg-white/95 dark:bg-black/95 backdrop-blur-3xl 2xl:hidden flex flex-col items-center pt-24 pb-12 overflow-y-auto"
+            className="fixed inset-0 z-[45] bg-white/95 dark:bg-black/95 backdrop-blur-3xl lg:hidden flex flex-col items-center pt-24 pb-12 overflow-y-auto"
           >
              <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--secondary)]/10 blur-[120px] rounded-full animate-pulse" />

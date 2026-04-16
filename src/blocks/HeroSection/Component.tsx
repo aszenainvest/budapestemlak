@@ -37,7 +37,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
             }}
             className="w-[110%] h-[110%] absolute -left-[5%] -top-[5%]"
           >
-            <Media resource={image} fill className="object-cover opacity-60" priority />
+            <Media resource={image} fill imgClassName="object-cover opacity-60" priority />
           </motion.div>
         )}
         {/* Depth gradient over image */}
@@ -68,7 +68,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
                 initial={{ y: 30, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tighter"
+                className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tighter text-balance"
               >
                 <span className="block">{titlePart1}</span>
                 {titlePart2 && (
@@ -83,7 +83,7 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
-                className="max-w-xl text-lg md:text-xl text-gray-300 font-light leading-relaxed border-l-2 border-white/10 pl-6"
+                className="max-w-xl text-lg md:text-xl text-gray-300 font-light leading-relaxed border-l-2 border-white/10 pl-6 text-pretty"
               >
                 {description}
               </motion.p>
@@ -185,7 +185,7 @@ const HeroStyle2: React.FC<HeroSectionType> = ({
           <Media
             resource={image}
             fill
-            className="object-cover opacity-20 mix-blend-luminosity scale-110"
+            imgClassName="object-cover opacity-20 mix-blend-luminosity scale-110"
             priority
           />
         )}
@@ -210,7 +210,7 @@ const HeroStyle2: React.FC<HeroSectionType> = ({
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl md:text-8xl lg:text-9xl font-black text-white leading-none tracking-tight"
+            className="text-4xl md:text-8xl lg:text-9xl font-black text-white leading-none tracking-tight text-balance"
           >
             {titlePart1}{' '}
             {titlePart2 && (
@@ -224,7 +224,7 @@ const HeroStyle2: React.FC<HeroSectionType> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="max-w-2xl mx-auto text-xl md:text-2xl text-white/60 font-light leading-relaxed"
+            className="max-w-2xl mx-auto text-xl md:text-2xl text-white/60 font-light leading-relaxed text-pretty"
           >
             {description}
           </motion.p>
@@ -286,7 +286,7 @@ const HeroStyle3: React.FC<HeroSectionType> = ({
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.85] tracking-tighter"
+            className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.85] tracking-tighter text-balance"
           >
             {titlePart1}
             <br />
@@ -348,7 +348,7 @@ const HeroStyle3: React.FC<HeroSectionType> = ({
             transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
             className="absolute inset-0"
           >
-            <Media resource={image} fill className="object-cover opacity-80" priority />
+            <Media resource={image} fill imgClassName="object-cover opacity-80" priority />
             <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent" />
           </motion.div>
         )}
