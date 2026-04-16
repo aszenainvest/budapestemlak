@@ -55,9 +55,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
     setMobileMenuOpen(false)
   }, [pathname])
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark')
-  }
+
 
   // Determine effective theme for text color
   const effectiveTheme = scrolled ? theme : (headerTheme || theme)
@@ -70,7 +68,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
           style={{
             width: headerWidth,
             borderRadius: headerRadius,
-            backgroundColor: theme === 'dark' ? headerBgDark : headerBg
+            backgroundColor: headerBg
           }}
           className={cn(
             "pointer-events-auto backdrop-blur-xl transition-all duration-500",
@@ -113,13 +111,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
                >
                  <Globe size={18} />
                </motion.button>
-               <motion.button 
-                 onClick={toggleTheme}
-                 whileHover={{ rotate: 15 }}
-                 className={cn("p-2 rounded-full transition-colors", isDark ? "hover:bg-white/10" : "hover:bg-black/5")}
-               >
-                 {mounted && theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-               </motion.button>
+
             </div>
 
             {/* Mobile Burger */}
@@ -192,9 +184,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
                className="mt-auto flex flex-col items-center gap-8 pb-8"
              >
                 <LocaleSelector />
-                <button onClick={toggleTheme} className="text-sm font-bold tracking-widest uppercase">
-                  {mounted && theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                </button>
+
              </motion.div>
           </motion.div>
         )}
