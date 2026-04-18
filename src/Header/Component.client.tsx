@@ -37,11 +37,11 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
       <header className={cn(
         "fixed top-0 left-0 right-0 z-50",
         "bg-white dark:bg-black border-b border-black/5 dark:border-white/5",
-        "h-[64px] lg:h-[80px] flex items-center justify-between px-6 lg:px-12",
+        "h-[64px] lg:h-[80px] flex items-center justify-between px-4 lg:px-12",
         "w-full transition-colors duration-300"
       )}>
         {/* Logo */}
-        <div className="flex-none pr-6">
+        <div className="flex-none pr-4 lg:pr-6">
           <Link href="/" className="inline-block transition-transform active:scale-95">
             <Logo
               brandName={settings?.brandName}
@@ -117,6 +117,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
                       >
                         <Link
                           href={href || '#'}
+                          prefetch={false}
+                          onClick={() => setMobileMenuOpen(false)}
                           className="text-lg font-bold text-[var(--primary)] dark:text-white border-b border-black/5 dark:border-white/5 pb-1 block hover:text-[var(--secondary)] transition-colors"
                         >
                           {label}
@@ -127,6 +129,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
                                <Link
                                  key={subIdx}
                                  href={getHrefFromCMSLink(sub?.link) || '#'}
+                                 prefetch={false}
+                                 onClick={() => setMobileMenuOpen(false)}
                                  className="text-xs font-medium text-[var(--primary)]/60 dark:text-white/60 hover:text-[var(--secondary)] transition-colors"
                                 >
                                  {sub?.link?.label}

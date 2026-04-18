@@ -198,8 +198,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
 const queryPropertyBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
-  const cookieStore = await cookies()
-  const preferred = resolveFrontendLocale(cookieStore.get('payload-locale')?.value)
+  const preferred = 'en'
 
   const payload = await getPayload({ config: configPromise })
   const loc = payload.config.localization

@@ -54,6 +54,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceThem
             <div className="flex items-center gap-1.5">
               <Link 
                 href={(href as string) || '#'}
+                prefetch={false}
                 className={cn(
                   "relative z-10 text-sm font-bold tracking-tight transition-all duration-300",
                   isActive 
@@ -61,7 +62,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceThem
                     : (isDark ? "text-white/85 group-hover:text-white" : "text-[var(--primary)]/85 group-hover:text-[var(--primary)]")
                 )}
               >
-                {label}
+                {label === 'More' ? <MoreHorizontal className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity" /> : label}
               </Link>
               {hasSubItems && (
                 <svg 
@@ -96,6 +97,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceThem
                         <Link
                           key={subIdx}
                           href={sHref || '#'}
+                          prefetch={false}
                           className={cn(
                             "block px-4 py-2.5 text-sm font-bold rounded-xl transition-all duration-200",
                             isDark ? "text-white/70 hover:text-white hover:bg-white/10" : "text-[var(--primary)]/70 hover:text-[var(--primary)] hover:bg-gray-50"

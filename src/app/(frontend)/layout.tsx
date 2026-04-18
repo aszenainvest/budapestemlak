@@ -20,8 +20,7 @@ import { generateCSSVariables } from '@/utilities/generateCSSVariables'
 import { SiteIntegrations } from '@/components/SiteIntegrations'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies()
-  const locale = resolveFrontendLocale(cookieStore.get('payload-locale')?.value)
+  const locale = 'en'
   const settings: Setting = await getCachedGlobal('settings', 1)(locale)
 
   return (

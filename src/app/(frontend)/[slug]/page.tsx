@@ -111,15 +111,14 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
 const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug: string }) => {
   const { isEnabled: draft } = await draftMode()
-  const cookieStore = await cookies()
-  const locale = resolveFrontendLocale(cookieStore.get('payload-locale')?.value)
+  const locale = 'en'
 
   const payload = await getPayload({ config: configPromise })
 
   const result = await payload.find({
     collection: 'pages',
     draft,
-    depth: 4,
+    depth: 2,
     limit: 1,
     pagination: false,
     overrideAccess: draft,

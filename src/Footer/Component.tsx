@@ -28,13 +28,12 @@ const iconMap = {
 }
 
 export async function Footer() {
-  const cookieStore = await cookies()
-  const locale = resolveFrontendLocale(cookieStore.get('payload-locale')?.value)
+  const locale = 'en'
   const { isEnabled: draft } = await draftMode()
 
-  const footerData = (await getCachedGlobal('footer', 3)(locale)) as Footer
-  const headerData = (await getCachedGlobal('header', 3, { overrideAccess: true, draft })(locale)) as Header
-  const settingsData = (await getCachedGlobal('settings', 3)(locale)) as Setting
+  const footerData = (await getCachedGlobal('footer', 1)(locale)) as Footer
+  const headerData = (await getCachedGlobal('header', 1, { overrideAccess: true, draft })(locale)) as Header
+  const settingsData = (await getCachedGlobal('settings', 1)(locale)) as Setting
 
   const showHeaderNav = footerData?.syncWithHeader
   const columns = showHeaderNav

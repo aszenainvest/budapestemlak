@@ -15,7 +15,7 @@ export const Media: React.FC<Props> = (props) => {
     <Tag
       {...(htmlElement !== null
         ? {
-            className,
+            className: props.fill ? [className, 'relative w-full h-full'].filter(Boolean).join(' ') : className,
           }
         : {})}
     >

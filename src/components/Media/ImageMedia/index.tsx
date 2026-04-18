@@ -66,12 +66,10 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   // NOTE: this is used by the browser to determine which image to download at different screen sizes
   const sizes = sizeFromProps
     ? sizeFromProps
-    : Object.entries(breakpoints)
-        .map(([, value]) => `(max-width: ${value}px) ${value * 2}w`)
-        .join(', ')
+    : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
 
   return (
-    <picture className={cn(pictureClassName)}>
+    <picture className={cn(fill && !pictureClassName?.includes('absolute') && !pictureClassName?.includes('fixed') ? 'relative w-full h-full block' : '', pictureClassName)}>
       <NextImage
         alt={alt || ''}
         className={cn(imgClassName)}
@@ -80,11 +78,10 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         placeholder="blur"
         blurDataURL={placeholderBlur}
         priority={priority}
-        quality={80}
         loading={loading}
         sizes={sizes}
         src={src}
-        unoptimized={unoptimized}
+        unoptimized={true} // Bypassing Next.js image optimization to prevent 7000ms+ timeout crashes
         width={!fill ? width : undefined}
       />
     </picture>
