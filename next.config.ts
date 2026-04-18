@@ -52,7 +52,6 @@ const nextConfig: NextConfig = {
   // Required for Docker (see Dockerfile COPY .next/standalone)
   output: 'standalone',
   images: {
-    unoptimized: true,
     localPatterns: [
       {
         pathname: '/api/media/file/**',

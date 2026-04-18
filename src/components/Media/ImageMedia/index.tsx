@@ -68,11 +68,16 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     ? sizeFromProps
     : '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
 
+  const [isLoaded, setIsLoaded] = React.useState(false)
+
   return (
     <picture className={cn(fill && !pictureClassName?.includes('absolute') && !pictureClassName?.includes('fixed') ? 'relative w-full h-full block' : '', pictureClassName)}>
+      {!isLoaded && (
+        <div className="absolute inset-0 z-0 bg-gray-200/50 dark:bg-zinc-800/50 animate-pulse" style={{ borderRadius: 'inherit' }} />
+      )}
       <NextImage
         alt={alt || ''}
-        className={cn(imgClassName)}
+        className={cn(imgClassName, !isLoaded ? 'opacity-0' : 'opacity-100 transition-opacity duration-500')}
         fill={fill}
         height={!fill ? height : undefined}
         placeholder="blur"
@@ -81,7 +86,8 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         loading={loading}
         sizes={sizes}
         src={src}
-        unoptimized={true} // Bypassing Next.js image optimization to prevent 7000ms+ timeout crashes
+        onLoad={() => setIsLoaded(true)}
+        unoptimized={unoptimized}
         width={!fill ? width : undefined}
       />
     </picture>
