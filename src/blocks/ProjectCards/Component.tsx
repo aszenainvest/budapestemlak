@@ -40,11 +40,11 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
   }, [projects, filter, enableFiltering])
 
   return (
-    <div className="container py-10 mx-auto px-6">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+    <div className="container py-6 mx-auto px-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
         {title && (
           <h2
-            className="text-3xl md:text-5xl font-bold tracking-tight"
+            className="text-2xl md:text-3xl font-bold tracking-tight"
             style={{ color: 'var(--primary)' }}
           >
             {title}
@@ -53,12 +53,12 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
 
         {/* Dynamic Filter Tabs - Scrollable on mobile */}
         {enableFiltering && availableCategories.length > 0 && (
-          <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="flex flex-nowrap md:flex-wrap gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide -mx-2 px-2 md:mx-0 md:px-0">
             <button
               onClick={() => setFilter('all')}
-              className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 ${
                 filter === 'all'
-                  ? 'bg-[var(--primary)] text-white shadow-lg'
+                  ? 'bg-[var(--primary)] text-white shadow-md'
                   : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
               }`}
             >
@@ -68,9 +68,9 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
               <button
                 key={cat.id}
                 onClick={() => setFilter(cat.id)}
-                className={`whitespace-nowrap px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 ${
+                className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 ${
                   filter === cat.id
-                    ? 'bg-[var(--primary)] text-white shadow-lg'
+                    ? 'bg-[var(--primary)] text-white shadow-md'
                     : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
               }`}
               >
@@ -81,7 +81,7 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 min-h-[400px]">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-h-[300px]">
         {filteredProjects?.map((item, index) => {
           const prop = item.property
           const detailHref =
@@ -91,7 +91,7 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
 
           const cardClassName = cn(
             'group overflow-hidden border border-gray-100 transition-all duration-300 flex flex-col h-full',
-            detailHref && 'transform hover:-translate-y-2 cursor-pointer',
+            detailHref && 'transform hover:-translate-y-1 cursor-pointer hover:shadow-xl',
             !detailHref && 'cursor-default',
           )
           const cardStyle = {
@@ -104,7 +104,7 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
             <div className="flex h-full flex-col">
               <div className="relative h-72 w-full overflow-hidden">
                 {item.image ? (
-                  <Media resource={item.image} fill className="object-cover" />
+                  <Media resource={item.image} fill imgClassName="object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-gray-100 text-gray-400">
                     No image
@@ -112,10 +112,10 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
                 )}
               </div>
 
-              <div className="flex flex-grow flex-col p-8">
-                <div className="mb-6 flex items-center justify-between">
+              <div className="flex flex-grow flex-col p-5">
+                <div className="mb-4 flex items-center justify-between">
                   <span
-                    className="inline-flex items-center rounded-lg px-4 py-1.5 text-xs font-bold tracking-widest uppercase"
+                    className="inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-bold tracking-widest uppercase"
                     style={{
                       backgroundColor: 'color-mix(in srgb, var(--secondary), transparent 85%)',
                       color: 'var(--secondary)',
@@ -130,15 +130,15 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
                 </div>
 
                 <h3
-                  className="mb-4 line-clamp-2 text-2xl font-bold transition-colors duration-300 group-hover:opacity-80"
+                  className="mb-2 line-clamp-2 text-lg font-bold transition-colors duration-300 group-hover:opacity-80 leading-tight"
                   style={{ color: 'var(--primary)' }}
                 >
                   {item.title}
                 </h3>
 
-                <div className="mb-6 flex items-center text-sm text-gray-400">
+                <div className="mb-3 flex items-center text-sm text-gray-400">
                   <svg
-                    className="mr-2 h-4 w-4"
+                    className="mr-1.5 h-3.5 w-3.5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -160,7 +160,7 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
                   {item.location}
                 </div>
 
-                <p className="mb-auto line-clamp-3 text-sm leading-relaxed text-gray-500">
+                <p className="mb-auto line-clamp-2 text-sm leading-relaxed text-gray-500">
                   {item.description}
                 </p>
               </div>

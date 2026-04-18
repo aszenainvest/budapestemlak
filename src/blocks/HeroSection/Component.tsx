@@ -19,149 +19,65 @@ const HeroStyle1: React.FC<HeroSectionType & { settings?: Setting }> = ({
   const logo = settings?.logo
 
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black py-8">
-      {/* Background image — subtle drift animation */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        {image && typeof image === 'object' && (
+    <section className="relative w-full bg-white dark:bg-black overflow-hidden lg:h-[750px]">
+      <div className="flex flex-col lg:block h-full">
+        {/* BACKGROUND IMAGE - Fixed Height on mobile, Absolute on desktop overlaying the content area */}
+        <div className="relative lg:absolute lg:inset-0 w-full h-[50vh] lg:h-full z-0">
+          {image && typeof image === 'object' && (
+            <Media resource={image} fill imgClassName="object-cover" priority unoptimized={true} />
+          )}
+          {/* Subtle overlay only on desktop for readability if needed, but keeping it light */}
+          <div className="hidden lg:block absolute inset-0 bg-black/5 pointer-events-none" />
+        </div>
+
+        {/* CONTENT - Below image on mobile, Floating on top on desktop */}
+        <div className="relative z-10 w-full lg:h-full flex items-center justify-start p-6 md:p-12 lg:p-16">
           <motion.div
-            initial={{ scale: 1.1, x: '-1%', y: '-1%' }}
-            animate={{
-              scale: [1.1, 1.05, 1.1],
-              x: ['-1%', '1%', '-1%'],
-              y: ['-1%', '0.5%', '-1%'],
-            }}
-            transition={{
-              duration: 30,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-            className="w-[110%] h-[110%] absolute -left-[5%] -top-[5%]"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="w-full lg:max-w-xl space-y-6 bg-white dark:bg-black lg:bg-white/5 lg:dark:bg-black/10 lg:backdrop-blur-[2px] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] lg:border lg:border-white/10 shadow-xl"
           >
-            <Media resource={image} fill imgClassName="object-cover opacity-60" priority />
-          </motion.div>
-        )}
-        {/* Depth gradient over image */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10" />
-      </div>
+            {/* Tagline */}
+            {tagline && (
+              <div className="flex items-center justify-start gap-3">
+                <span className="h-[2px] w-10 bg-[var(--secondary)]" />
+                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--secondary)]">
+                  {tagline}
+                </span>
+              </div>
+            )}
 
-      <div className="container relative z-20 px-6">
-        <div className="grid lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-8 xl:col-span-7">
-            <div className="space-y-8">
-              {/* Tagline — line accent */}
-              {tagline && (
-                <motion.div
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="flex items-center gap-3"
-                >
-                  <span className="h-[1px] w-12 bg-[var(--secondary)]" />
-                  <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[var(--secondary)] whitespace-nowrap">
-                    {tagline}
-                  </span>
-                </motion.div>
+            {/* Title */}
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black text-[var(--primary)] dark:text-white lg:text-white leading-[1.2] tracking-tight">
+              {titlePart1}
+              {titlePart2 && (
+                <span className="block text-[var(--secondary)] italic font-serif mt-1">
+                  {titlePart2}
+                </span>
               )}
+            </h1>
 
-              {/* Title */}
-              <motion.h1
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.8 }}
-                className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.95] tracking-tighter text-balance"
-              >
-                <span className="block">{titlePart1}</span>
-                {titlePart2 && (
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[var(--secondary)] to-white/50 italic font-serif py-2">
-                    {titlePart2}
-                  </span>
-                )}
-              </motion.h1>
-
-              {/* Description */}
-              <motion.p
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="max-w-xl text-lg md:text-xl text-gray-300 font-light leading-relaxed border-l-2 border-white/10 pl-6 text-pretty"
-              >
+            {/* Description */}
+            {description && (
+              <p className="text-sm md:text-base text-[var(--primary)]/70 dark:text-white/70 lg:text-white/90 font-medium leading-relaxed">
                 {description}
-              </motion.p>
+              </p>
+            )}
 
-              {/* CTA */}
-              {cta && (
-                <motion.div
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.8 }}
-                  className="pt-6"
+            {/* CTA */}
+            {cta && (
+              <div className="pt-4">
+                <CMSLink
+                  {...cta}
+                  label=""
+                  className="inline-flex items-center justify-center px-8 py-3 bg-white text-black rounded-full font-bold text-[10px] uppercase tracking-[0.15em] hover:bg-[var(--secondary)] hover:text-white transition-all shadow-md active:scale-95"
                 >
-                  <CMSLink
-                    {...cta}
-                    label=""
-                    className="group relative inline-flex items-center justify-center px-12 py-6 overflow-hidden font-bold transition-all bg-white rounded-full hover:bg-transparent border-2 border-white"
-                  >
-                    <span className="absolute inset-0 w-0 h-full transition-all duration-[400ms] ease-out bg-[var(--secondary)] group-hover:w-full"></span>
-                    <span className="relative text-black transition-colors duration-300 group-hover:text-white uppercase tracking-widest text-xs">
-                      {cta.label || 'Explore'}
-                    </span>
-                  </CMSLink>
-                </motion.div>
-              )}
-            </div>
-          </div>
-
-          <div className="hidden lg:block lg:col-span-4 relative">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1, duration: 1.5 }}
-              className="w-full aspect-square border border-white/5 rounded-full flex items-center justify-center relative scale-110 xl:scale-125"
-            >
-              <div className="absolute inset-0 border-[0.5px] border-white/5 rounded-full animate-[spin_30s_linear_infinite]" />
-              <div className="absolute inset-8 border-[0.5px] border-[var(--secondary)]/10 rounded-full animate-[spin_20s_linear_infinite_reverse]" />
-
-              {[0, 72, 144, 216, 288].map((degree, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ opacity: [0.2, 1, 0.2] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.4 }}
-                  className="absolute w-1 h-1 bg-[var(--secondary)] rounded-full shadow-[0_0_10px_var(--secondary)]"
-                  style={{
-                    transform: `rotate(${degree}deg) translateY(-50%)`,
-                    top: '50%',
-                    left: '50%',
-                    transformOrigin: '0 0',
-                    marginTop: '-0.5px',
-                    marginLeft: '-0.5px',
-                  }}
-                />
-              ))}
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.5 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 1.5, type: 'spring', damping: 15 }}
-                className="z-10 bg-white/5 backdrop-blur-[20px] p-6 lg:p-8 rounded-full border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.3)] flex items-center justify-center relative min-w-[150px] min-h-[150px]"
-              >
-                {logo && typeof logo === 'object' && logo.url ? (
-                  <img
-                    src={logo.url}
-                    alt="Brand Logo"
-                    className="w-24 h-24 lg:w-32 lg:h-32 object-contain filter brightness-110 contrast-110 transition-all duration-700 hover:scale-105"
-                  />
-                ) : (
-                  <Logo
-                    brandName="Aszena Invest"
-                    className="!text-white !text-xl tracking-[0.3em] font-black uppercase"
-                  />
-                )}
-              </motion.div>
-
-              <div className="absolute w-3/4 h-3/4 bg-[var(--secondary)]/5 blur-[120px] rounded-full animate-pulse" />
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-[var(--secondary)]/5 to-transparent opacity-20" />
-            </motion.div>
-          </div>
+                  {cta.label || 'Explore'}
+                </CMSLink>
+              </div>
+            )}
+          </motion.div>
         </div>
       </div>
     </section>
@@ -177,84 +93,54 @@ const HeroStyle2: React.FC<HeroSectionType> = ({
   cta,
 }) => {
   return (
-    <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-[#050505] py-8">
+    <section className="relative w-full h-[60vh] lg:h-[80vh] flex items-center justify-center overflow-hidden bg-white">
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--secondary)]/10 blur-[120px] rounded-full animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-[var(--secondary)]/5 blur-[120px] rounded-full animate-pulse delay-1000" />
         {image && typeof image === 'object' && (
-          <Media
-            resource={image}
-            fill
-            imgClassName="object-cover opacity-20 mix-blend-luminosity scale-110"
-            priority
-          />
+          <Media resource={image} fill imgClassName="object-cover opacity-30" priority />
         )}
       </div>
 
       <div className="container relative z-10 px-6 text-center">
-        <div className="max-w-4xl mx-auto space-y-12">
+        <div className="max-w-3xl mx-auto space-y-6">
           {tagline && (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center px-4 py-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="inline-flex items-center px-3 py-1 rounded-full border border-black/5 bg-black/5 backdrop-blur-md"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--secondary)] mr-3 animate-ping" />
-              <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/80">
+              <span className="text-[10px] font-bold tracking-widest uppercase text-black/60">
                 {tagline}
               </span>
             </motion.div>
           )}
-
           <motion.h1
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="text-4xl md:text-8xl lg:text-9xl font-black text-white leading-none tracking-tight text-balance"
+            className="text-2xl md:text-4xl lg:text-5xl font-black text-[var(--primary)] leading-tight tracking-tight text-balance bg-white/30 p-4 rounded-xl backdrop-blur-sm"
           >
             {titlePart1}{' '}
-            {titlePart2 && (
-              <span className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/20">
-                {titlePart2}
-              </span>
-            )}
+            {titlePart2 && <span className="text-[var(--secondary)]">{titlePart2}</span>}
           </motion.h1>
-
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="max-w-2xl mx-auto text-xl md:text-2xl text-white/60 font-light leading-relaxed text-pretty"
+            className="max-w-xl mx-auto text-sm md:text-base text-[var(--primary)]/60 font-medium leading-relaxed text-pretty"
           >
             {description}
           </motion.p>
-
+          ...
           {cta && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex justify-center"
-            >
+            <div className="flex justify-center pt-4">
               <CMSLink
                 {...cta}
                 label=""
-                className="group relative px-16 py-6 overflow-hidden rounded-full transition-all duration-500"
+                className="px-10 py-3 bg-[var(--primary)] text-white rounded-full font-bold uppercase tracking-widest text-[10px] hover:bg-[var(--secondary)] transition-colors"
               >
-                <div className="absolute inset-0 bg-white" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--secondary)] to-[#d4af37] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <span className="relative z-10 text-black group-hover:text-white font-bold uppercase tracking-[0.2em] text-xs">
-                  {cta.label || 'Get started'}
-                </span>
+                {cta.label || 'Get started'}
               </CMSLink>
-            </motion.div>
+            </div>
           )}
         </div>
-      </div>
-
-      <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-10">
-        <div className="absolute left-1/4 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-white to-transparent" />
-        <div className="absolute right-1/4 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-white to-transparent" />
       </div>
     </section>
   )
@@ -269,39 +155,30 @@ const HeroStyle3: React.FC<HeroSectionType> = ({
   cta,
 }) => {
   return (
-    <section className="relative w-full min-h-screen flex items-stretch overflow-hidden bg-white">
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-24 bg-black relative z-20">
-        <div className="max-w-xl w-full space-y-10">
+    <section className="relative w-full h-[60vh] lg:h-[80vh] flex items-stretch overflow-hidden bg-white">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-white relative z-20">
+        <div className="max-w-lg w-full space-y-8">
           {tagline && (
-            <motion.p
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-[var(--secondary)] font-bold tracking-[0.4em] uppercase text-xs"
-            >
+            <p className="text-[var(--secondary)] font-bold tracking-[0.2em] uppercase text-[10px]">
               {tagline}
-            </motion.p>
+            </p>
           )}
 
           <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-4xl md:text-7xl lg:text-8xl font-black text-white leading-[0.85] tracking-tighter text-balance"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-2xl md:text-4xl lg:text-5xl font-black text-[var(--primary)] leading-tight tracking-tight text-balance"
           >
             {titlePart1}
-            <br />
             {titlePart2 && (
-              <span className="text-[var(--secondary)] italic font-serif mt-2 block">
-                {titlePart2}
-              </span>
+              <span className="text-[var(--secondary)] italic font-serif block">{titlePart2}</span>
             )}
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-lg text-white/50 leading-relaxed font-light"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-sm md:text-base text-[var(--primary)]/60 leading-relaxed font-medium"
           >
             {description}
           </motion.p>
@@ -389,8 +266,8 @@ export const HeroSectionBlock: React.FC<HeroSectionType & { settings?: Setting }
   const { setHeaderTheme } = useHeaderTheme()
 
   React.useEffect(() => {
-    setHeaderTheme('dark')
-  }, [setHeaderTheme])
+    // Header should handle its own theme now
+  }, [])
 
   switch (style) {
     case 'style2':

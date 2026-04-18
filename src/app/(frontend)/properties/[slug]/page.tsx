@@ -62,9 +62,11 @@ export default async function PropertyPage({ params: paramsPromise }: Args) {
   ]
 
   const priceLabel =
-    property.price != null
+    property.price != null && typeof property.price === 'number'
       ? `${property.currency ?? 'USD'} ${property.price.toLocaleString('en-US')}`
-      : null
+      : typeof property.price === 'string'
+        ? `${property.currency ?? 'USD'} ${property.price}`
+        : null
 
   return (
     <article className="pb-24 pt-28 md:pt-36">

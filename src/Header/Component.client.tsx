@@ -19,34 +19,11 @@ interface HeaderClientProps {
 }
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) => {
-  const { theme, setTheme } = useTheme()
-  const { headerTheme } = useHeaderTheme()
+  const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   
-  const { scrollY } = useScroll()
-  const [scrolled, setScrolled] = useState(false)
-  
-  useEffect(() => {
-    return scrollY.on('change', (v) => setScrolled(v > 50))
-  }, [scrollY])
-
-  const headerWidth = useTransform(scrollY, [0, 100], ['100%', '90%'])
-  const headerY = useTransform(scrollY, [0, 100], [0, 20])
-  const headerRadius = useTransform(scrollY, [0, 100], [4, 999])
-  
-  const headerBg = useTransform(
-    scrollY, 
-    [0, 100], 
-    ['rgba(255, 255, 255, 0)', 'rgba(255, 255, 255, 0.95)']
-  )
-  const headerBgDark = useTransform(
-    scrollY, 
-    [0, 100], 
-    ['rgba(10, 10, 10, 0)', 'rgba(10, 10, 10, 0.95)']
-  )
-
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -55,122 +32,108 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
     setMobileMenuOpen(false)
   }, [pathname])
 
-
-
-  // Determine effective theme for text color
-  const effectiveTheme = scrolled ? theme : (headerTheme || theme)
-  const isDark = effectiveTheme === 'dark'
-
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pointer-events-none">
-        <motion.header 
-          style={{
-            width: headerWidth,
-            borderRadius: headerRadius,
-            backgroundColor: headerBg
-          }}
-          className={cn(
-            "pointer-events-auto backdrop-blur-xl transition-all duration-500",
-            "flex items-center justify-between px-6 lg:px-10 h-14 lg:h-16 max-w-7xl",
-            "shadow-[0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[0_0_1px_rgba(255,255,255,0.1)]",
-            scrolled ? "border border-gray-200/50 dark:border-white/10" : "border border-transparent",
-            isDark ? "text-white" : "text-black"
-          )}
-        >
-          {/* Logo */}
-          <div className="flex-none pr-4">
-            <Link href="/" className="inline-block hover:scale-105 transition-transform">
-              <Logo
-                brandName={settings?.brandName}
-                logo={settings?.logo}
-                loading="eager"
-                priority="high"
-                width={120}
-                className={cn(
-                  isDark ? "!text-white" : "!text-black",
-                  "!h-10 lg:!h-10"
-                )}
-              />
-            </Link>
+      <header className={cn(
+        "fixed top-0 left-0 right-0 z-50",
+        "bg-white dark:bg-black border-b border-black/5 dark:border-white/5",
+        "h-[64px] lg:h-[80px] flex items-center justify-between px-6 lg:px-12",
+        "w-full transition-colors duration-300"
+      )}>
+        {/* Logo */}
+        <div className="flex-none pr-6">
+          <Link href="/" className="inline-block transition-transform active:scale-95">
+            <Logo
+              brandName={settings?.brandName}
+              logo={settings?.logo}
+              loading="eager"
+              priority="high"
+              width={180}
+              className={cn(
+                theme === 'dark' ? "!text-white" : "!text-black",
+                "!h-8 lg:!h-10"
+              )}
+            />
+          </Link>
+        </div>
+
+        {/* Desktop Nav */}
+        <div className="hidden lg:flex flex-1 justify-center px-4">
+          <HeaderNav data={data} />
+        </div>
+
+        {/* Actions */}
+        <div className="flex-none flex items-center gap-3 lg:gap-6 ml-auto">
+          <div className="hidden md:flex items-center">
+             <LocaleSelector isDark={theme === 'dark'} />
           </div>
 
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex flex-1 justify-center px-4">
-            <HeaderNav data={data} forceTheme={effectiveTheme} />
-          </div>
-
-          {/* Actions */}
-          <div className="flex-none flex items-center gap-3 lg:gap-4 ml-auto">
-            <div className="hidden md:flex items-center gap-2 lg:gap-4">
-               <LocaleSelector isDark={isDark} />
-               <div className="h-4 w-px bg-current opacity-10" />
-               <motion.button 
-                 whileHover={{ y: -2 }}
-                 className={cn("p-2 rounded-full transition-colors", isDark ? "hover:bg-white/10" : "hover:bg-black/5")}
-               >
-                 <Globe size={18} />
-               </motion.button>
-
+          {/* Mobile Burger */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 relative z-50"
+          >
+            <div className="w-6 h-4 relative flex flex-col justify-between items-end">
+              <span className={cn("h-0.5 w-full rounded-full transition-all", theme === 'dark' ? "bg-white" : "bg-black", mobileMenuOpen && "rotate-45 translate-y-[7px]")} />
+              <span className={cn("h-0.5 w-3/4 rounded-full transition-all", theme === 'dark' ? "bg-white" : "bg-black", mobileMenuOpen && "opacity-0")} />
+              <span className={cn("h-0.5 w-full rounded-full transition-all", theme === 'dark' ? "bg-white" : "bg-black", mobileMenuOpen && "-rotate-45 -translate-y-[7px]")} />
             </div>
+          </button>
+        </div>
+      </header>
 
-            {/* Mobile Burger */}
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 relative z-50 overflow-hidden"
-            >
-              <div className="w-6 h-4 relative flex flex-col justify-between items-end">
-                <motion.span 
-                  animate={mobileMenuOpen ? { rotate: 45, y: 7, width: '100%', backgroundColor: theme === 'dark' ? '#fff' : '#000' } : { rotate: 0, y: 0, width: '100%', backgroundColor: isDark ? '#fff' : '#000' }}
-                  className="h-0.5 rounded-full"
-                />
-                <motion.span 
-                  animate={mobileMenuOpen ? { opacity: 0 } : { opacity: 1, width: '70%', backgroundColor: isDark ? '#fff' : '#000' }}
-                  className="h-0.5 rounded-full"
-                />
-                <motion.span 
-                  animate={mobileMenuOpen ? { rotate: -45, y: -7, width: '100%', backgroundColor: theme === 'dark' ? '#fff' : '#000' } : { rotate: 0, y: 0, width: '100%', backgroundColor: isDark ? '#fff' : '#000' }}
-                  className="h-0.5 rounded-full"
-                />
-              </div>
-            </button>
-          </div>
-        </motion.header>
-      </div>
-
-      {/* Fullscreen Mobile Menu - Abstract & Minimalist */}
+      {/* Fullscreen Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[45] bg-white/95 dark:bg-black/95 backdrop-blur-3xl lg:hidden flex flex-col items-center pt-24 pb-12 overflow-y-auto"
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-[45] bg-white/95 dark:bg-black/95 backdrop-blur-2xl lg:hidden flex flex-col overflow-y-auto"
           >
-             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--secondary)]/10 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 blur-[120px] rounded-full" />
+             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-30">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[var(--secondary)]/20 blur-[120px] rounded-full animate-pulse" />
+                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/10 blur-[120px] rounded-full" />
              </div>
 
-             <div className="relative z-10 w-full px-10">
-                <nav className="flex flex-col gap-6 py-8">
-                  {data?.navItems?.map(({ link }, i) => {
+             <div className="relative z-10 w-full px-8 pt-32 pb-12">
+                <nav className="flex flex-col gap-4">
+                  {data?.navItems?.filter(item => {
+                    const label = item.link?.label?.toLowerCase()
+                    return label !== 'home' && label !== 'ana sayfa'
+                  }).map(({ link, subItems }, i) => {
                     const label = link?.label
                     const href = getHrefFromCMSLink(link)
+                    const hasSubItems = subItems && subItems.length > 0
 
                     return (
                       <motion.div
                         key={i}
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1, type: 'spring' }}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="flex flex-col gap-1"
                       >
                         <Link
                           href={href || '#'}
-                          className="text-2xl md:text-4xl font-black text-[var(--primary)] hover:text-[var(--secondary)] transition-colors tracking-tighter block text-center py-2"
+                          className="text-lg font-bold text-[var(--primary)] dark:text-white border-b border-black/5 dark:border-white/5 pb-1 block hover:text-[var(--secondary)] transition-colors"
                         >
                           {label}
                         </Link>
+                        {hasSubItems && (
+                          <div className="flex flex-col gap-1 pl-4 py-1">
+                             {subItems.map((sub: any, subIdx: number) => (
+                               <Link
+                                 key={subIdx}
+                                 href={getHrefFromCMSLink(sub?.link) || '#'}
+                                 className="text-xs font-medium text-[var(--primary)]/60 dark:text-white/60 hover:text-[var(--secondary)] transition-colors"
+                                >
+                                 {sub?.link?.label}
+                               </Link>
+                             ))}
+                          </div>
+                        )}
                       </motion.div>
                     )
                   })}
@@ -180,11 +143,10 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
              <motion.div 
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
-               transition={{ delay: 0.5 }}
-               className="mt-auto flex flex-col items-center gap-8 pb-8"
+               transition={{ delay: 0.3 }}
+               className="mt-auto p-8 flex flex-col gap-6"
              >
                 <LocaleSelector />
-
              </motion.div>
           </motion.div>
         )}

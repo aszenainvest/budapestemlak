@@ -16,43 +16,34 @@ export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceThem
   const pathname = usePathname()
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   
-  // Strategy: If more than 4 items, group the rest into a "More" dropdown
-  const limit = 4
-  const displayItems = rawNavItems.slice(0, limit)
-  const moreItems = rawNavItems.slice(limit)
-
-  const navItems = [...displayItems]
-  if (moreItems.length > 0) {
-    navItems.push({
-      link: {
-        label: '_more_', // Marker for icon rendering
-        type: 'custom',
-        url: '#',
-      },
-      // Transform the remaining top-level items into subItems for the "More" dropdown
-      subItems: moreItems.map(item => ({
-        link: item.link,
-      }))
-    } as any)
-  }
+  const navItems = rawNavItems.filter(item => {
+    const label = item.link?.label?.toLowerCase()
+    return label !== 'home' && label !== 'ana sayfa'
+  })
 
   // Determine effective theme
   const isDark = forceTheme === 'dark'
 
   if (mobile) return null // Handled in HeaderClient for mobile
 
+  const displayedItems = navItems.length > 6 ? navItems.slice(0, 6) : navItems
+  const overflowItems = navItems.length > 6 ? navItems.slice(6) : []
+
   return (
     <nav 
-      className="flex items-center gap-4 lg:gap-6 xl:gap-8"
+      className="flex items-center gap-3 lg:gap-4 xl:gap-5"
       onMouseLeave={() => setHoveredIndex(null)}
     >
-      {navItems.map(({ link, subItems }, i) => {
+      {[...displayedItems, ...(overflowItems.length > 0 ? [{ 
+        link: { label: 'More' }, 
+        subItems: overflowItems 
+      }] : [])].map((item, i) => {
+        const { link, subItems } = item as any
         const { label } = link || {}
         const href = getHrefFromCMSLink(link)
             
         const hasSubItems = subItems && subItems.length > 0
         const isActive = pathname === href || (href !== '' && href !== '/' && pathname.startsWith(href))
-        const isMoreMenu = label === '_more_'
         
         return (
           <div 
@@ -60,19 +51,17 @@ export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceThem
             className="relative px-2 py-1 cursor-pointer group"
             onMouseEnter={() => setHoveredIndex(i)}
           >
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <Link 
                 href={(href as string) || '#'}
                 className={cn(
                   "relative z-10 text-sm font-bold tracking-tight transition-all duration-300",
-                  isActive ? (isDark ? "text-white" : "text-[var(--primary)]") : (isDark ? "text-white/60 group-hover:text-white" : "text-[var(--primary)] opacity-40 group-hover:opacity-100")
+                  isActive 
+                    ? (isDark ? "text-white" : "text-[var(--primary)]") 
+                    : (isDark ? "text-white/85 group-hover:text-white" : "text-[var(--primary)]/85 group-hover:text-[var(--primary)]")
                 )}
               >
-                {isMoreMenu ? (
-                  <div className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
-                    <MoreHorizontal size={20} />
-                  </div>
-                ) : label}
+                {label}
               </Link>
               {hasSubItems && (
                 <svg 
@@ -94,11 +83,12 @@ export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceThem
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
                     className={cn(
-                      "absolute top-full left-0 mt-2 min-w-[240px] rounded-2xl border p-2 shadow-2xl z-50",
+                      "absolute top-full mt-2 min-w-[240px] rounded-2xl border p-2 shadow-2xl z-50",
+                      label === 'More' ? "right-0 origin-top-right" : "left-0 origin-top-left",
                       isDark ? "bg-black border-white/10 shadow-white/5" : "bg-white border-gray-100 shadow-gray-200/50"
                     )}
                   >
-                    {subItems.map((sub, subIdx) => {
+                    {subItems.map((sub: any, subIdx: number) => {
                       const sLabel = sub.link?.label
                       const sHref = getHrefFromCMSLink(sub.link)
 

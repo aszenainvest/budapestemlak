@@ -54,9 +54,28 @@ export async function Footer() {
                 brandName={settingsData?.brandName}
               />
             </Link>
-            <p className="text-gray-500 text-sm leading-relaxed font-light max-w-sm">
+            <p className="text-gray-500 text-sm leading-relaxed font-light max-w-sm mb-8">
               {footerData?.description}
             </p>
+
+            {/* Social Links for prominence */}
+            <div className="flex items-center gap-5 text-gray-400">
+              {footerData?.socialLinks?.map((social, i) => {
+                const Icon = iconMap[social.platform as keyof typeof iconMap] || ExternalLink
+                return (
+                  <a
+                    key={i}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-[var(--secondary)] transition-all hover:scale-110 active:scale-95"
+                    title={social.label || social.platform}
+                  >
+                    <Icon size={22} />
+                  </a>
+                )
+              })}
+            </div>
           </div>
 
           {/* Nav & Contact Columns */}
@@ -120,24 +139,6 @@ export async function Footer() {
           <p className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
             {footerData?.copyright}
           </p>
-
-          <div className="flex items-center gap-6 text-gray-400">
-            {footerData?.socialLinks?.map((social, i) => {
-              const Icon = iconMap[social.platform as keyof typeof iconMap] || ExternalLink
-              return (
-                <a
-                  key={i}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-[var(--secondary)] transition-colors"
-                  title={social.label || social.platform}
-                >
-                  <Icon size={20} />
-                </a>
-              )
-            })}
-          </div>
         </div>
       </div>
     </footer>

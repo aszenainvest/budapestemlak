@@ -97,24 +97,26 @@ export const Card: React.FC<{
         )}
 
         <Link className="block mb-4 no-underline group-hover:text-[var(--secondary)] transition-colors" href={href} ref={link.ref}>
-          <h3 className="text-xl md:text-2xl font-black text-[var(--primary)] leading-tight line-clamp-2 uppercase">
-            {titleToUse}
-          </h3>
+            <h4 className="text-lg font-bold text-gray-900 group-hover:text-[var(--primary)] transition-colors line-clamp-2 leading-tight">
+              {titleToUse}
+            </h4>
+            
+            {description && (
+              <p className="mt-1 text-xs text-gray-500 line-clamp-2 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity">
+                {sanitizedDescription}
+              </p>
+            )}
+            
+            {/* Action Bar */}
+            <div className="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between">
+              <span className="text-xs font-bold text-[var(--secondary)] uppercase tracking-widest">
+                Discover
+              </span>
+              <div className="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[var(--primary)] group-hover:text-white transition-all">
+                <ArrowRight size={12} />
+              </div>
+            </div>
         </Link>
-        
-        {description && (
-          <p className="text-gray-500 text-sm leading-relaxed mb-8 line-clamp-3 font-medium">
-            {sanitizedDescription}
-          </p>
-        )}
-
-        {/* Action Bar */}
-        <div className="mt-auto pt-6 border-t border-gray-50 flex items-center justify-between text-[10px] font-black uppercase tracking-[0.2em] text-[var(--primary)]/40">
-           <span className="group-hover:text-[var(--primary)] transition-colors">Read more</span>
-           <div className="p-2 rounded-full bg-gray-50 text-[var(--primary)] group-hover:bg-[var(--secondary)] group-hover:text-white transition-all duration-300 transform group-hover:translate-x-1">
-             <ArrowRight size={14} />
-           </div>
-        </div>
       </div>
     </article>
   )

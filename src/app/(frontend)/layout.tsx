@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <Providers>
           <Header />
-          {children}
+          <main className="flex-1 overflow-hidden pt-16 lg:pt-20">{children}</main>
           <Footer />
         </Providers>
         <SiteIntegrations

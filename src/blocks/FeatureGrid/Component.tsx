@@ -103,7 +103,7 @@ export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, f
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-4xl font-black tracking-tighter text-[var(--primary)] md:text-6xl"
+              className="text-2xl font-black tracking-tighter text-[var(--primary)] md:text-4xl"
             >
               {title}
             </motion.h2>
@@ -137,7 +137,7 @@ export const FeatureGridBlock: React.FC<FeatureGridProps> = ({ title, tagline, f
                 className={cn(
                   gridClasses,
                   'group relative flex flex-col overflow-hidden rounded-2xl transition-all duration-500',
-                  'shadow-none hover:shadow-2xl hover:shadow-[var(--secondary)]/10',
+                  'shadow-lg shadow-gray-200/50 hover:shadow-2xl hover:shadow-[var(--secondary)]/10',
                   isImageCovered && 'min-h-[12rem] justify-end p-6 text-white md:p-8',
                   feature.type === 'solid-color' &&
                     'justify-start bg-[var(--primary)] p-6 text-white md:p-8',

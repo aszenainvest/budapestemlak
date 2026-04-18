@@ -15,7 +15,7 @@ export async function Header() {
   // overrideAccess + draft so relationship targets populate (slug) for drafts and restricted read access.
   const [headerData, settingsData] = await Promise.all([
     getCachedGlobal('header', 3, { overrideAccess: true, draft })(locale),
-    getCachedGlobal('settings', 3)(locale),
+    getCachedGlobal('settings', 3, { overrideAccess: true, draft })(locale),
   ])
 
   return <HeaderClient data={headerData} settings={settingsData} />

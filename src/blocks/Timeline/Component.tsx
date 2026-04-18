@@ -6,7 +6,7 @@ export const TimelineBlock: React.FC<TimelineBlockType> = ({ title, items }) => 
   return (
     <div className="container py-24 mx-auto px-4 md:px-0 bg-[var(--background)]">
       {title && (
-        <h2 className="text-4xl md:text-5xl font-bold mb-20 text-center tracking-tight text-[var(--primary)]">
+        <h2 className="text-2xl md:text-4xl font-black mb-20 text-center tracking-tight text-[var(--primary)] uppercase">
           {title}
         </h2>
       )}
@@ -32,7 +32,7 @@ export const TimelineBlock: React.FC<TimelineBlockType> = ({ title, items }) => 
               {/* Content Panel */}
               <div className="w-full md:w-[45%] pl-14 md:pl-0">
                 <div 
-                  className={`p-6 md:p-8 rounded-3xl border border-gray-100/50 shadow-sm hover:shadow-xl transition-all duration-500 bg-white group cursor-default`}
+                  className={`p-6 md:p-8 rounded-3xl border border-gray-100/50 shadow-xl hover:shadow-2xl transition-all duration-500 bg-white group cursor-default`}
                 >
                   <span className="inline-block px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-[var(--secondary)]/10 text-[var(--secondary)] mb-4 md:mb-6">
                     {item.year}
@@ -51,7 +51,7 @@ export const TimelineBlock: React.FC<TimelineBlockType> = ({ title, items }) => 
                       <Media 
                         resource={item.image} 
                         fill 
-                        className="object-cover transform group-hover:scale-105 transition-transform duration-700" 
+                        imgClassName="object-cover transform group-hover:scale-105 transition-transform duration-700" 
                       />
                     </div>
                   )}

@@ -216,6 +216,7 @@
 
 html {
   opacity: 0;
+  font-size: 15px; /* Restoring to a more readable size, slightly smaller than default 16px */
 }
 
 html[data-theme='dark'],
