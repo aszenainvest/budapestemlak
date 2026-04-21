@@ -27,7 +27,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
       <head>
         <InitTheme />
-        <link href={typeof settings.favicon === 'object' && settings.favicon?.url ? settings.favicon.url : '/favicon.ico'} rel="icon" sizes="32x32" />
+        <link
+          href={
+            typeof settings.favicon === 'object' && settings.favicon?.url
+              ? settings.favicon.url
+              : '/favicon.ico'
+          }
+          rel="icon"
+          sizes="32x32"
+        />
         <style dangerouslySetInnerHTML={{ __html: generateCSSVariables(settings) }} />
       </head>
       <body>
