@@ -62,8 +62,10 @@ export const Media: CollectionConfig = {
         const pathParamRaw = req.routeParams?.path
         if (!pathParamRaw) return new Response('Not Found', { status: 404 })
 
-        // pathParam dizi olabilir ( [ 'folder', 'file.jpg' ] ), string'e çevir
-        const pathParam = (Array.isArray(pathParamRaw) ? pathParamRaw.join('/') : pathParamRaw) as string
+        // pathParam dizi olabilir ( [ 'folder', 'file.jpg' ] ), string'e çevir ve URL decode et
+        const pathParam = decodeURIComponent(
+          (Array.isArray(pathParamRaw) ? pathParamRaw.join('/') : pathParamRaw) as string,
+        ) as string
 
         // S3'ten getirmeyi dene
         const bucket = process.env.S3_BUCKET
@@ -101,8 +103,11 @@ export const Media: CollectionConfig = {
                 },
               })
             }
-          } catch (err) {
-            console.error('S3 Proxy Error:', err)
+          } catch (err: any) {
+            // Sadece 404 olmayan hataları logla
+            if (err.name !== 'NoSuchKey') {
+              console.error(`S3 Proxy Error for [${pathParam}]:`, err)
+            }
           }
         }
 
@@ -121,14 +126,14 @@ export const Media: CollectionConfig = {
               '.gif': 'image/gif',
             }
 
-            return new Response(fileBuffer, {
+            return new Response(fileBuffer as any, {
               headers: {
                 'Content-Type': contentTypeMap[ext] || 'application/octet-stream',
                 'Cache-Control': 'public, max-age=31536000, immutable',
               },
             })
           } catch (err) {
-            console.error('Local Proxy Error:', err)
+            console.error(`Local Proxy Error for [${pathParam}]:`, err)
           }
         }
 
