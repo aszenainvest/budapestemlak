@@ -56,6 +56,27 @@ export const Media: CollectionConfig = {
   },
   endpoints: [
     {
+      path: '/debug-s3',
+      method: 'get',
+      handler: async () => {
+        return new Response(
+          JSON.stringify({
+            S3_BUCKET: process.env.S3_BUCKET || 'MISSING',
+            S3_REGION: process.env.S3_REGION || 'auto',
+            S3_ENDPOINT: process.env.S3_ENDPOINT || 'MISSING',
+            HAS_ACCESS_KEY: !!process.env.S3_ACCESS_KEY_ID,
+            HAS_SECRET_KEY: !!process.env.S3_SECRET_ACCESS_KEY,
+            S3_ENABLED: Boolean(
+              process.env.S3_BUCKET &&
+                process.env.S3_ACCESS_KEY_ID &&
+                process.env.S3_SECRET_ACCESS_KEY,
+            ),
+          }),
+          { headers: { 'Content-Type': 'application/json' } },
+        )
+      },
+    },
+    {
       path: '/file/:path+',
       method: 'get',
       handler: async (req) => {
