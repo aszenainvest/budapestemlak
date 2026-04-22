@@ -7,6 +7,8 @@ import {
 } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import fs from 'fs'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
@@ -52,6 +54,88 @@ export const Media: CollectionConfig = {
     read: anyone,
     update: authenticated,
   },
+  endpoints: [
+    {
+      path: '/file/:path+',
+      method: 'get',
+      handler: async (req) => {
+        const pathParamRaw = req.routeParams?.path
+        if (!pathParamRaw) return new Response('Not Found', { status: 404 })
+
+        // pathParam dizi olabilir ( [ 'folder', 'file.jpg' ] ), string'e çevir
+        const pathParam = (Array.isArray(pathParamRaw) ? pathParamRaw.join('/') : pathParamRaw) as string
+
+        // S3'ten getirmeyi dene
+        const bucket = process.env.S3_BUCKET
+        const s3Enabled = Boolean(
+          bucket && process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY,
+        )
+
+        if (s3Enabled) {
+          try {
+            const client = new S3Client({
+              region: process.env.S3_REGION || 'auto',
+              endpoint: process.env.S3_ENDPOINT,
+              forcePathStyle: true,
+              credentials: {
+                accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+                secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
+              },
+            })
+
+            const command = new GetObjectCommand({
+              Bucket: bucket!,
+              Key: pathParam,
+            })
+            const response = await client.send(command)
+
+            if (response.Body) {
+              // @ts-ignore
+              const data = await response.Body.transformToByteArray()
+
+              return new Response(data as any, {
+                headers: {
+                  'Content-Type': response.ContentType || 'application/octet-stream',
+                  'Content-Length': response.ContentLength?.toString() || '',
+                  'Cache-Control': 'public, max-age=31536000, immutable',
+                },
+              })
+            }
+          } catch (err) {
+            console.error('S3 Proxy Error:', err)
+          }
+        }
+
+        // Yerel diskten (public/media) getirmeyi dene
+        const localPath = path.resolve(dirname, '../../public/media', pathParam)
+        if (fs.existsSync(localPath)) {
+          try {
+            const fileBuffer = fs.readFileSync(localPath)
+            const ext = path.extname(localPath).toLowerCase()
+            const contentTypeMap: Record<string, string> = {
+              '.webp': 'image/webp',
+              '.png': 'image/png',
+              '.jpg': 'image/jpeg',
+              '.jpeg': 'image/jpeg',
+              '.svg': 'image/svg+xml',
+              '.gif': 'image/gif',
+            }
+
+            return new Response(fileBuffer, {
+              headers: {
+                'Content-Type': contentTypeMap[ext] || 'application/octet-stream',
+                'Cache-Control': 'public, max-age=31536000, immutable',
+              },
+            })
+          } catch (err) {
+            console.error('Local Proxy Error:', err)
+          }
+        }
+
+        return new Response('Not Found', { status: 404 })
+      },
+    },
+  ],
   fields: [
     {
       name: 'alt',
