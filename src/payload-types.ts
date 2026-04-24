@@ -1185,6 +1185,38 @@ export interface TimelineBlock {
         year: string;
         title: string;
         description?: string | null;
+        icon?:
+          | (
+              | 'building'
+              | 'users'
+              | 'shield'
+              | 'award'
+              | 'check'
+              | 'star'
+              | 'heart'
+              | 'zap'
+              | 'target'
+              | 'briefcase'
+              | 'globe'
+              | 'map-pin'
+              | 'lightbulb'
+              | 'trending-up'
+              | 'phone'
+              | 'mail'
+              | 'clock'
+              | 'leaf'
+              | 'settings'
+              | 'monitor'
+              | 'hammer'
+              | 'hard-hat'
+              | 'wrench'
+              | 'truck'
+              | 'bar-chart'
+              | 'compass'
+              | 'tool'
+              | 'trophy'
+            )
+          | null;
         image?: (number | null) | Media;
         id?: string | null;
       }[]
@@ -1873,6 +1905,7 @@ export interface TimelineBlockSelect<T extends boolean = true> {
         year?: T;
         title?: T;
         description?: T;
+        icon?: T;
         image?: T;
         id?: T;
       };
