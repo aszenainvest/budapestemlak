@@ -62,10 +62,14 @@ export default async function Page({ params: paramsPromise }: Args) {
   )
 }
 
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { Setting } from '@/payload-types'
+
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { pageNumber } = await paramsPromise
+  const settings: Setting = await getCachedGlobal('settings', 1)()
   return {
-    title: `Payload Website Template Posts Page ${pageNumber || ''}`,
+    title: `Posts Page ${pageNumber || ''} | ${settings?.brandName || 'Payload Website Template Search'}`,
   }
 }
 

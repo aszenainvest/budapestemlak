@@ -81,8 +81,12 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   )
 }
 
-export function generateMetadata(): Metadata {
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { Setting } from '@/payload-types'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings: Setting = await getCachedGlobal('settings', 1)()
   return {
-    title: `Payload Website Template Search`,
+    title: `Search | ${settings?.brandName || 'Payload Website Template Search'}`,
   }
 }

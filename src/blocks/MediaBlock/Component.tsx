@@ -43,16 +43,20 @@ export const MediaBlock: React.FC<Props> = (props) => {
       )}
     >
       {(media || staticImage) && (
-        <Media
-          imgClassName={cn('border border-border rounded-[0.8rem]', imgClassName)}
-          resource={media}
-          src={staticImage}
-        />
+        <div className="flex justify-center">
+          <div className="w-full max-w-[15rem]">
+            <Media
+              imgClassName={cn('border border-border rounded-[0.8rem] w-full h-auto', imgClassName)}
+              resource={media}
+              src={staticImage}
+            />
+          </div>
+        </div>
       )}
       {caption && (
         <div
           className={cn(
-            'mt-6',
+            'mt-6 mx-auto max-w-[30rem] text-center',
             {
               container: !disableInnerContainer,
             },

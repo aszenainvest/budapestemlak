@@ -15,8 +15,14 @@ import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { toApiMediaFileUrl, toPublicMinioObjectUrl } from '@/utilities/mediaFileUrl'
 
-const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
+const generateTitle: GenerateTitle<Post | Page> = async ({ doc, req }) => {
+  const settings = await req.payload.findGlobal({
+    slug: 'settings',
+    depth: 0,
+  })
+  const brandName = settings?.brandName || 'Payload Website Template'
+
+  return doc?.title ? `${doc.title} | ${brandName}` : brandName
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
@@ -53,9 +59,7 @@ const storagePlugins: Plugin[] = s3Enabled
             accessKeyId: process.env.S3_ACCESS_KEY_ID!,
             secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
           },
-          region:
-            process.env.S3_REGION ||
-            (process.env.S3_ENDPOINT ? 'auto' : 'us-east-1'),
+          region: process.env.S3_REGION || (process.env.S3_ENDPOINT ? 'auto' : 'us-east-1'),
           ...(process.env.S3_ENDPOINT
             ? { endpoint: process.env.S3_ENDPOINT, forcePathStyle: true }
             : {}),

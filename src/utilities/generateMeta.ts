@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 
-import type { Media, Page, Post, Property, Config } from '../payload-types'
+import type { Media, Page, Post, Property, Config, Setting } from '../payload-types'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
+
+import { getCachedGlobal } from './getGlobals'
 
 const joinSite = (serverUrl: string, pathOrAbsolute: string | null | undefined) => {
   if (!pathOrAbsolute) return serverUrl + '/website-template-OG.webp'
@@ -36,28 +38,33 @@ export const generateMeta = async (args: {
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Payload Website Template'
-    : 'Payload Website Template'
+  const settings: Setting = await getCachedGlobal('settings', 1)()
+  const brandName = settings?.brandName || 'Payload Website Template'
+
+  const title = doc?.meta?.title || brandName
 
   const slug = doc?.slug
   const ogUrl =
-    pathOverride ?? (Array.isArray(slug) ? slug.join('/') : typeof slug === 'string' ? `/${slug}` : '/')
-
+    pathOverride ??
+    (Array.isArray(slug) ? slug.join('/') : typeof slug === 'string' ? `/${slug}` : '/')
   return {
     description: doc?.meta?.description,
-    openGraph: mergeOpenGraph({
-      description: doc?.meta?.description || '',
-      images: ogImage
-        ? [
-            {
-              url: ogImage,
-            },
-          ]
-        : undefined,
-      title,
-      url: ogUrl,
-    }),
+    openGraph: mergeOpenGraph(
+      {
+        description: doc?.meta?.description || '',
+        images: ogImage
+          ? [
+              {
+                url: ogImage,
+              },
+            ]
+          : undefined,
+        title,
+        url: ogUrl,
+        siteName: brandName,
+      },
+      settings,
+    ),
     title,
   }
 }

@@ -55,11 +55,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   )
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL(getServerSideURL()),
-  openGraph: mergeOpenGraph(),
-  twitter: {
-    card: 'summary_large_image',
-    creator: '@payloadcms',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const settings: Setting = await getCachedGlobal('settings', 1)()
+
+  return {
+    metadataBase: new URL(getServerSideURL()),
+    openGraph: mergeOpenGraph({}, settings),
+    twitter: {
+      card: 'summary_large_image',
+    },
+  }
 }
