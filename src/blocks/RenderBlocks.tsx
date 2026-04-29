@@ -22,6 +22,7 @@ import { FeatureGridBlock } from '@/blocks/FeatureGrid/Component'
 import { ArtisticShowcaseBlock } from '@/blocks/ArtisticShowcase/Component'
 import { TimelineBlock } from '@/blocks/Timeline/Component'
 import { MapComponent } from '@/blocks/Map/Component'
+import { VideoBlock } from '@/blocks/Video/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -43,6 +44,7 @@ const blockComponents = {
   artisticShowcase: ArtisticShowcaseBlock,
   timeline: TimelineBlock,
   map: MapComponent,
+  video: VideoBlock,
 }
 
 export const RenderBlocks: React.FC<{

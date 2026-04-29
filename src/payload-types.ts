@@ -229,6 +229,7 @@ export interface Page {
     | ArtisticShowcaseBlock
     | TimelineBlock
     | MapBlock
+    | VideoBlock
   )[];
   meta?: {
     title?: string | null;
@@ -1244,6 +1245,27 @@ export interface MapBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VideoBlock".
+ */
+export interface VideoBlock {
+  title?: string | null;
+  subtitle?: string | null;
+  videoSource: 'url' | 'upload';
+  videoUrl?: string | null;
+  videoUpload?: (number | null) | Media;
+  thumbnail?: (number | null) | Media;
+  settings?: {
+    autoPlay?: boolean | null;
+    loop?: boolean | null;
+    muted?: boolean | null;
+    controls?: boolean | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'video';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1572,6 +1594,7 @@ export interface PagesSelect<T extends boolean = true> {
         artisticShowcase?: T | ArtisticShowcaseBlockSelect<T>;
         timeline?: T | TimelineBlockSelect<T>;
         map?: T | MapBlockSelect<T>;
+        video?: T | VideoBlockSelect<T>;
       };
   meta?:
     | T
@@ -1922,6 +1945,28 @@ export interface MapBlockSelect<T extends boolean = true> {
   useFullWidth?: T;
   addressTitle?: T;
   addressDetail?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VideoBlock_select".
+ */
+export interface VideoBlockSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  videoSource?: T;
+  videoUrl?: T;
+  videoUpload?: T;
+  thumbnail?: T;
+  settings?:
+    | T
+    | {
+        autoPlay?: T;
+        loop?: T;
+        muted?: T;
+        controls?: T;
+      };
   id?: T;
   blockName?: T;
 }

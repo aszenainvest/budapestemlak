@@ -21,6 +21,7 @@ import { FeatureGrid } from '../../blocks/FeatureGrid/config'
 import { ArtisticShowcase } from '../../blocks/ArtisticShowcase/config'
 import { Timeline } from '../../blocks/Timeline/config'
 import { MapBlock } from '../../blocks/Map/config'
+import { Video } from '../../blocks/Video/config'
 
 import { hero } from '@/heros/config'
 
@@ -90,7 +91,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [HeroSection, ProjectCards, CallToAction, Content, MediaBlock, Archive, FormBlock, Banner, Code, Pricing, Gallery, Testimonials, FAQ, Stats, FeatureGrid, Steps, ArtisticShowcase, Timeline, MapBlock],
+              blocks: [HeroSection, ProjectCards, CallToAction, Content, MediaBlock, Archive, FormBlock, Banner, Code, Pricing, Gallery, Testimonials, FAQ, Stats, FeatureGrid, Steps, ArtisticShowcase, Timeline, MapBlock, Video],
 
               required: true,
               localized: true,

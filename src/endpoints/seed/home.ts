@@ -570,6 +570,19 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
         relationTo: 'posts',
       },
       {
+        blockType: 'video',
+        title: 'Watch our story',
+        subtitle: 'Learn more about how we are changing the investment landscape with our innovative approach.',
+        videoSource: 'url',
+        videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        settings: {
+          autoPlay: false,
+          controls: true,
+          loop: false,
+          muted: false,
+        },
+      },
+      {
         blockName: 'CTA',
         blockType: 'cta',
         links: [
