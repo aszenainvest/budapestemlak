@@ -3,9 +3,6 @@ import type { Block } from 'payload'
 export const Video: Block = {
   slug: 'video',
   interfaceName: 'VideoBlock',
-  admin: {
-    useAsTitle: 'title',
-  },
   fields: [
     {
       name: 'title',
