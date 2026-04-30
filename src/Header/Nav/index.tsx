@@ -8,7 +8,7 @@ import Link from 'next/link'
 
 import type { Theme } from '@/providers/Theme/types'
 
-import { MoreHorizontal } from 'lucide-react'
+
 import { getHrefFromCMSLink } from '@/utilities/getHrefFromCMSLink'
 
 export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceTheme?: Theme | null }> = ({ data, mobile, forceTheme }) => {
@@ -62,7 +62,7 @@ export const HeaderNav: React.FC<{ data: HeaderType; mobile?: boolean; forceThem
                     : (isDark ? "text-white/85 group-hover:text-white" : "text-[var(--primary)]/85 group-hover:text-[var(--primary)]")
                 )}
               >
-                {label === 'More' ? <MoreHorizontal className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity" /> : label}
+                {label === 'More' ? <span className="text-sm font-bold opacity-70 group-hover:opacity-100 transition-opacity">more</span> : label}
               </Link>
               {hasSubItems && (
                 <svg 

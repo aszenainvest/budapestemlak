@@ -101,7 +101,7 @@ export const VideoBlock: React.FC<Props> = (props) => {
   }
 
   return (
-    <div className={cn('container my-16 px-4 md:px-0', className)}>
+    <div className={cn('container max-w-5xl my-16 px-4 md:px-0 mx-auto', className)}>
       {(title || subtitle) && (
         <div className="mb-8 max-w-2xl">
           {title && (
