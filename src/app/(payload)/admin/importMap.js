@@ -23,9 +23,9 @@ import { FolderField as FolderField_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@pa
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
-import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
-import { default as default_3ff15b814cdf190575ac4e737da964e4 } from '@/components/Logo/Icon'
-import { default as default_a0bd5f2fa532ef2166f77171a2b9828a } from '@/components/Logo/Logo'
+import { RowLabel as RowLabel_35c4f07b94077a54ab0db31fba2fa85b } from '../../../Header/RowLabel'
+import { default as default_5991ccf52506f74424a5998122434f39 } from '../../../components/Logo/Icon'
+import { default as default_2f594692661464c361c9fb763de845e2 } from '../../../components/Logo/Logo'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
@@ -55,9 +55,9 @@ export const importMap = {
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
-  "@/Header/RowLabel#RowLabel": RowLabel_ec255a65fa6fa8d1faeb09cf35284224,
-  "@/components/Logo/Icon#default": default_3ff15b814cdf190575ac4e737da964e4,
-  "@/components/Logo/Logo#default": default_a0bd5f2fa532ef2166f77171a2b9828a,
+  "/Header/RowLabel#RowLabel": RowLabel_35c4f07b94077a54ab0db31fba2fa85b,
+  "./components/Logo/Icon#default": default_5991ccf52506f74424a5998122434f39,
+  "./components/Logo/Logo#default": default_2f594692661464c361c9fb763de845e2,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
