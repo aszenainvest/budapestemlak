@@ -58,6 +58,9 @@ ENV S3_REGION=${S3_REGION}
 ARG S3_ENDPOINT
 ENV S3_ENDPOINT=${S3_ENDPOINT}
 
+ARG RAILWAY_DEPLOYMENT_ID
+ENV RAILWAY_DEPLOYMENT_ID=${RAILWAY_DEPLOYMENT_ID}
+
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
   elif [ -f package-lock.json ]; then npm run build; \
