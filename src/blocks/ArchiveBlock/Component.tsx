@@ -13,7 +13,7 @@ export const ArchiveBlock: React.FC<
     id?: string
   }
 > = async (props) => {
-  const { id, categories, introContent, limit: limitFromProps, populateBy, selectedDocs } = props
+  const { id, categories, introContent, limit: limitFromProps, populateBy, selectedDocs, relationTo = 'posts' } = props
 
   const limit = limitFromProps || 3
 
@@ -27,18 +27,27 @@ export const ArchiveBlock: React.FC<
       else return category
     })
 
-    const fetchedPosts = await payload.find({
-      collection: 'posts',
+    const collectionToFind = relationTo || 'posts'
+
+    const fetchedDocs = await payload.find({
+      collection: collectionToFind,
       depth: 1,
       limit,
-      select: {
+      select: collectionToFind === 'posts' ? {
         title: true,
         slug: true,
         categories: true,
         meta: true,
         publishedAt: true,
+      } : {
+        title: true,
+        slug: true,
+        meta: true,
+        mainImage: true,
+        publishedAt: true,
+        statusLabels: true,
       },
-      ...(flattenedCategories && flattenedCategories.length > 0
+      ...(collectionToFind === 'posts' && flattenedCategories && flattenedCategories.length > 0
         ? {
             where: {
               categories: {
@@ -49,12 +58,17 @@ export const ArchiveBlock: React.FC<
         : {}),
     })
 
-    posts = fetchedPosts.docs
+    posts = fetchedDocs.docs as CardPostData[]
   } else {
     if (selectedDocs?.length) {
       const filteredSelectedPosts = selectedDocs.map((post) => {
-        if (typeof post.value === 'object') return post.value
-      }) as Post[]
+        if (typeof post.value === 'object' && post.value !== null) {
+          return {
+            ...post.value,
+            _collection: post.relationTo,
+          }
+        }
+      }).filter(Boolean) as CardPostData[]
 
       posts = filteredSelectedPosts
     }
@@ -67,7 +81,7 @@ export const ArchiveBlock: React.FC<
           <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
         </div>
       )}
-      <CollectionArchive posts={posts} />
+      <CollectionArchive posts={posts} relationTo={populateBy === 'collection' ? (relationTo || 'posts') : undefined} />
     </div>
   )
 }

@@ -482,6 +482,20 @@ export interface Property {
   price?: number | null;
   currency?: ('USD' | 'EUR' | 'GBP' | 'TRY') | null;
   listingType?: ('sale' | 'rent') | null;
+  /**
+   * Status labels to display on property cards (e.g. sold, under negotiations, due diligence)
+   */
+  statusLabels?:
+    | {
+        name: string;
+        count?: number | null;
+        /**
+         * e.g. #EF4444, #F59E0B, #3B82F6, green
+         */
+        color?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   location?: string | null;
   /**
    * Optional link to open maps or embed.
@@ -735,14 +749,20 @@ export interface ArchiveBlock {
     [k: string]: unknown;
   } | null;
   populateBy?: ('collection' | 'selection') | null;
-  relationTo?: 'posts' | null;
+  relationTo?: ('posts' | 'properties') | null;
   categories?: (number | Category)[] | null;
   limit?: number | null;
   selectedDocs?:
-    | {
-        relationTo: 'posts';
-        value: number | Post;
-      }[]
+    | (
+        | {
+            relationTo: 'posts';
+            value: number | Post;
+          }
+        | {
+            relationTo: 'properties';
+            value: number | Property;
+          }
+      )[]
     | null;
   id?: string | null;
   blockName?: string | null;
@@ -2011,6 +2031,14 @@ export interface PropertiesSelect<T extends boolean = true> {
   price?: T;
   currency?: T;
   listingType?: T;
+  statusLabels?:
+    | T
+    | {
+        name?: T;
+        count?: T;
+        color?: T;
+        id?: T;
+      };
   location?: T;
   mapUrl?: T;
   bedrooms?: T;

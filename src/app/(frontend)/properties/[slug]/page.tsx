@@ -11,6 +11,7 @@ import React, { cache } from 'react'
 import type { Media, Property } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
 import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
+import { PropertyBlogSection } from '@/components/PropertyBlogSection'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -74,11 +75,33 @@ export default async function PropertyPage({ params: paramsPromise }: Args) {
 
       <div className="container max-w-5xl px-6">
         <header className="mb-10">
-          {property.listingType && (
-            <span className="mb-3 inline-block rounded-full bg-[var(--primary)]/10 px-3 py-1 text-[10px] font-black tracking-widest text-[var(--primary)] uppercase">
-              {property.listingType === 'rent' ? 'For rent' : 'For sale'}
-            </span>
-          )}
+          <div className="flex flex-wrap gap-2 mb-3 items-center">
+            {property.listingType && (
+              <span className="inline-block rounded-full bg-[var(--primary)]/10 px-3 py-1 text-[10px] font-black tracking-widest text-[var(--primary)] uppercase">
+                {property.listingType === 'rent' ? 'For rent' : 'For sale'}
+              </span>
+            )}
+            {property.statusLabels && property.statusLabels.length > 0 && (
+              property.statusLabels.map((label, labelIdx) => {
+                if (!label || !label.name) return null
+                const badgeBg = label.color || '#EF4444'
+                return (
+                  <span
+                    key={label.id || labelIdx}
+                    className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-[10px] font-black text-white uppercase tracking-widest shadow-sm"
+                    style={{ backgroundColor: badgeBg }}
+                  >
+                    <span>{label.name}</span>
+                    {label.count !== undefined && label.count !== null && (
+                      <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/20 text-[9px] font-extrabold">
+                        {label.count}
+                      </span>
+                    )}
+                  </span>
+                )
+              })
+            )}
+          </div>
           <h1 className="text-4xl font-black tracking-tighter text-[var(--primary)] md:text-5xl">
             {property.title}
           </h1>
@@ -181,6 +204,8 @@ export default async function PropertyPage({ params: paramsPromise }: Args) {
         <div className="prose prose-neutral max-w-none">
           <RichText data={property.content} enableGutter={false} />
         </div>
+
+        <PropertyBlogSection />
       </div>
     </article>
   )

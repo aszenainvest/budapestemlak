@@ -5,26 +5,28 @@ import Link from 'next/link'
 import React, { Fragment } from 'react'
 import { ArrowRight, Calendar } from 'lucide-react'
 
-import type { Post } from '@/payload-types'
+import type { Post, Property } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title' | 'publishedAt'>
+export type CardPostData = Partial<Post> & Partial<Property>
 
 export const Card: React.FC<{
   alignItems?: 'center'
   className?: string
   doc?: CardPostData
-  relationTo?: 'posts'
+  relationTo?: 'posts' | 'properties'
   showCategories?: boolean
   title?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
-  const { className, doc, relationTo, showCategories, title: titleFromProps } = props
+  const { className, doc, relationTo: relationToFromProps, showCategories, title: titleFromProps } = props
 
-  const { slug, categories, meta, title, publishedAt } = doc || {}
+  const { slug, categories, meta, title, publishedAt, mainImage, statusLabels, _collection } = (doc || {}) as any
   const { description, image: metaImage } = meta || {}
+  const imageToUse = metaImage || mainImage
 
+  const relationTo = relationToFromProps || _collection || 'posts'
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ') 
@@ -48,9 +50,9 @@ export const Card: React.FC<{
     >
       {/* Image Wrapper */}
       <div className="relative w-full aspect-[16/10] overflow-hidden">
-        {metaImage && typeof metaImage !== 'string' ? (
+        {imageToUse && typeof imageToUse !== 'string' ? (
           <Media 
-            resource={metaImage} 
+            resource={imageToUse} 
             size="33vw" 
             className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" 
           />
@@ -67,6 +69,30 @@ export const Card: React.FC<{
               <Calendar size={10} className="text-[var(--secondary)]" />
               {formattedDate}
             </div>
+          </div>
+        )}
+
+        {/* Status Labels Overlay */}
+        {statusLabels && Array.isArray(statusLabels) && statusLabels.length > 0 && (
+          <div className="absolute top-4 right-4 z-10 flex flex-col gap-1.5 items-end">
+            {statusLabels.map((label, labelIdx) => {
+              if (!label || !label.name) return null
+              const badgeBg = label.color || '#EF4444'
+              return (
+                <div
+                  key={label.id || labelIdx}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wider shadow-md border border-white/10"
+                  style={{ backgroundColor: badgeBg }}
+                >
+                  <span>{label.name}</span>
+                  {label.count !== undefined && label.count !== null && (
+                    <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/20 text-[9px] font-extrabold">
+                      {label.count}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

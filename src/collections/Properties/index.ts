@@ -122,6 +122,45 @@ export const Properties: CollectionConfig<'properties'> = {
               ],
             },
             {
+              name: 'statusLabels',
+              type: 'array',
+              label: 'Status Labels',
+              admin: {
+                initCollapsed: true,
+                description: 'Status labels to display on property cards (e.g. sold, under negotiations, due diligence)',
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'name',
+                      type: 'text',
+                      required: true,
+                      label: 'Label Name',
+                      admin: { width: '40%' },
+                    },
+                    {
+                      name: 'count',
+                      type: 'number',
+                      label: 'Count (Optional)',
+                      admin: { width: '20%' },
+                    },
+                    {
+                      name: 'color',
+                      type: 'text',
+                      label: 'Badge Background Color',
+                      defaultValue: '#EF4444',
+                      admin: {
+                        width: '40%',
+                        description: 'e.g. #EF4444, #F59E0B, #3B82F6, green',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
               name: 'location',
               type: 'text',
               localized: true,

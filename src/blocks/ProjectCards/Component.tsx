@@ -110,6 +110,30 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
                     No image
                   </div>
                 )}
+
+                {/* Status Labels Overlay */}
+                {typeof prop === 'object' && prop !== null && 'statusLabels' in prop && Array.isArray((prop as any).statusLabels) && ((prop as any).statusLabels as any[]).length > 0 && (
+                  <div className="absolute top-4 left-4 z-10 flex flex-col gap-1.5 items-start">
+                    {((prop as any).statusLabels as any[]).map((label, labelIdx) => {
+                      if (!label || !label.name) return null
+                      const badgeBg = label.color || '#EF4444'
+                      return (
+                        <div
+                          key={label.id || labelIdx}
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wider shadow-md border border-white/10"
+                          style={{ backgroundColor: badgeBg }}
+                        >
+                          <span>{label.name}</span>
+                          {label.count !== undefined && label.count !== null && (
+                            <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/20 text-[9px] font-extrabold">
+                              {label.count}
+                            </span>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
 
               <div className="flex flex-grow flex-col p-5">
