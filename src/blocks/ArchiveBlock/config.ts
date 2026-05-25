@@ -66,15 +66,6 @@ export const Archive: Block = {
       admin: {
         condition: (_, siblingData) => siblingData.populateBy === 'collection',
       },
-      filterOptions: ({ siblingData }: any) => {
-        const relationTo = siblingData?.relationTo || 'posts'
-        return {
-          or: [
-            { type: { equals: relationTo } },
-            { type: { equals: 'both' } },
-          ],
-        }
-      },
       hasMany: true,
       label: 'Categories To Show',
       relationTo: 'categories',
