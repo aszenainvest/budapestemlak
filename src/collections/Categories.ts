@@ -24,6 +24,19 @@ export const Categories: CollectionConfig = {
       required: true,
       localized: true,
     },
+    {
+      name: 'type',
+      type: 'select',
+      defaultValue: 'posts',
+      options: [
+        { label: 'Posts', value: 'posts' },
+        { label: 'Properties', value: 'properties' },
+        { label: 'Both', value: 'both' },
+      ],
+      admin: {
+        description: 'Specify which collection uses this category.',
+      },
+    },
     slugField({
       localized: true,
       position: undefined,
