@@ -22,14 +22,15 @@ export const Card: React.FC<{
   const { card, link } = useClickableCard({})
   const { className, doc, relationTo: relationToFromProps, showCategories, title: titleFromProps } = props
 
-  const { slug, categories, meta, title, publishedAt, mainImage, statusLabels, _collection } = (doc || {}) as any
+  const { slug, categories, meta, title, publishedAt, mainImage, statusLabels, summary, _collection } = (doc || {}) as any
   const { description, image: metaImage } = meta || {}
   const imageToUse = metaImage || mainImage
 
   const relationTo = relationToFromProps || _collection || 'posts'
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
-  const sanitizedDescription = description?.replace(/\s/g, ' ') 
+  const descriptionToUse = description || summary
+  const sanitizedDescription = descriptionToUse?.replace(/\s/g, ' ') 
   const href = `/${relationTo}/${slug}`
 
   // Use native Intl.DateTimeFormat instead of date-fns to avoid install errors
@@ -127,7 +128,7 @@ export const Card: React.FC<{
               {titleToUse}
             </h4>
             
-            {description && (
+            {descriptionToUse && (
               <p className="mt-1 text-xs text-gray-500 line-clamp-2 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity">
                 {sanitizedDescription}
               </p>
