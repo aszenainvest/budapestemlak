@@ -537,6 +537,7 @@ export interface Property {
     description?: string | null;
   };
   publishedAt?: string | null;
+  categories?: (number | Category)[] | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -2062,6 +2063,7 @@ export interface PropertiesSelect<T extends boolean = true> {
         description?: T;
       };
   publishedAt?: T;
+  categories?: T;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;

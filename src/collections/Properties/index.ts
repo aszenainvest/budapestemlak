@@ -63,6 +63,7 @@ export const Properties: CollectionConfig<'properties'> = {
     slug: true,
     mainImage: true,
     price: true,
+    categories: true,
   },
   fields: [
     {
@@ -275,6 +276,15 @@ export const Properties: CollectionConfig<'properties'> = {
           pickerAppearance: 'dayAndTime',
         },
       },
+    },
+    {
+      name: 'categories',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      hasMany: true,
+      relationTo: 'categories',
     },
     slugField({
       localized: true,

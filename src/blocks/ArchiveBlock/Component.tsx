@@ -33,21 +33,18 @@ export const ArchiveBlock: React.FC<
       collection: collectionToFind,
       depth: 1,
       limit,
-      select: collectionToFind === 'posts' ? {
-        title: true,
-        slug: true,
-        categories: true,
-        meta: true,
-        publishedAt: true,
-      } : {
-        title: true,
-        slug: true,
-        meta: true,
-        mainImage: true,
-        publishedAt: true,
-        statusLabels: true,
-      },
-      ...(collectionToFind === 'posts' && flattenedCategories && flattenedCategories.length > 0
+      ...(collectionToFind === 'posts'
+        ? {
+            select: {
+              title: true,
+              slug: true,
+              categories: true,
+              meta: true,
+              publishedAt: true,
+            },
+          }
+        : {}),
+      ...(flattenedCategories && flattenedCategories.length > 0
         ? {
             where: {
               categories: {
