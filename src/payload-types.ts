@@ -757,6 +757,8 @@ export interface ArchiveBlock {
   relationTo?: ('posts' | 'properties') | null;
   categories?: (number | Category)[] | null;
   limit?: number | null;
+  selectedPosts?: (number | Post)[] | null;
+  selectedProperties?: (number | Property)[] | null;
   selectedDocs?:
     | (
         | {
@@ -1752,6 +1754,8 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
   relationTo?: T;
   categories?: T;
   limit?: T;
+  selectedPosts?: T;
+  selectedProperties?: T;
   selectedDocs?: T;
   id?: T;
   blockName?: T;
