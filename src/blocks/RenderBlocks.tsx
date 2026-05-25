@@ -4,6 +4,7 @@ import { cn } from '@/utilities/ui'
 import type { Page, Setting } from '@/payload-types'
 
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
+import { PropertyArchiveBlock } from '@/blocks/PropertyArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
@@ -26,6 +27,7 @@ import { VideoBlock } from '@/blocks/Video/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
+  propertyArchive: PropertyArchiveBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,

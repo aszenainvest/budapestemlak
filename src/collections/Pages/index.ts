@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
+import { PropertyArchive } from '../../blocks/PropertyArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
@@ -91,7 +92,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [HeroSection, ProjectCards, CallToAction, Content, MediaBlock, Archive, FormBlock, Banner, Code, Pricing, Gallery, Testimonials, FAQ, Stats, FeatureGrid, Steps, ArtisticShowcase, Timeline, MapBlock, Video],
+              blocks: [HeroSection, ProjectCards, CallToAction, Content, MediaBlock, Archive, PropertyArchive, FormBlock, Banner, Code, Pricing, Gallery, Testimonials, FAQ, Stats, FeatureGrid, Steps, ArtisticShowcase, Timeline, MapBlock, Video],
 
               required: true,
               localized: true,

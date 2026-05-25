@@ -216,6 +216,7 @@ export interface Page {
     | ContentBlock
     | MediaBlock
     | ArchiveBlock
+    | PropertyArchiveBlock
     | FormBlock
     | BannerBlock
     | CodeBlock
@@ -754,26 +755,40 @@ export interface ArchiveBlock {
     [k: string]: unknown;
   } | null;
   populateBy?: ('collection' | 'selection') | null;
-  relationTo?: ('posts' | 'properties') | null;
   categories?: (number | Category)[] | null;
   limit?: number | null;
   selectedPosts?: (number | Post)[] | null;
-  selectedProperties?: (number | Property)[] | null;
-  selectedDocs?:
-    | (
-        | {
-            relationTo: 'posts';
-            value: number | Post;
-          }
-        | {
-            relationTo: 'properties';
-            value: number | Property;
-          }
-      )[]
-    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'archive';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PropertyArchiveBlock".
+ */
+export interface PropertyArchiveBlock {
+  introContent?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  populateBy?: ('collection' | 'selection') | null;
+  categories?: (number | Category)[] | null;
+  limit?: number | null;
+  selectedProperties?: (number | Property)[] | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'propertyArchive';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1608,6 +1623,7 @@ export interface PagesSelect<T extends boolean = true> {
         content?: T | ContentBlockSelect<T>;
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
+        propertyArchive?: T | PropertyArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
         banner?: T | BannerBlockSelect<T>;
         code?: T | CodeBlockSelect<T>;
@@ -1751,12 +1767,22 @@ export interface MediaBlockSelect<T extends boolean = true> {
 export interface ArchiveBlockSelect<T extends boolean = true> {
   introContent?: T;
   populateBy?: T;
-  relationTo?: T;
   categories?: T;
   limit?: T;
   selectedPosts?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PropertyArchiveBlock_select".
+ */
+export interface PropertyArchiveBlockSelect<T extends boolean = true> {
+  introContent?: T;
+  populateBy?: T;
+  categories?: T;
+  limit?: T;
   selectedProperties?: T;
-  selectedDocs?: T;
   id?: T;
   blockName?: T;
 }

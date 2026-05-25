@@ -42,32 +42,15 @@ export const Archive: Block = {
       ],
     },
     {
-      name: 'relationTo',
-      type: 'select',
-      defaultValue: 'posts',
-      label: 'Collections To Show',
-      options: [
-        {
-          label: 'Posts',
-          value: 'posts',
-        },
-        {
-          label: 'Properties',
-          value: 'properties',
-        },
-      ],
-    },
-    {
       name: 'categories',
       type: 'relationship',
       admin: {
         condition: (_, siblingData) => siblingData.populateBy === 'collection',
       },
-      filterOptions: ({ siblingData }) => {
-        const relationTo = (siblingData as any)?.relationTo || 'posts'
+      filterOptions: () => {
         return {
           type: {
-            in: [relationTo, 'both'],
+            in: ['posts', 'both'],
           },
         }
       },
@@ -89,32 +72,11 @@ export const Archive: Block = {
       name: 'selectedPosts',
       type: 'relationship',
       admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'selection' && siblingData.relationTo === 'posts',
+        condition: (_, siblingData) => siblingData.populateBy === 'selection',
       },
       hasMany: true,
-      label: 'Selection (Posts)',
+      label: 'Selection',
       relationTo: 'posts',
-    },
-    {
-      name: 'selectedProperties',
-      type: 'relationship',
-      admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'selection' && siblingData.relationTo === 'properties',
-      },
-      hasMany: true,
-      label: 'Selection (Properties)',
-      relationTo: 'properties',
-    },
-    {
-      name: 'selectedDocs',
-      type: 'relationship',
-      admin: {
-        disabled: true,
-        hidden: true,
-      },
-      hasMany: true,
-      label: 'Selection (Legacy)',
-      relationTo: ['posts', 'properties'],
     },
   ],
   labels: {
