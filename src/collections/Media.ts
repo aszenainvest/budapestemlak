@@ -14,6 +14,7 @@ import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 
 import { toApiMediaFileUrl, toPublicMinioObjectUrl } from '@/utilities/mediaFileUrl'
+import { checkDuplicateFile } from '../hooks/checkDuplicateFile'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -22,6 +23,7 @@ export const Media: CollectionConfig = {
   slug: 'media',
   folders: false,
   hooks: {
+    beforeChange: [checkDuplicateFile],
     afterRead: [
       ({ doc }) => {
         if (!doc?.filename || typeof doc.filename !== 'string') return doc
@@ -164,6 +166,15 @@ export const Media: CollectionConfig = {
   ],
   fields: [
     {
+      name: 'fileHash',
+      type: 'text',
+      index: true,
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'alt',
       type: 'text',
       //required: true,
@@ -183,48 +194,21 @@ export const Media: CollectionConfig = {
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
+    resizeOptions: {
+      width: 1920,
+      height: 1920,
+      fit: 'inside',
+      withoutEnlargement: true,
+    },
     formatOptions: {
       format: 'webp',
-      options: { quality: 80 },
+      options: { quality: 75 },
     },
     imageSizes: [
       {
         name: 'thumbnail',
         width: 300,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
-      },
-      {
-        name: 'square',
-        width: 500,
-        height: 500,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
-      },
-      {
-        name: 'small',
-        width: 600,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
-      },
-      {
-        name: 'medium',
-        width: 900,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
-      },
-      {
-        name: 'large',
-        width: 1400,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
-      },
-      {
-        name: 'xlarge',
-        width: 1920,
-        formatOptions: { format: 'webp', options: { quality: 80 } },
-      },
-      {
-        name: 'og',
-        width: 1200,
-        height: 630,
-        crop: 'center',
-        formatOptions: { format: 'webp', options: { quality: 80 } },
+        formatOptions: { format: 'webp', options: { quality: 75 } },
       },
     ],
   },

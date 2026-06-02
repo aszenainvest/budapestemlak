@@ -21,8 +21,7 @@ const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   let url = serverUrl + '/website-template-OG.webp'
 
   if (image && typeof image === 'object' && 'url' in image) {
-    const ogUrl = image.sizes?.og?.url
-    const preferred = ogUrl || image.url
+    const preferred = image.url
     url = joinSite(serverUrl, preferred || undefined)
   }
 

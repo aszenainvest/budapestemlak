@@ -5,6 +5,7 @@ import * as migration_20260525_125610_add_categories_to_properties from './20260
 import * as migration_20260525_135508_add_type_to_categories from './20260525_135508_add_type_to_categories';
 import * as migration_20260525_151959_add_property_archive_block from './20260525_151959_add_property_archive_block';
 import * as migration_20260614_property_status_label_presets from './20260614_property_status_label_presets';
+import * as migration_20260602_194400_add_file_hash_to_media from './20260602_194400_add_file_hash_to_media';
 
 export const migrations = [
   {
@@ -41,5 +42,10 @@ export const migrations = [
     up: migration_20260614_property_status_label_presets.up,
     down: migration_20260614_property_status_label_presets.down,
     name: '20260614_property_status_label_presets',
+  },
+  {
+    up: migration_20260602_194400_add_file_hash_to_media.up,
+    down: migration_20260602_194400_add_file_hash_to_media.down,
+    name: '20260602_194400_add_file_hash_to_media',
   },
 ];
