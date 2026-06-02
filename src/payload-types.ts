@@ -70,6 +70,7 @@ export interface Config {
     pages: Page;
     posts: Post;
     properties: Property;
+    'property-status-labels': PropertyStatusLabel;
     media: Media;
     categories: Category;
     users: User;
@@ -79,20 +80,16 @@ export interface Config {
     search: Search;
     'payload-kv': PayloadKv;
     'payload-jobs': PayloadJob;
-    'payload-folders': FolderInterface;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {
-    'payload-folders': {
-      documentsAndFolders: 'payload-folders' | 'media';
-    };
-  };
+  collectionsJoins: {};
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     properties: PropertiesSelect<false> | PropertiesSelect<true>;
+    'property-status-labels': PropertyStatusLabelsSelect<false> | PropertyStatusLabelsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -102,7 +99,6 @@ export interface Config {
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
-    'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -322,7 +318,6 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
-  folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -395,32 +390,6 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-folders".
- */
-export interface FolderInterface {
-  id: number;
-  name: string;
-  folder?: (number | null) | FolderInterface;
-  documentsAndFolders?: {
-    docs?: (
-      | {
-          relationTo?: 'payload-folders';
-          value: number | FolderInterface;
-        }
-      | {
-          relationTo?: 'media';
-          value: number | Media;
-        }
-    )[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  folderType?: 'media'[] | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
@@ -488,16 +457,12 @@ export interface Property {
   currency?: ('USD' | 'EUR' | 'GBP' | 'TRY') | null;
   listingType?: ('sale' | 'rent') | null;
   /**
-   * Status labels to display on property cards (e.g. sold, under negotiations, due diligence)
+   * Manage label text and colors under Content → Property Status Labels, then pick them here (e.g. Sold, Under negotiation, Due diligence).
    */
   statusLabels?:
     | {
-        name: string;
+        preset: number | PropertyStatusLabel;
         count?: number | null;
-        /**
-         * e.g. #EF4444, #F59E0B, #3B82F6, green
-         */
-        color?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -551,6 +516,22 @@ export interface Property {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * Reusable badges for Current Opportunities and property cards (e.g. Sold, Under negotiation). Add labels here, then assign them on each property.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "property-status-labels".
+ */
+export interface PropertyStatusLabel {
+  id: number;
+  name: string;
+  /**
+   * CSS color, e.g. #EF4444 (red), #F59E0B (amber), #3B82F6 (blue), #10B981 (green)
+   */
+  color: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -608,7 +589,7 @@ export interface ProjectCardsBlock {
         description?: string | null;
         image: number | Media;
         /**
-         * Select a property to open its detail page when the card is clicked. Leave empty if the card should not navigate.
+         * Select a published property for card badges and detail link. Create the property first (Properties), then link it here.
          */
         property?: (number | null) | Property;
         id?: string | null;
@@ -1513,6 +1494,10 @@ export interface PayloadLockedDocument {
         value: number | Property;
       } | null)
     | ({
+        relationTo: 'property-status-labels';
+        value: number | PropertyStatusLabel;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1539,10 +1524,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'search';
         value: number | Search;
-      } | null)
-    | ({
-        relationTo: 'payload-folders';
-        value: number | FolderInterface;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -2069,9 +2050,8 @@ export interface PropertiesSelect<T extends boolean = true> {
   statusLabels?:
     | T
     | {
-        name?: T;
+        preset?: T;
         count?: T;
-        color?: T;
         id?: T;
       };
   location?: T;
@@ -2106,12 +2086,21 @@ export interface PropertiesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "property-status-labels_select".
+ */
+export interface PropertyStatusLabelsSelect<T extends boolean = true> {
+  name?: T;
+  color?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
-  folder?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -2470,18 +2459,6 @@ export interface PayloadJobsSelect<T extends boolean = true> {
   queue?: T;
   waitUntil?: T;
   processing?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-folders_select".
- */
-export interface PayloadFoldersSelect<T extends boolean = true> {
-  name?: T;
-  folder?: T;
-  documentsAndFolders?: T;
-  folderType?: T;
   updatedAt?: T;
   createdAt?: T;
 }

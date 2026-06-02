@@ -64,6 +64,9 @@ export const Properties: CollectionConfig<'properties'> = {
     mainImage: true,
     price: true,
     categories: true,
+    statusLabels: {
+      preset: true,
+    },
   },
   fields: [
     {
@@ -125,37 +128,29 @@ export const Properties: CollectionConfig<'properties'> = {
             {
               name: 'statusLabels',
               type: 'array',
-              label: 'Status Labels',
+              label: 'Status labels',
               admin: {
                 initCollapsed: true,
-                description: 'Status labels to display on property cards (e.g. sold, under negotiations, due diligence)',
+                description:
+                  'Manage label text and colors under Content → Property Status Labels, then pick them here (e.g. Sold, Under negotiation, Due diligence).',
               },
               fields: [
                 {
                   type: 'row',
                   fields: [
                     {
-                      name: 'name',
-                      type: 'text',
+                      name: 'preset',
+                      type: 'relationship',
+                      relationTo: 'property-status-labels',
                       required: true,
-                      label: 'Label Name',
-                      admin: { width: '40%' },
+                      label: 'Label',
+                      admin: { width: '60%' },
                     },
                     {
                       name: 'count',
                       type: 'number',
-                      label: 'Count (Optional)',
-                      admin: { width: '20%' },
-                    },
-                    {
-                      name: 'color',
-                      type: 'text',
-                      label: 'Badge Background Color',
-                      defaultValue: '#EF4444',
-                      admin: {
-                        width: '40%',
-                        description: 'e.g. #EF4444, #F59E0B, #3B82F6, green',
-                      },
+                      label: 'Count (optional)',
+                      admin: { width: '40%' },
                     },
                   ],
                 },
@@ -300,6 +295,7 @@ export const Properties: CollectionConfig<'properties'> = {
       autosave: {
         interval: 500,
       },
+      validate: false,
     },
     maxPerDoc: 50,
   },

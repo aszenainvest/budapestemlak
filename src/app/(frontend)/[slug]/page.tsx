@@ -118,7 +118,7 @@ const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug:
   const result = await payload.find({
     collection: 'pages',
     draft,
-    depth: 2,
+    depth: 3,
     limit: 1,
     pagination: false,
     overrideAccess: draft,

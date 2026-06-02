@@ -20,7 +20,7 @@ const dirname = path.dirname(filename)
 
 export const Media: CollectionConfig = {
   slug: 'media',
-  folders: true,
+  folders: false,
   hooks: {
     afterRead: [
       ({ doc }) => {

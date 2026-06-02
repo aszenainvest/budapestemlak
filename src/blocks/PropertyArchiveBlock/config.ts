@@ -45,7 +45,7 @@ export const PropertyArchive: Block = {
       name: 'categories',
       type: 'relationship',
       admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
+        condition: (_, siblingData) => siblingData?.populateBy === 'collection',
       },
       filterOptions: () => {
         return {
@@ -62,7 +62,7 @@ export const PropertyArchive: Block = {
       name: 'limit',
       type: 'number',
       admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
+        condition: (_, siblingData) => siblingData?.populateBy === 'collection',
         step: 1,
       },
       defaultValue: 10,
@@ -72,7 +72,7 @@ export const PropertyArchive: Block = {
       name: 'selectedProperties',
       type: 'relationship',
       admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'selection',
+        condition: (_, siblingData) => siblingData?.populateBy === 'selection',
       },
       hasMany: true,
       label: 'Selection',

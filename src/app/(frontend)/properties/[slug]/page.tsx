@@ -12,6 +12,7 @@ import type { Media, Property } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
 import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import { PropertyBlogSection } from '@/components/PropertyBlogSection'
+import { normalizeStatusLabels } from '@/utilities/normalizeStatusLabel'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -69,6 +70,8 @@ export default async function PropertyPage({ params: paramsPromise }: Args) {
         ? `${property.currency ?? 'USD'} ${property.price}`
         : null
 
+  const statusLabelItems = normalizeStatusLabels(property.statusLabels)
+
   return (
     <article className="pb-24 pt-28 md:pt-36">
       <PayloadRedirects disableNotFound url={url} />
@@ -81,15 +84,13 @@ export default async function PropertyPage({ params: paramsPromise }: Args) {
                 {property.listingType === 'rent' ? 'For rent' : 'For sale'}
               </span>
             )}
-            {property.statusLabels && property.statusLabels.length > 0 && (
-              property.statusLabels.map((label, labelIdx) => {
-                if (!label || !label.name) return null
-                const badgeBg = label.color || '#EF4444'
-                return (
+            {statusLabelItems.length > 0 && (
+              <div className="flex flex-wrap gap-2 items-center">
+                {statusLabelItems.map((label, labelIdx) => (
                   <span
-                    key={label.id || labelIdx}
+                    key={label.id ?? labelIdx}
                     className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-[10px] font-black text-white uppercase tracking-widest shadow-sm"
-                    style={{ backgroundColor: badgeBg }}
+                    style={{ backgroundColor: label.color }}
                   >
                     <span>{label.name}</span>
                     {label.count !== undefined && label.count !== null && (
@@ -98,8 +99,8 @@ export default async function PropertyPage({ params: paramsPromise }: Args) {
                       </span>
                     )}
                   </span>
-                )
-              })
+                ))}
+              </div>
             )}
           </div>
           <h1 className="text-4xl font-black tracking-tighter text-[var(--primary)] md:text-5xl">
@@ -236,6 +237,7 @@ const queryPropertyBySlug = cache(async ({ slug }: { slug: string }) => {
       collection: 'properties',
       draft,
       limit: 1,
+      depth: 2,
       overrideAccess: draft,
       pagination: false,
       locale: locale as 'en',

@@ -9,6 +9,7 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Properties } from './collections/Properties'
+import { PropertyStatusLabels } from './collections/PropertyStatusLabels'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -73,7 +74,7 @@ export default buildConfig({
      */
     push: process.env.PAYLOAD_DATABASE_PUSH === 'true',
   }),
-  collections: [Pages, Posts, Properties, Media, Categories, Users],
+  collections: [Pages, Posts, Properties, PropertyStatusLabels, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, Settings],
   localization: {

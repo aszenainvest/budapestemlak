@@ -9,6 +9,8 @@ export async function PropertyBlogSection() {
     collection: 'posts',
     limit: 3,
     sort: '-publishedAt',
+    depth: 1,
+    overrideAccess: false,
     where: {
       _status: {
         equals: 'published',
@@ -33,8 +35,8 @@ export async function PropertyBlogSection() {
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {posts.map((post, index) => (
-          <Card key={index} doc={post} relationTo="posts" showCategories />
+        {posts.map((post) => (
+          <Card key={post.id ?? post.slug} doc={post} relationTo="posts" showCategories />
         ))}
       </div>
     </section>

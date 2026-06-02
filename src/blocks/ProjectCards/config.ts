@@ -97,7 +97,8 @@ export const ProjectCards: Block = {
           label: 'Link to property detail',
           admin: {
             description:
-              'Select a property to open its detail page when the card is clicked. Leave empty if the card should not navigate.',
+              'Select a published property for card badges and detail link. Create the property first (Properties), then link it here.',
+            allowCreate: false,
           },
         },
       ],

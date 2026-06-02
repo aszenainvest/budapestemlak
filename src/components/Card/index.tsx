@@ -8,6 +8,8 @@ import { ArrowRight, Calendar } from 'lucide-react'
 import type { Post, Property } from '@/payload-types'
 
 import { Media } from '@/components/Media'
+import { StatusLabelBadges } from '@/components/StatusLabelBadges'
+import { normalizeStatusLabels } from '@/utilities/normalizeStatusLabel'
 
 export type CardPostData = Partial<Post> & Partial<Property>
 
@@ -32,6 +34,7 @@ export const Card: React.FC<{
   const descriptionToUse = description || summary
   const sanitizedDescription = descriptionToUse?.replace(/\s/g, ' ') 
   const href = `/${relationTo}/${slug}`
+  const statusLabelItems = normalizeStatusLabels(statusLabels)
 
   // Use native Intl.DateTimeFormat instead of date-fns to avoid install errors
   const formattedDate = publishedAt ? new Intl.DateTimeFormat('tr-TR', {
@@ -73,28 +76,8 @@ export const Card: React.FC<{
           </div>
         )}
 
-        {/* Status Labels Overlay */}
-        {statusLabels && Array.isArray(statusLabels) && statusLabels.length > 0 && (
-          <div className="absolute top-4 right-4 z-10 flex flex-col gap-1.5 items-end">
-            {statusLabels.map((label, labelIdx) => {
-              if (!label || !label.name) return null
-              const badgeBg = label.color || '#EF4444'
-              return (
-                <div
-                  key={label.id || labelIdx}
-                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wider shadow-md border border-white/10"
-                  style={{ backgroundColor: badgeBg }}
-                >
-                  <span>{label.name}</span>
-                  {label.count !== undefined && label.count !== null && (
-                    <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/20 text-[9px] font-extrabold">
-                      {label.count}
-                    </span>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+        {statusLabelItems.length > 0 && (
+          <StatusLabelBadges labels={statusLabelItems} position="right" />
         )}
       </div>
 
