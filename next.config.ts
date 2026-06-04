@@ -87,6 +87,15 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: path.resolve(dirname),
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: [
+        'www.aszenainvest.hu',
+        'aszenainvest.hu',
+        '*.up.railway.app',
+      ],
+    },
+  },
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })
