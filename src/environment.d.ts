@@ -19,6 +19,7 @@ declare global {
       /** openssl rand -base64 32 — same value at next build and runtime (Railway Variables + Build) */
       NEXT_SERVER_ACTIONS_ENCRYPTION_KEY?: string
       RAILWAY_DEPLOYMENT_ID?: string
+      SERVER_ACTION_ALLOWED_ORIGINS?: string
     }
   }
 }

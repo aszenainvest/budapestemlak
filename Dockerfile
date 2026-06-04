@@ -58,9 +58,6 @@ ENV S3_REGION=${S3_REGION}
 ARG S3_ENDPOINT
 ENV S3_ENDPOINT=${S3_ENDPOINT}
 
-ARG RAILWAY_DEPLOYMENT_ID
-ENV RAILWAY_DEPLOYMENT_ID=${RAILWAY_DEPLOYMENT_ID}
-
 # Stable Server Action IDs (Payload admin: render-document, media drawer). Build + runtime same value.
 # Generate once: openssl rand -base64 32
 ARG NEXT_SERVER_ACTIONS_ENCRYPTION_KEY

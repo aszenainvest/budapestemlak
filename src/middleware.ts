@@ -1,22 +1,19 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+/** Bot/scanner probes (e.g. react2shell) send short values like "x". Real IDs are long hex (40+). */
+const MIN_SERVER_ACTION_ID_LENGTH = 10
+
 /**
- * Blocks fake / malformed Server-Action requests that come from bots,
- * crawlers, or security-scanners. Valid Next.js action IDs are 40-char
- * hex strings; anything shorter (like the literal "x") is bogus.
+ * Blocks fake Server-Action POSTs (bots, scanners). Do not require exactly 40 hex chars —
+ * Next.js 16 uses longer action IDs; a strict /^[0-9a-f]{40}$/ caused 400 on Payload admin.
  */
 export function middleware(request: NextRequest) {
-  const actionId = request.headers.get('Next-Action')
+  const actionId =
+    request.headers.get('next-action') ?? request.headers.get('Next-Action')
 
-  // Only inspect POST requests that carry the Next-Action header
-  if (request.method === 'POST' && actionId) {
-    // Valid Next.js server-action IDs are 40-character hex strings
-    const isValid = /^[0-9a-f]{40}$/i.test(actionId)
-
-    if (!isValid) {
-      return new NextResponse('Bad Request', { status: 400 })
-    }
+  if (request.method === 'POST' && actionId && actionId.length < MIN_SERVER_ACTION_ID_LENGTH) {
+    return new NextResponse('Bad Request', { status: 400 })
   }
 
   return NextResponse.next()

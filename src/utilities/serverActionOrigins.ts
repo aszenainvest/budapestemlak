@@ -1,16 +1,24 @@
-/** Hostnames allowed for Next.js Server Actions (Payload admin drawers, forms). */
+const CANONICAL_SITE_HOSTS = ['www.aszenainvest.hu', 'aszenainvest.hu'] as const
+
+/** Hostnames / origins for Next.js Server Actions (Payload admin: render-document, media drawer). */
 export function getServerActionAllowedOrigins(): string[] {
-  const hosts = new Set<string>(['localhost:3000', 'localhost', 'www.aszenainvest.hu', 'aszenainvest.hu'])
+  const allowed = new Set<string>(['localhost:3000', 'localhost', ...CANONICAL_SITE_HOSTS])
 
   const addUrl = (raw?: string) => {
     const value = raw?.trim()
     if (!value) return
     try {
       const u = new URL(value.includes('://') ? value : `https://${value}`)
-      hosts.add(u.host)
-      hosts.add(u.hostname)
+      allowed.add(u.host)
+      allowed.add(u.hostname)
+      // www ↔ apex (Railway / CDN sometimes differ from browser Origin)
+      if (u.hostname.startsWith('www.')) {
+        allowed.add(u.hostname.slice(4))
+      } else if (!u.hostname.startsWith('www.')) {
+        allowed.add(`www.${u.hostname}`)
+      }
     } catch {
-      hosts.add(value.replace(/^https?:\/\//, '').replace(/\/$/, ''))
+      allowed.add(value.replace(/^https?:\/\//, '').replace(/\/$/, ''))
     }
   }
 
@@ -21,10 +29,14 @@ export function getServerActionAllowedOrigins(): string[] {
     addUrl(`https://${process.env.RAILWAY_PUBLIC_DOMAIN.trim()}`)
   }
 
-  // Railway default public URLs (*.up.railway.app)
-  hosts.add('*.up.railway.app')
+  const extra = process.env.SERVER_ACTION_ALLOWED_ORIGINS?.split(',')
+  if (extra) {
+    for (const part of extra) {
+      addUrl(part.trim())
+    }
+  }
 
-  return [...hosts]
+  return [...allowed]
 }
 
 /** Origins for Payload `cors` / `serverURL` (full URL with protocol). */
@@ -46,6 +58,12 @@ export function getPayloadCorsOrigins(): string[] {
 
   if (process.env.RAILWAY_PUBLIC_DOMAIN?.trim()) {
     add(`https://${process.env.RAILWAY_PUBLIC_DOMAIN.trim()}`)
+  }
+
+  for (const host of CANONICAL_SITE_HOSTS) {
+    if (!host.startsWith('*')) {
+      add(`https://${host}`)
+    }
   }
 
   if (origins.size === 0) {

@@ -52,9 +52,6 @@ function minioRemotePatterns(): Array<{
 const nextConfig: NextConfig = {
   // Required for Docker (see Dockerfile COPY .next/standalone)
   output: 'standalone',
-  // Unique per deploy – prevents "Failed to find Server Action" when clients
-  // still hold JS from a previous build. Railway injects RAILWAY_DEPLOYMENT_ID automatically.
-  deploymentId: process.env.RAILWAY_DEPLOYMENT_ID || undefined,
   images: {
     localPatterns: [
       {
