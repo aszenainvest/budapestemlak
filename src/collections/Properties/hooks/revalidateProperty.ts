@@ -2,9 +2,11 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'paylo
 
 import { revalidatePath, revalidateTag } from 'next/cache'
 
+import { revalidatePropertyListingPages } from '@/hooks/revalidatePropertyListings'
+
 import type { Property } from '@/payload-types'
 
-export const revalidateProperty: CollectionAfterChangeHook<Property> = ({
+export const revalidateProperty: CollectionAfterChangeHook<Property> = async ({
   doc,
   previousDoc,
   req: { payload, context },
@@ -15,6 +17,7 @@ export const revalidateProperty: CollectionAfterChangeHook<Property> = ({
       payload.logger.info(`Revalidating property at path: ${path}`)
       revalidatePath(path)
       revalidateTag('properties-sitemap', 'max')
+      await revalidatePropertyListingPages(payload)
     }
 
     if (previousDoc?._status === 'published' && doc._status !== 'published' && previousDoc.slug) {
@@ -22,15 +25,20 @@ export const revalidateProperty: CollectionAfterChangeHook<Property> = ({
       payload.logger.info(`Revalidating old property at path: ${oldPath}`)
       revalidatePath(oldPath)
       revalidateTag('properties-sitemap', 'max')
+      await revalidatePropertyListingPages(payload)
     }
   }
   return doc
 }
 
-export const revalidatePropertyDelete: CollectionAfterDeleteHook<Property> = ({ doc, req: { context } }) => {
+export const revalidatePropertyDelete: CollectionAfterDeleteHook<Property> = async ({
+  doc,
+  req: { context, payload },
+}) => {
   if (!context.disableRevalidate && doc?.slug) {
     revalidatePath(`/properties/${doc.slug}`)
     revalidateTag('properties-sitemap', 'max')
+    await revalidatePropertyListingPages(payload)
   }
   return doc
 }

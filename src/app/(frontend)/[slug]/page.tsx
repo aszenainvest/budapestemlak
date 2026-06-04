@@ -38,6 +38,9 @@ export async function generateStaticParams() {
     .map((doc) => ({ slug: doc.slug as string }))
 }
 
+/** Property cards / Project Cards blocks refresh when labels or properties change (see revalidatePropertyListings). */
+export const revalidate = 60
+
 type Args = {
   params: Promise<{
     slug?: string

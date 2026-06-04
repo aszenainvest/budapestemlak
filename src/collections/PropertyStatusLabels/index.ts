@@ -3,6 +3,11 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 
+import {
+  revalidatePropertyStatusLabel,
+  revalidatePropertyStatusLabelDelete,
+} from './hooks/revalidatePropertyStatusLabel'
+
 export const PropertyStatusLabels: CollectionConfig = {
   slug: 'property-status-labels',
   labels: {
@@ -40,4 +45,8 @@ export const PropertyStatusLabels: CollectionConfig = {
       },
     },
   ],
+  hooks: {
+    afterChange: [revalidatePropertyStatusLabel],
+    afterDelete: [revalidatePropertyStatusLabelDelete],
+  },
 }
