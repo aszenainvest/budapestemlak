@@ -17,6 +17,7 @@ import { Settings } from './Settings/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { getPayloadCorsOrigins } from './utilities/serverActionOrigins'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -75,7 +76,7 @@ export default buildConfig({
     push: process.env.PAYLOAD_DATABASE_PUSH === 'true',
   }),
   collections: [Pages, Posts, Properties, PropertyStatusLabels, Media, Categories, Users],
-  cors: [getServerSideURL()].filter(Boolean),
+  cors: getPayloadCorsOrigins(),
   globals: [Header, Footer, Settings],
   localization: {
     // Keep tr/ar in sync with existing Postgres enum `_locales`. Shrinking to `en` only

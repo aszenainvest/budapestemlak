@@ -16,6 +16,9 @@ declare global {
       S3_SECRET_ACCESS_KEY?: string
       S3_REGION?: string
       S3_ENDPOINT?: string
+      /** openssl rand -base64 32 — same value at next build and runtime (Railway Variables + Build) */
+      NEXT_SERVER_ACTIONS_ENCRYPTION_KEY?: string
+      RAILWAY_DEPLOYMENT_ID?: string
     }
   }
 }

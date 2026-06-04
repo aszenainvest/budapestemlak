@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 import { redirects } from './redirects'
+import { getServerActionAllowedOrigins } from './src/utilities/serverActionOrigins'
 
 /** Base URL for Next/Image remotePatterns (must match browser origin in production). */
 function resolvePublicOrigin(): string {
@@ -46,24 +47,6 @@ function minioRemotePatterns(): Array<{
   } catch {
     return []
   }
-}
-
-const allowedOrigins = [
-  'www.aszenainvest.hu',
-  'aszenainvest.hu',
-  'localhost:3000',
-];
-
-if (process.env.RAILWAY_PUBLIC_DOMAIN) {
-  allowedOrigins.push(process.env.RAILWAY_PUBLIC_DOMAIN)
-}
-
-if (process.env.NEXT_PUBLIC_SERVER_URL) {
-  try {
-    const url = new URL(process.env.NEXT_PUBLIC_SERVER_URL)
-    // Add only hostname (and port if present) without protocol
-    allowedOrigins.push(url.host)
-  } catch {}
 }
 
 const nextConfig: NextConfig = {
@@ -107,7 +90,8 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins,
+      allowedOrigins: getServerActionAllowedOrigins(),
+      bodySizeLimit: '15mb',
     },
   },
 }
