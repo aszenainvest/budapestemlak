@@ -50,23 +50,19 @@ function minioRemotePatterns(): Array<{
 
 const allowedOrigins = [
   'www.aszenainvest.hu',
-  'https://www.aszenainvest.hu',
   'aszenainvest.hu',
-  'https://aszenainvest.hu',
   'localhost:3000',
-  'http://localhost:3000',
-]
+];
 
 if (process.env.RAILWAY_PUBLIC_DOMAIN) {
   allowedOrigins.push(process.env.RAILWAY_PUBLIC_DOMAIN)
-  allowedOrigins.push(`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`)
 }
 
 if (process.env.NEXT_PUBLIC_SERVER_URL) {
   try {
     const url = new URL(process.env.NEXT_PUBLIC_SERVER_URL)
+    // Add only hostname (and port if present) without protocol
     allowedOrigins.push(url.host)
-    allowedOrigins.push(url.origin)
   } catch {}
 }
 
