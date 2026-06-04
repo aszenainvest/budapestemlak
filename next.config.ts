@@ -91,8 +91,12 @@ const nextConfig: NextConfig = {
     serverActions: {
       allowedOrigins: [
         'www.aszenainvest.hu',
+        'https://www.aszenainvest.hu',
         'aszenainvest.hu',
+        'https://aszenainvest.hu',
         '*.up.railway.app',
+        'localhost:3000',
+        'http://localhost:3000',
       ],
     },
   },
