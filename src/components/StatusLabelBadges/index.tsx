@@ -14,8 +14,8 @@ export function StatusLabelBadges({ labels, className, position = 'left' }: Prop
   return (
     <div
       className={cn(
-        'absolute top-4 z-10 flex flex-col gap-1.5',
-        position === 'left' ? 'left-4 items-start' : 'right-4 items-end',
+        'pointer-events-none absolute top-3 z-20 flex flex-col gap-1.5',
+        position === 'left' ? 'left-3 items-start' : 'right-3 items-end',
         className,
       )}
     >

@@ -88,7 +88,7 @@ export const Card: React.FC<{
         )}
 
         {statusLabelItems.length > 0 && (
-          <StatusLabelBadges labels={statusLabelItems} position="right" />
+          <StatusLabelBadges labels={statusLabelItems} position="left" />
         )}
       </div>
 

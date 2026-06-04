@@ -29,7 +29,8 @@ export const PropertyArchiveBlock: React.FC<
 
     const fetchedDocs = await payload.find({
       collection: 'properties',
-      depth: 1,
+      depth: 2,
+      locale: 'en',
       limit,
       ...(flattenedCategories && flattenedCategories.length > 0
         ? {
@@ -84,7 +85,7 @@ export const PropertyArchiveBlock: React.FC<
           <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
         </div>
       )}
-      <CollectionArchive posts={propertiesList} relationTo="properties" />
+      <CollectionArchive posts={propertiesList} relationTo="properties" showCategories={false} />
     </div>
   )
 }
