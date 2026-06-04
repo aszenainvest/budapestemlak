@@ -29,8 +29,16 @@ export default async function Page({ params: paramsPromise }: Args) {
     collection: 'posts',
     depth: 1,
     limit: 12,
+    locale: 'en',
     page: sanitizedPageNumber,
     overrideAccess: false,
+    select: {
+      title: true,
+      slug: true,
+      categories: true,
+      heroImage: true,
+      meta: true,
+    },
   })
 
   return (

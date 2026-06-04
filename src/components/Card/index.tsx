@@ -24,9 +24,20 @@ export const Card: React.FC<{
   const { card, link } = useClickableCard({})
   const { className, doc, relationTo: relationToFromProps, showCategories, title: titleFromProps } = props
 
-  const { slug, categories, meta, title, publishedAt, mainImage, statusLabels, summary, _collection } = (doc || {}) as any
+  const {
+    slug,
+    categories,
+    meta,
+    title,
+    publishedAt,
+    mainImage,
+    heroImage,
+    statusLabels,
+    summary,
+    _collection,
+  } = (doc || {}) as any
   const { description, image: metaImage } = meta || {}
-  const imageToUse = metaImage || mainImage
+  const imageToUse = metaImage || heroImage || mainImage
 
   const relationTo = relationToFromProps || _collection || 'posts'
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0

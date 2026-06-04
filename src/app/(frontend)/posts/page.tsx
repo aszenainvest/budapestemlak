@@ -18,11 +18,13 @@ export default async function Page() {
     collection: 'posts',
     depth: 1,
     limit: 12,
+    locale: 'en',
     overrideAccess: false,
     select: {
       title: true,
       slug: true,
       categories: true,
+      heroImage: true,
       meta: true,
     },
   })

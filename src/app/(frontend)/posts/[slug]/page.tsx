@@ -15,6 +15,9 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
+/** Published posts can change after deploy; ISR + revalidatePath on publish keep hero/images fresh. */
+export const revalidate = 60
+
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
   const posts = await payload.find({
@@ -91,8 +94,10 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
 
   const result = await payload.find({
     collection: 'posts',
+    depth: 2,
     draft,
     limit: 1,
+    locale: 'en',
     overrideAccess: draft,
     pagination: false,
     where: {
