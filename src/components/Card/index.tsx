@@ -6,14 +6,19 @@ import React, { Fragment } from 'react'
 import { ArrowRight, Calendar } from 'lucide-react'
 
 import type { Post, Property } from '@/payload-types'
-
-import { Media } from '@/components/Media'
 import { StatusLabelBadges } from '@/components/StatusLabelBadges'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { normalizeStatusLabels } from '@/utilities/normalizeStatusLabel'
 import { resolveCardImage } from '@/utilities/resolvePropertyCardImage'
+import { resolveMediaSrcForDisplay } from '@/utilities/enrichPropertyMedia'
 
-export type CardPostData = Partial<Post> & Partial<Property>
+export type CardPostData = Partial<Post> &
+  Partial<Property> & {
+    _collection?: 'posts' | 'properties'
+    /** Set on the server — absolute image URL for listing cards */
+    cardImageSrc?: string | null
+    cardImageAlt?: string | null
+  }
 
 export const Card: React.FC<{
   alignItems?: 'center'
@@ -39,9 +44,12 @@ export const Card: React.FC<{
   const { description } = meta || {}
 
   const relationTo = relationToFromProps || _collection || 'posts'
-  const imageToUse = resolveCardImage((doc || {}) as any, relationTo)
-  const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
+  const imageToUse = resolveCardImage((doc || {}) as any, relationTo)
+  const cardImageSrc =
+    doc?.cardImageSrc || (imageToUse ? resolveMediaSrcForDisplay(imageToUse) : null) || undefined
+  const cardImageAlt = doc?.cardImageAlt || imageToUse?.alt || titleToUse || ''
+  const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const descriptionToUse = description || summary
   const sanitizedDescription = descriptionToUse?.replace(/\s/g, ' ') 
   const href = `/${relationTo}/${slug}`
@@ -59,16 +67,16 @@ export const Card: React.FC<{
       ref={card.ref}
     >
       {/* Image Wrapper */}
-      <div className="relative w-full aspect-[16/10] overflow-hidden">
-        {imageToUse ? (
-          <Media
-            resource={imageToUse}
-            fill
-            size="33vw"
-            imgClassName="object-cover transition-transform duration-700 group-hover:scale-110"
+      <div className="relative w-full aspect-[16/10] overflow-hidden bg-gray-100">
+        {cardImageSrc ? (
+          <img
+            src={cardImageSrc}
+            alt={cardImageAlt}
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
+          <div className="flex h-full w-full items-center justify-center text-gray-400">
             Resim Yok
           </div>
         )}

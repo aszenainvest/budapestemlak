@@ -76,10 +76,7 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
       totalDocs = result.totalDocs
       totalPages = result.totalPages
       currentPage = result.page ?? propertyArchivePage
-      propertiesList = result.docs.map((doc) => ({
-        ...doc,
-        _collection: 'properties' as const,
-      })) as CardPostData[]
+      propertiesList = result.docs as CardPostData[]
     } else {
       const result = await queryPropertiesArchive({
         page: 1,
@@ -88,10 +85,7 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
         search: propertySearchQuery || undefined,
       })
       totalDocs = result.totalDocs
-      propertiesList = result.docs.map((doc) => ({
-        ...doc,
-        _collection: 'properties' as const,
-      })) as CardPostData[]
+      propertiesList = result.docs as CardPostData[]
     }
   } else if (selectedProperties?.length) {
     const payload = await getPayload({ config: configPromise })
@@ -120,12 +114,7 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
         .map((propId) => fetchedProperties.docs.find((doc) => String(doc.id) === String(propId)))
         .filter(Boolean) as Property[]
 
-      const enriched = await enrichPropertiesForCards(payload, mapped)
-
-      propertiesList = enriched.map((prop) => ({
-        ...prop,
-        _collection: 'properties',
-      })) as CardPostData[]
+      propertiesList = await enrichPropertiesForCards(payload, mapped)
       totalDocs = propertiesList.length
     }
   }

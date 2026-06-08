@@ -1,7 +1,10 @@
 import type { Media, Property } from '@/payload-types'
 import type { Payload } from 'payload'
 
+import type { CardPostData } from '@/components/Card'
+import { getServerSideURL, toAbsoluteSiteUrl } from '@/utilities/getURL'
 import { toApiMediaFileUrl, toPublicMinioObjectUrl } from '@/utilities/mediaFileUrl'
+import { resolvePropertyCardImage } from '@/utilities/resolvePropertyCardImage'
 
 export function hydrateMediaUrl(media: Media): Media {
   if (typeof media.filename === 'string' && media.filename.length > 0) {
@@ -36,6 +39,45 @@ export function hydrateMediaUrl(media: Media): Media {
   }
 
   return media
+}
+
+/** Absolute URL for SSR / serialized card props (stable across hydrate). */
+export function resolveMediaSrcAbsolute(media: Media | null | undefined): string | null {
+  if (!isPopulatedMedia(media)) return null
+  const hydrated = hydrateMediaUrl(media)
+  const raw = hydrated.url ?? hydrated.thumbnailURL ?? hydrated.sizes?.thumbnail?.url ?? ''
+  if (typeof raw === 'string' && raw.startsWith('http')) return raw
+  if (typeof raw === 'string' && raw.startsWith('/')) {
+    return `${getServerSideURL().replace(/\/$/, '')}${raw}`
+  }
+  if (typeof hydrated.filename === 'string' && hydrated.filename.length > 0) {
+    const path = toApiMediaFileUrl(hydrated.filename)
+    return `${getServerSideURL().replace(/\/$/, '')}${path}`
+  }
+  return null
+}
+
+/** Client fallback when cardImageSrc was not set on the server. */
+export function resolveMediaSrcForDisplay(media: Media | null | undefined): string | null {
+  if (!isPopulatedMedia(media)) return null
+  const hydrated = hydrateMediaUrl(media)
+  const raw = hydrated.url ?? hydrated.thumbnailURL ?? hydrated.sizes?.thumbnail?.url ?? ''
+  if (typeof raw === 'string' && raw.startsWith('http')) return raw
+  if (typeof raw === 'string' && raw.startsWith('/')) return toAbsoluteSiteUrl(raw)
+  if (typeof hydrated.filename === 'string' && hydrated.filename.length > 0) {
+    return toAbsoluteSiteUrl(toApiMediaFileUrl(hydrated.filename))
+  }
+  return null
+}
+
+export function toCardPostData(property: Property): CardPostData {
+  const image = resolvePropertyCardImage(property)
+  return {
+    ...property,
+    _collection: 'properties',
+    cardImageSrc: resolveMediaSrcAbsolute(image),
+    cardImageAlt: image?.alt ?? property.title ?? null,
+  }
 }
 
 export function isPopulatedMedia(value: unknown): value is Media {
@@ -111,7 +153,7 @@ async function fetchMediaByIds(payload: Payload, ids: Set<number>): Promise<Map<
 export async function enrichPropertiesForCards(
   payload: Payload,
   properties: Property[],
-): Promise<Property[]> {
+): Promise<CardPostData[]> {
   const mediaIds = new Set<number>()
 
   for (const property of properties) {
@@ -124,7 +166,7 @@ export async function enrichPropertiesForCards(
 
   const mediaById = await fetchMediaByIds(payload, mediaIds)
 
-  return properties.map((property) => enrichPropertyMediaFields(property, mediaById))
+  return properties.map((property) => toCardPostData(enrichPropertyMediaFields(property, mediaById)))
 }
 
 export async function enrichProjectCardsBlock<T extends { projects?: Array<Record<string, unknown>> | null }>(
@@ -153,13 +195,29 @@ export async function enrichProjectCardsBlock<T extends { projects?: Array<Recor
     ...block,
     projects: block.projects.map((project) => {
       const property = project.property
+      const resolvedProperty =
+        typeof property === 'object' && property !== null
+          ? enrichPropertyMediaFields(property as Property, mediaById)
+          : property
+      const image = resolveMediaRef(project.image as number | Media | null | undefined, mediaById)
+      const cardMedia = isPopulatedMedia(image)
+        ? image
+        : typeof resolvedProperty === 'object' && resolvedProperty !== null
+          ? resolvePropertyCardImage(resolvedProperty as Property)
+          : null
+
       return {
         ...project,
-        image: resolveMediaRef(project.image as number | Media | null | undefined, mediaById),
-        property:
-          typeof property === 'object' && property !== null
-            ? enrichPropertyMediaFields(property as Property, mediaById)
-            : property,
+        image,
+        property: resolvedProperty,
+        cardImageSrc: resolveMediaSrcAbsolute(cardMedia),
+        cardImageAlt:
+          cardMedia?.alt ??
+          (typeof resolvedProperty === 'object' && resolvedProperty !== null && 'title' in resolvedProperty
+            ? String(resolvedProperty.title ?? '')
+            : typeof project.title === 'string'
+              ? project.title
+              : null),
       }
     }),
   } as T

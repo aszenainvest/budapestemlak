@@ -1,7 +1,7 @@
 import configPromise from '@payload-config'
 import { getPayload, type PaginatedDocs, type Where } from 'payload'
 
-import type { Property } from '@/payload-types'
+import type { CardPostData } from '@/components/Card'
 import { enrichPropertiesForCards } from './enrichPropertyMedia'
 
 export const PROPERTIES_ARCHIVE_PAGE_SIZE = 6
@@ -33,7 +33,7 @@ export async function queryPropertiesArchive({
   categoryIds,
   locale = 'en',
   search,
-}: QueryArgs): Promise<PaginatedDocs<Property>> {
+}: QueryArgs): Promise<PaginatedDocs<CardPostData>> {
   const payload = await getPayload({ config: configPromise })
 
   const hasCategories = categoryIds && categoryIds.length > 0
