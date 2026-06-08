@@ -48,10 +48,10 @@ export const PropertyArchive: Block = {
       admin: {
         condition: (_, siblingData) => siblingData?.populateBy === 'collection',
         description:
-          'All published: every published property, 12 per page with pagination (?propertyPage=2). Limited: fixed count only on this page.',
+          'All published: search + full list on this page. Limited: fixed preview count with optional “View all” link.',
       },
       options: [
-        { label: 'All published (paginated)', value: 'allPaginated' },
+        { label: 'All published (search + full list)', value: 'allPaginated' },
         { label: 'Limited count', value: 'limited' },
       ],
       label: 'Display',

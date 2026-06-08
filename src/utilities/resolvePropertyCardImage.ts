@@ -1,0 +1,38 @@
+import type { Media, Property } from '@/payload-types'
+
+function isPopulatedMedia(value: unknown): value is Media {
+  return typeof value === 'object' && value !== null && 'filename' in value
+}
+
+/** Card/listing image: meta → main → first gallery item. */
+export function resolvePropertyCardImage(property: Partial<Property>): Media | null {
+  const metaImage = property.meta?.image
+  if (isPopulatedMedia(metaImage)) return metaImage
+
+  if (isPopulatedMedia(property.mainImage)) return property.mainImage
+
+  const gallery = property.gallery
+  if (Array.isArray(gallery)) {
+    for (const item of gallery) {
+      if (isPopulatedMedia(item)) return item
+    }
+  }
+
+  return null
+}
+
+export function resolveCardImage(
+  doc: Partial<Property> & { meta?: { image?: unknown }; heroImage?: unknown; mainImage?: unknown },
+  relationTo: 'posts' | 'properties',
+): Media | null {
+  if (relationTo === 'properties') {
+    return resolvePropertyCardImage(doc)
+  }
+
+  const metaImage = doc.meta?.image
+  if (isPopulatedMedia(metaImage)) return metaImage
+  if (isPopulatedMedia(doc.heroImage)) return doc.heroImage as Media
+  if (isPopulatedMedia(doc.mainImage)) return doc.mainImage as Media
+
+  return null
+}

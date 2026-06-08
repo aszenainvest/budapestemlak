@@ -9,10 +9,7 @@ import RichText from '@/components/RichText'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PropertyArchiveListing } from '@/components/PropertyArchiveListing'
 import type { CardPostData } from '@/components/Card'
-import {
-  PROPERTIES_ARCHIVE_PAGE_SIZE,
-  queryPropertiesArchive,
-} from '@/utilities/queryPropertiesArchive'
+import { queryPropertiesArchive } from '@/utilities/queryPropertiesArchive'
 
 function pageHref(slug: string | null | undefined): string | null {
   if (!slug || typeof slug !== 'string') return null
@@ -21,7 +18,7 @@ function pageHref(slug: string | null | undefined): string | null {
 
 type Props = PropertyArchiveBlockProps & {
   id?: string
-  propertyArchivePage?: number
+  propertySearchQuery?: string
   /** Current CMS page path, e.g. /current-opportunities */
   pagePath?: string
 }
@@ -36,7 +33,7 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
     selectedProperties,
     displayMode = 'allPaginated',
     viewAllPage,
-    propertyArchivePage = 1,
+    propertySearchQuery = '',
     pagePath = '',
   } = props
 
@@ -54,37 +51,35 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
   })
 
   let propertiesList: CardPostData[] = []
-  let paginatedResult: Awaited<ReturnType<typeof queryPropertiesArchive>> | null = null
-  let pageSize = PROPERTIES_ARCHIVE_PAGE_SIZE
-  let usePaginatedListing = false
+  let totalDocs = 0
+  let useFullListing = false
 
   if (populateBy === 'collection') {
-    pageSize = displayMode === 'allPaginated' ? PROPERTIES_ARCHIVE_PAGE_SIZE : limit
-
-    const preview = await queryPropertiesArchive({
-      page: 1,
-      limit: pageSize,
-      categoryIds: flattenedCategories,
-    })
-
-    const needsPagination =
-      displayMode === 'allPaginated' ||
-      (displayMode === 'limited' && preview.totalDocs > limit && !viewAllHref)
-
-    usePaginatedListing = Boolean(cmsPagePath && needsPagination)
-
-    paginatedResult = usePaginatedListing
-      ? await queryPropertiesArchive({
-          page: propertyArchivePage,
-          limit: pageSize,
-          categoryIds: flattenedCategories,
-        })
-      : preview
-
-    propertiesList = paginatedResult.docs.map((doc) => ({
-      ...doc,
-      _collection: 'properties' as const,
-    })) as CardPostData[]
+    if (displayMode === 'allPaginated') {
+      useFullListing = Boolean(cmsPagePath)
+      const result = await queryPropertiesArchive({
+        fetchAll: true,
+        categoryIds: flattenedCategories,
+        search: propertySearchQuery,
+      })
+      totalDocs = result.totalDocs
+      propertiesList = result.docs.map((doc) => ({
+        ...doc,
+        _collection: 'properties' as const,
+      })) as CardPostData[]
+    } else {
+      const result = await queryPropertiesArchive({
+        page: 1,
+        limit,
+        categoryIds: flattenedCategories,
+        search: propertySearchQuery || undefined,
+      })
+      totalDocs = result.totalDocs
+      propertiesList = result.docs.map((doc) => ({
+        ...doc,
+        _collection: 'properties' as const,
+      })) as CardPostData[]
+    }
   } else if (selectedProperties?.length) {
     const payload = await getPayload({ config: configPromise })
     const propertyIds = selectedProperties
@@ -97,7 +92,7 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
     if (propertyIds.length > 0) {
       const fetchedProperties = await payload.find({
         collection: 'properties',
-        depth: 2,
+        depth: 3,
         locale: 'en',
         limit: propertyIds.length,
         overrideAccess: false,
@@ -116,14 +111,13 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
         ...prop,
         _collection: 'properties',
       })) as CardPostData[]
+      totalDocs = propertiesList.length
     }
   }
 
   const showViewAllLink =
     displayMode === 'limited' &&
-    !usePaginatedListing &&
-    paginatedResult != null &&
-    paginatedResult.totalDocs > limit &&
+    totalDocs > limit &&
     viewAllHref
 
   return (
@@ -134,18 +128,16 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
         </div>
       )}
 
-      {usePaginatedListing && paginatedResult && (
+      {useFullListing && (
         <PropertyArchiveListing
           docs={propertiesList}
-          page={paginatedResult.page ?? propertyArchivePage}
-          pageSize={pageSize}
-          totalDocs={paginatedResult.totalDocs}
-          totalPages={paginatedResult.totalPages}
-          paginationQueryOnPath={cmsPagePath!}
+          totalDocs={totalDocs}
+          pagePath={cmsPagePath!}
+          searchQuery={propertySearchQuery}
         />
       )}
 
-      {!usePaginatedListing && populateBy === 'collection' && propertiesList.length > 0 && (
+      {!useFullListing && populateBy === 'collection' && propertiesList.length > 0 && (
         <>
           <CollectionArchive posts={propertiesList} relationTo="properties" showCategories={false} />
           {showViewAllLink && (
@@ -159,6 +151,10 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
             </div>
           )}
         </>
+      )}
+
+      {!useFullListing && populateBy === 'collection' && propertiesList.length === 0 && displayMode === 'limited' && (
+        <div className="container text-muted-foreground">No properties found.</div>
       )}
 
       {populateBy === 'selection' && propertiesList.length > 0 && (

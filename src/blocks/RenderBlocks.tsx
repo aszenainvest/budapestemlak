@@ -53,9 +53,10 @@ export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
   settings?: Setting
   propertyArchivePage?: number
+  propertySearchQuery?: string
   pagePath?: string
 }> = (props) => {
-  const { blocks, settings, propertyArchivePage, pagePath } = props
+  const { blocks, settings, propertyArchivePage, propertySearchQuery, pagePath } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
@@ -79,7 +80,7 @@ export const RenderBlocks: React.FC<{
                       {...block}
                       settings={settings}
                       {...(blockType === 'propertyArchive'
-                        ? { propertyArchivePage, pagePath }
+                        ? { propertyArchivePage, propertySearchQuery, pagePath }
                         : {})}
                     />
                   )}

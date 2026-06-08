@@ -47,6 +47,7 @@ type Args = {
   }>
   searchParams: Promise<{
     propertyPage?: string
+    q?: string
   }>
 }
 
@@ -61,6 +62,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
   const url = '/' + (slug ? decodedSlug : '')
   const pagePath = isHome ? '/' : `/${decodedSlug}`
   const propertyArchivePage = Math.max(1, Number(searchParams?.propertyPage) || 1)
+  const propertySearchQuery = searchParams?.q?.trim() || ''
 
   let page: RequiredDataFromCollectionSlug<'pages'> | null
 
@@ -99,6 +101,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
         blocks={layout}
         settings={settings}
         propertyArchivePage={propertyArchivePage}
+        propertySearchQuery={propertySearchQuery}
         pagePath={pagePath}
       />
     </article>

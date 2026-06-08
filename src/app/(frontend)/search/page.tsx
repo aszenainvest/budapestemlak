@@ -13,50 +13,45 @@ type Args = {
     q: string
   }>
 }
+
+const SEARCH_RESULTS_MAX = 500
+
 export default async function Page({ searchParams: searchParamsPromise }: Args) {
   const { q: query } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })
 
-  const posts = await payload.find({
+  const results = await payload.find({
     collection: 'search',
-    depth: 1,
-    limit: 12,
-    select: {
-      title: true,
-      slug: true,
-      categories: true,
-      meta: true,
-    },
-    // pagination: false reduces overhead if you don't need totalDocs
+    depth: 3,
+    limit: SEARCH_RESULTS_MAX,
     pagination: false,
     ...(query
       ? {
           where: {
             or: [
-              {
-                title: {
-                  like: query,
-                },
-              },
-              {
-                'meta.description': {
-                  like: query,
-                },
-              },
-              {
-                'meta.title': {
-                  like: query,
-                },
-              },
-              {
-                slug: {
-                  like: query,
-                },
-              },
+              { title: { like: query } },
+              { 'meta.description': { like: query } },
+              { 'meta.title': { like: query } },
+              { slug: { like: query } },
             ],
           },
         }
       : {}),
+  })
+
+  const cards: CardPostData[] = results.docs.flatMap((item) => {
+    const doc = item.doc
+    if (!doc || typeof doc.value !== 'object' || doc.value === null) return []
+
+    const relationTo = doc.relationTo
+    if (relationTo !== 'posts' && relationTo !== 'properties') return []
+
+    return [
+      {
+        ...doc.value,
+        _collection: relationTo,
+      } as CardPostData,
+    ]
   })
 
   return (
@@ -72,8 +67,8 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
         </div>
       </div>
 
-      {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} />
+      {cards.length > 0 ? (
+        <CollectionArchive posts={cards} showCategories={false} />
       ) : (
         <div className="container">No results found.</div>
       )}

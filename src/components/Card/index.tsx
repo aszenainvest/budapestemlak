@@ -11,6 +11,7 @@ import { Media } from '@/components/Media'
 import { StatusLabelBadges } from '@/components/StatusLabelBadges'
 import { formatDateTime } from '@/utilities/formatDateTime'
 import { normalizeStatusLabels } from '@/utilities/normalizeStatusLabel'
+import { resolveCardImage } from '@/utilities/resolvePropertyCardImage'
 
 export type CardPostData = Partial<Post> & Partial<Property>
 
@@ -31,16 +32,14 @@ export const Card: React.FC<{
     meta,
     title,
     publishedAt,
-    mainImage,
-    heroImage,
     statusLabels,
     summary,
     _collection,
   } = (doc || {}) as any
-  const { description, image: metaImage } = meta || {}
-  const imageToUse = metaImage || heroImage || mainImage
+  const { description } = meta || {}
 
   const relationTo = relationToFromProps || _collection || 'posts'
+  const imageToUse = resolveCardImage((doc || {}) as any, relationTo)
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const descriptionToUse = description || summary
@@ -61,11 +60,12 @@ export const Card: React.FC<{
     >
       {/* Image Wrapper */}
       <div className="relative w-full aspect-[16/10] overflow-hidden">
-        {imageToUse && typeof imageToUse !== 'string' ? (
-          <Media 
-            resource={imageToUse} 
-            size="33vw" 
-            className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110" 
+        {imageToUse ? (
+          <Media
+            resource={imageToUse}
+            fill
+            size="33vw"
+            imgClassName="object-cover transition-transform duration-700 group-hover:scale-110"
           />
         ) : (
           <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">
