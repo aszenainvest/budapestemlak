@@ -130,7 +130,7 @@ export const Settings: GlobalConfig = {
           label: 'Tracking & chat',
           admin: {
             description:
-              'Paste full snippets from each vendor’s docs (Google Analytics / GA4, Google Tag Manager, Meta Pixel, LinkedIn Insight, TikTok Pixel, Microsoft Clarity, Hotjar, HubSpot, etc.). For GTM, use both the <head> script and the <body> noscript block in the fields below. Chat: Intercom, Crisp, Tawk.to, Zendesk, Drift — usually one script block in “before </body>”.',
+              'Paste full snippets from each vendor’s docs (Google Analytics / GA4, Google Tag Manager, Meta Pixel, LinkedIn Insight, TikTok Pixel, Microsoft Clarity, Hotjar, HubSpot, etc.). For GTM, use both the <head> script and the <body> noscript block in the fields below. Chat: Intercom, Crisp, Tawk.to, Zendesk, Drift — usually one script block in “before </body>”. Floating buttons below: WhatsApp, Botim and IMO (popular in the Gulf / Arabian Peninsula).',
           },
           fields: [
             {
@@ -154,22 +154,92 @@ export const Settings: GlobalConfig = {
               },
             },
             {
-              type: 'row',
+              type: 'collapsible',
+              label: 'Floating messenger buttons',
+              admin: {
+                initCollapsed: false,
+                description:
+                  'Shown fixed at bottom-right on every page. For Botim/IMO, paste a share or web-call link from the app when you have one; otherwise enter the phone number (country code, digits only).',
+              },
               fields: [
                 {
-                  name: 'whatsappEnabled',
-                  type: 'checkbox',
-                  label: 'Show WhatsApp floating button',
-                  defaultValue: false,
-                  admin: { width: '50%' },
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'whatsappEnabled',
+                      type: 'checkbox',
+                      label: 'Show WhatsApp button',
+                      defaultValue: false,
+                      admin: { width: '33%' },
+                    },
+                    {
+                      name: 'whatsappPhone',
+                      type: 'text',
+                      label: 'WhatsApp number',
+                      admin: {
+                        width: '67%',
+                        description: 'Digits only with country code, e.g. 36707200444',
+                      },
+                    },
+                  ],
                 },
                 {
-                  name: 'whatsappPhone',
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'botimEnabled',
+                      type: 'checkbox',
+                      label: 'Show Botim button',
+                      defaultValue: false,
+                      admin: { width: '33%' },
+                    },
+                    {
+                      name: 'botimContactUrl',
+                      type: 'text',
+                      label: 'Botim link (optional)',
+                      admin: {
+                        width: '67%',
+                        description: 'Share link from Botim app, if available. Leave empty to use phone deep link.',
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'botimPhone',
                   type: 'text',
-                  label: 'WhatsApp number (digits only, with country code)',
+                  label: 'Botim phone (fallback)',
                   admin: {
-                    width: '50%',
-                    description: 'Example: 441234567890 or 905551234567 (no + or spaces).',
+                    description: 'Used when no Botim link is set. Country code + number, digits only.',
+                  },
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'imoEnabled',
+                      type: 'checkbox',
+                      label: 'Show IMO button',
+                      defaultValue: false,
+                      admin: { width: '33%' },
+                    },
+                    {
+                      name: 'imoContactUrl',
+                      type: 'text',
+                      label: 'IMO link (recommended)',
+                      admin: {
+                        width: '67%',
+                        description:
+                          'IMO → Contacts → Global Web Call → copy share link. Or any imo.im / imo:// link.',
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'imoPhone',
+                  type: 'text',
+                  label: 'IMO phone (fallback)',
+                  admin: {
+                    description: 'Used when no IMO link is set. Opens IMO app on mobile when installed.',
                   },
                 },
               ],

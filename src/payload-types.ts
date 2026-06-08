@@ -2534,9 +2534,27 @@ export interface Setting {
   bodyScripts?: string | null;
   whatsappEnabled?: boolean | null;
   /**
-   * Example: 441234567890 or 905551234567 (no + or spaces).
+   * Digits only with country code, e.g. 36707200444
    */
   whatsappPhone?: string | null;
+  botimEnabled?: boolean | null;
+  /**
+   * Share link from Botim app, if available. Leave empty to use phone deep link.
+   */
+  botimContactUrl?: string | null;
+  /**
+   * Used when no Botim link is set. Country code + number, digits only.
+   */
+  botimPhone?: string | null;
+  imoEnabled?: boolean | null;
+  /**
+   * IMO → Contacts → Global Web Call → copy share link. Or any imo.im / imo:// link.
+   */
+  imoContactUrl?: string | null;
+  /**
+   * Used when no IMO link is set. Opens IMO app on mobile when installed.
+   */
+  imoPhone?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2648,6 +2666,12 @@ export interface SettingsSelect<T extends boolean = true> {
   bodyScripts?: T;
   whatsappEnabled?: T;
   whatsappPhone?: T;
+  botimEnabled?: T;
+  botimContactUrl?: T;
+  botimPhone?: T;
+  imoEnabled?: T;
+  imoContactUrl?: T;
+  imoPhone?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

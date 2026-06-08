@@ -9,6 +9,7 @@ import type { Post, Property } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import { StatusLabelBadges } from '@/components/StatusLabelBadges'
+import { formatDateTime } from '@/utilities/formatDateTime'
 import { normalizeStatusLabels } from '@/utilities/normalizeStatusLabel'
 
 export type CardPostData = Partial<Post> & Partial<Property>
@@ -47,12 +48,7 @@ export const Card: React.FC<{
   const href = `/${relationTo}/${slug}`
   const statusLabelItems = normalizeStatusLabels(statusLabels)
 
-  // Use native Intl.DateTimeFormat instead of date-fns to avoid install errors
-  const formattedDate = publishedAt ? new Intl.DateTimeFormat('tr-TR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  }).format(new Date(publishedAt)) : null
+  const formattedDate = publishedAt ? formatDateTime(publishedAt) : null
 
   return (
     <article

@@ -49,6 +49,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           headScripts={settings.headScripts}
           whatsappEnabled={settings.whatsappEnabled}
           whatsappPhone={settings.whatsappPhone}
+          botimEnabled={settings.botimEnabled}
+          botimContactUrl={settings.botimContactUrl}
+          botimPhone={settings.botimPhone}
+          imoEnabled={settings.imoEnabled}
+          imoContactUrl={settings.imoContactUrl}
+          imoPhone={settings.imoPhone}
         />
       </body>
     </html>
