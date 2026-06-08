@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react'
 import { cn } from '@/utilities/ui'
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
 
 import type { Page, Setting } from '@/payload-types'
 
@@ -24,6 +26,7 @@ import { ArtisticShowcaseBlock } from '@/blocks/ArtisticShowcase/Component'
 import { TimelineBlock } from '@/blocks/Timeline/Component'
 import { MapComponent } from '@/blocks/Map/Component'
 import { VideoBlock } from '@/blocks/Video/Component'
+import { enrichProjectCardsBlock } from '@/utilities/enrichPropertyMedia'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -55,44 +58,45 @@ export const RenderBlocks: React.FC<{
   propertyArchivePage?: number
   propertySearchQuery?: string
   pagePath?: string
-}> = (props) => {
+}> = async (props) => {
   const { blocks, settings, propertyArchivePage, propertySearchQuery, pagePath } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
-  if (hasBlocks) {
-    return (
-      <Fragment>
-        {blocks.map((block, index) => {
-          const { blockType } = block
+  if (!hasBlocks) return null
 
-          if (blockType && blockType in blockComponents) {
-            const Block: any = blockComponents[blockType]
+  const payload = await getPayload({ config: configPromise })
 
-            if (Block) {
-              return (
-                <div
-                  className={cn(index === 0 && blockType === 'heroSection' ? '' : 'my-0')}
-                  key={index}
-                >
-                  {(Block as any) && (
-                    <Block
-                      {...block}
-                      settings={settings}
-                      {...(blockType === 'propertyArchive'
-                        ? { propertyArchivePage, propertySearchQuery, pagePath }
-                        : {})}
-                    />
-                  )}
-                </div>
-              )
-            }
-          }
-          return null
-        })}
-      </Fragment>
-    )
-  }
+  const rendered = await Promise.all(
+    blocks.map(async (block, index) => {
+      const { blockType } = block
 
-  return null
+      if (!blockType || !(blockType in blockComponents)) return null
+
+      const Block: any = blockComponents[blockType as keyof typeof blockComponents]
+      if (!Block) return null
+
+      let blockProps = block
+      if (blockType === 'projectCards') {
+        blockProps = await enrichProjectCardsBlock(payload, block)
+      }
+
+      return (
+        <div
+          className={cn(index === 0 && blockType === 'heroSection' ? '' : 'my-0')}
+          key={index}
+        >
+          <Block
+            {...blockProps}
+            settings={settings}
+            {...(blockType === 'propertyArchive'
+              ? { propertyArchivePage, propertySearchQuery, pagePath }
+              : {})}
+          />
+        </div>
+      )
+    }),
+  )
+
+  return <Fragment>{rendered}</Fragment>
 }

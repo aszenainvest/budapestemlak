@@ -1,8 +1,6 @@
 import type { Media, Property } from '@/payload-types'
 
-function isPopulatedMedia(value: unknown): value is Media {
-  return typeof value === 'object' && value !== null && 'filename' in value
-}
+import { isPopulatedMedia } from '@/utilities/enrichPropertyMedia'
 
 /** Card/listing image: meta → main → first gallery item. */
 export function resolvePropertyCardImage(property: Partial<Property>): Media | null {
@@ -16,6 +14,19 @@ export function resolvePropertyCardImage(property: Partial<Property>): Media | n
     for (const item of gallery) {
       if (isPopulatedMedia(item)) return item
     }
+  }
+
+  return null
+}
+
+export function resolveProjectCardImage(project: {
+  image?: unknown
+  property?: unknown
+}): Media | null {
+  if (isPopulatedMedia(project.image)) return project.image
+
+  if (typeof project.property === 'object' && project.property !== null) {
+    return resolvePropertyCardImage(project.property as Partial<Property>)
   }
 
   return null

@@ -17,6 +17,7 @@ import { ensureUniqueSlug } from '../../hooks/ensureUniqueSlug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateProperty, revalidatePropertyDelete } from './hooks/revalidateProperty'
+import { hydrateMediaUrl, isPopulatedMedia } from '../../utilities/enrichPropertyMedia'
 
 import {
   MetaDescriptionField,
@@ -26,6 +27,8 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from 'payload'
+
+import type { Property } from '@/payload-types'
 
 export const Properties: CollectionConfig<'properties'> = {
   slug: 'properties',
@@ -289,6 +292,22 @@ export const Properties: CollectionConfig<'properties'> = {
     beforeChange: [populatePublishedAt, ensureUniqueSlug('properties')],
     afterChange: [revalidateProperty],
     afterDelete: [revalidatePropertyDelete],
+    afterRead: [
+      ({ doc }) => {
+        if (isPopulatedMedia(doc.mainImage)) {
+          doc.mainImage = hydrateMediaUrl(doc.mainImage)
+        }
+        if (doc.meta?.image && isPopulatedMedia(doc.meta.image)) {
+          doc.meta.image = hydrateMediaUrl(doc.meta.image)
+        }
+    if (Array.isArray(doc.gallery)) {
+      doc.gallery = doc.gallery.map((item: NonNullable<Property['gallery']>[number]) =>
+        isPopulatedMedia(item) ? hydrateMediaUrl(item) : item,
+      )
+    }
+        return doc
+      },
+    ],
   },
   versions: {
     drafts: {

@@ -56,9 +56,32 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
       src = toAbsoluteSiteUrl(u)
     } else if (typeof filename === 'string' && filename.length > 0) {
       src = toAbsoluteSiteUrl(toApiMediaFileUrl(filename))
+    } else if (typeof resource.thumbnailURL === 'string' && resource.thumbnailURL.length > 0) {
+      const t = resource.thumbnailURL
+      src = t.startsWith('http') ? t : toAbsoluteSiteUrl(t)
+    } else if (
+      resource.sizes?.thumbnail &&
+      typeof resource.sizes.thumbnail.url === 'string' &&
+      resource.sizes.thumbnail.url.length > 0
+    ) {
+      const t = resource.sizes.thumbnail.url
+      src = t.startsWith('http') ? t : toAbsoluteSiteUrl(t)
     } else {
       src = ''
     }
+  }
+
+  if (!src) {
+    return (
+      <div
+        className={cn(
+          'flex h-full w-full items-center justify-center bg-gray-100 text-gray-400',
+          pictureClassName,
+        )}
+      >
+        —
+      </div>
+    )
   }
 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)

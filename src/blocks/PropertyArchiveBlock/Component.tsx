@@ -13,6 +13,7 @@ import {
   PROPERTIES_ARCHIVE_PAGE_SIZE,
   queryPropertiesArchive,
 } from '@/utilities/queryPropertiesArchive'
+import { enrichPropertiesForCards } from '@/utilities/enrichPropertyMedia'
 
 function pageHref(slug: string | null | undefined): string | null {
   if (!slug || typeof slug !== 'string') return null
@@ -119,7 +120,9 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
         .map((propId) => fetchedProperties.docs.find((doc) => String(doc.id) === String(propId)))
         .filter(Boolean) as Property[]
 
-      propertiesList = mapped.map((prop) => ({
+      const enriched = await enrichPropertiesForCards(payload, mapped)
+
+      propertiesList = enriched.map((prop) => ({
         ...prop,
         _collection: 'properties',
       })) as CardPostData[]

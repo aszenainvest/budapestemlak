@@ -5,6 +5,7 @@ import type { ProjectCardsBlock as ProjectCardsBlockType } from '@/payload-types
 import { Media } from '@/components/Media'
 import { StatusLabelBadges } from '@/components/StatusLabelBadges'
 import { normalizeStatusLabels } from '@/utilities/normalizeStatusLabel'
+import { resolveProjectCardImage } from '@/utilities/resolvePropertyCardImage'
 import { cn } from '@/utilities/ui'
 
 export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, projects, enableFiltering, allFilterLabel }) => {
@@ -107,11 +108,13 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
               ? normalizeStatusLabels((prop as { statusLabels?: unknown }).statusLabels)
               : []
 
+          const cardImage = resolveProjectCardImage(item)
+
           const cardInner = (
             <div className="flex h-full flex-col">
               <div className="relative h-72 w-full overflow-hidden">
-                {item.image ? (
-                  <Media resource={item.image} fill imgClassName="object-cover" />
+                {cardImage ? (
+                  <Media resource={cardImage} fill imgClassName="object-cover" />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-gray-100 text-gray-400">
                     No image

@@ -2,6 +2,7 @@ import configPromise from '@payload-config'
 import { getPayload, type PaginatedDocs, type Where } from 'payload'
 
 import type { Property } from '@/payload-types'
+import { enrichPropertiesForCards } from './enrichPropertyMedia'
 
 export const PROPERTIES_ARCHIVE_PAGE_SIZE = 6
 
@@ -55,7 +56,7 @@ export async function queryPropertiesArchive({
   const where: Where | undefined =
     filters.length === 0 ? undefined : filters.length === 1 ? filters[0] : { and: filters }
 
-  return payload.find({
+  const result = await payload.find({
     collection: 'properties',
     depth: 3,
     locale,
@@ -65,4 +66,11 @@ export async function queryPropertiesArchive({
     sort: '-publishedAt',
     ...(where ? { where } : {}),
   })
+
+  const docs = await enrichPropertiesForCards(payload, result.docs)
+
+  return {
+    ...result,
+    docs,
+  }
 }
