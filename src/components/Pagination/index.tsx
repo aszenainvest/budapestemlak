@@ -17,12 +17,24 @@ function buildPageHref(
   basePath: string,
   queryPath?: string,
   queryParamKey?: string,
+  additionalQuery?: Record<string, string>,
 ): string {
   if (queryPath && queryParamKey) {
     const path = queryPath.replace(/\/$/, '') || '/'
-    if (page <= 1) return path
-    const sep = path.includes('?') ? '&' : '?'
-    return `${path}${sep}${queryParamKey}=${page}`
+    const params = new URLSearchParams()
+
+    if (additionalQuery) {
+      for (const [key, value] of Object.entries(additionalQuery)) {
+        if (value) params.set(key, value)
+      }
+    }
+
+    if (page > 1) {
+      params.set(queryParamKey, String(page))
+    }
+
+    const qs = params.toString()
+    return qs ? `${path}?${qs}` : path
   }
 
   const base = basePath.replace(/\/$/, '')
@@ -41,6 +53,7 @@ export const Pagination: React.FC<{
   /** When set with queryParamKey, uses query pagination on this path */
   queryPath?: string
   queryParamKey?: string
+  additionalQuery?: Record<string, string>
 }> = (props) => {
   const router = useRouter()
 
@@ -51,10 +64,11 @@ export const Pagination: React.FC<{
     basePath = '/posts/page',
     queryPath,
     queryParamKey = 'propertyPage',
+    additionalQuery,
   } = props
 
   const go = (targetPage: number) => {
-    router.push(buildPageHref(targetPage, basePath, queryPath, queryParamKey))
+    router.push(buildPageHref(targetPage, basePath, queryPath, queryParamKey, additionalQuery))
   }
 
   const hasNextPage = page < totalPages

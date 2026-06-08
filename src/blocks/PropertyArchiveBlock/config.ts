@@ -48,10 +48,10 @@ export const PropertyArchive: Block = {
       admin: {
         condition: (_, siblingData) => siblingData?.populateBy === 'collection',
         description:
-          'All published: search + full list on this page. Limited: fixed preview count with optional “View all” link.',
+          'All published: search + 6 per page with pagination. Limited: fixed preview count with optional “View all” link.',
       },
       options: [
-        { label: 'All published (search + full list)', value: 'allPaginated' },
+        { label: 'All published (search + paginated)', value: 'allPaginated' },
         { label: 'Limited count', value: 'limited' },
       ],
       label: 'Display',
@@ -82,7 +82,7 @@ export const PropertyArchive: Block = {
         step: 1,
         description: 'Number of properties to show in the grid (limited mode only).',
       },
-      defaultValue: 10,
+      defaultValue: 6,
       label: 'Limit',
     },
     {

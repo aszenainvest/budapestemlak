@@ -3,9 +3,7 @@ import { getPayload, type PaginatedDocs, type Where } from 'payload'
 
 import type { Property } from '@/payload-types'
 
-export const PROPERTIES_ARCHIVE_PAGE_SIZE = 12
-/** Upper bound when loading the full published list on one page */
-export const PROPERTIES_ARCHIVE_MAX = 500
+export const PROPERTIES_ARCHIVE_PAGE_SIZE = 6
 
 type QueryArgs = {
   page?: number
@@ -13,7 +11,6 @@ type QueryArgs = {
   categoryIds?: (string | number)[]
   locale?: 'en'
   search?: string
-  fetchAll?: boolean
 }
 
 function buildSearchWhere(query: string): Where {
@@ -35,7 +32,6 @@ export async function queryPropertiesArchive({
   categoryIds,
   locale = 'en',
   search,
-  fetchAll = false,
 }: QueryArgs): Promise<PaginatedDocs<Property>> {
   const payload = await getPayload({ config: configPromise })
 
@@ -63,8 +59,8 @@ export async function queryPropertiesArchive({
     collection: 'properties',
     depth: 3,
     locale,
-    limit: fetchAll ? PROPERTIES_ARCHIVE_MAX : limit,
-    page: fetchAll ? 1 : page,
+    limit,
+    page,
     overrideAccess: false,
     sort: '-publishedAt',
     ...(where ? { where } : {}),

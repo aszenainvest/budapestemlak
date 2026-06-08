@@ -1,11 +1,16 @@
 import React from 'react'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
+import { PageRange } from '@/components/PageRange'
+import { Pagination } from '@/components/Pagination'
 import { PropertyArchiveSearch } from '@/components/PropertyArchiveSearch'
 import type { CardPostData } from '@/components/Card'
 
 type Props = {
   docs: CardPostData[]
+  page: number
+  pageSize: number
+  totalPages: number
   totalDocs: number
   pagePath: string
   searchQuery?: string
@@ -14,6 +19,9 @@ type Props = {
 
 export function PropertyArchiveListing({
   docs,
+  page,
+  pageSize,
+  totalPages,
   totalDocs,
   pagePath,
   searchQuery = '',
@@ -31,7 +39,28 @@ export function PropertyArchiveListing({
       </div>
 
       {docs.length > 0 ? (
-        <CollectionArchive posts={docs} relationTo="properties" showCategories={false} />
+        <>
+          <div className="container mb-8">
+            <PageRange
+              collection="properties"
+              currentPage={page}
+              limit={pageSize}
+              totalDocs={totalDocs}
+            />
+          </div>
+          <CollectionArchive posts={docs} relationTo="properties" showCategories={false} />
+          {totalPages > 1 && (
+            <div className="container pb-8">
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                queryPath={pagePath}
+                queryParamKey="propertyPage"
+                additionalQuery={searchQuery ? { q: searchQuery } : undefined}
+              />
+            </div>
+          )}
+        </>
       ) : (
         <div className="container pb-8 text-muted-foreground">Try a different search term.</div>
       )}

@@ -9,7 +9,10 @@ import RichText from '@/components/RichText'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PropertyArchiveListing } from '@/components/PropertyArchiveListing'
 import type { CardPostData } from '@/components/Card'
-import { queryPropertiesArchive } from '@/utilities/queryPropertiesArchive'
+import {
+  PROPERTIES_ARCHIVE_PAGE_SIZE,
+  queryPropertiesArchive,
+} from '@/utilities/queryPropertiesArchive'
 
 function pageHref(slug: string | null | undefined): string | null {
   if (!slug || typeof slug !== 'string') return null
@@ -18,6 +21,7 @@ function pageHref(slug: string | null | undefined): string | null {
 
 type Props = PropertyArchiveBlockProps & {
   id?: string
+  propertyArchivePage?: number
   propertySearchQuery?: string
   /** Current CMS page path, e.g. /current-opportunities */
   pagePath?: string
@@ -33,11 +37,12 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
     selectedProperties,
     displayMode = 'allPaginated',
     viewAllPage,
+    propertyArchivePage = 1,
     propertySearchQuery = '',
     pagePath = '',
   } = props
 
-  const limit = limitFromProps || 10
+  const limit = limitFromProps || 6
   const cmsPagePath = pagePath || undefined
 
   const viewAllHref =
@@ -52,17 +57,24 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
 
   let propertiesList: CardPostData[] = []
   let totalDocs = 0
+  let totalPages = 1
+  let pageSize = PROPERTIES_ARCHIVE_PAGE_SIZE
+  let currentPage = propertyArchivePage
   let useFullListing = false
 
   if (populateBy === 'collection') {
     if (displayMode === 'allPaginated') {
       useFullListing = Boolean(cmsPagePath)
+      pageSize = PROPERTIES_ARCHIVE_PAGE_SIZE
       const result = await queryPropertiesArchive({
-        fetchAll: true,
+        page: propertyArchivePage,
+        limit: pageSize,
         categoryIds: flattenedCategories,
         search: propertySearchQuery,
       })
       totalDocs = result.totalDocs
+      totalPages = result.totalPages
+      currentPage = result.page ?? propertyArchivePage
       propertiesList = result.docs.map((doc) => ({
         ...doc,
         _collection: 'properties' as const,
@@ -131,7 +143,10 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
       {useFullListing && (
         <PropertyArchiveListing
           docs={propertiesList}
+          page={currentPage}
+          pageSize={pageSize}
           totalDocs={totalDocs}
+          totalPages={totalPages}
           pagePath={cmsPagePath!}
           searchQuery={propertySearchQuery}
         />
