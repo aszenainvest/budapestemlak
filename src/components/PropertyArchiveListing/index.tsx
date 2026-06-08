@@ -4,11 +4,11 @@ import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import type { CardPostData } from '@/components/Card'
-import { PROPERTIES_ARCHIVE_PAGE_SIZE } from '@/utilities/queryPropertiesArchive'
 
 type Props = {
   docs: CardPostData[]
   page: number
+  pageSize: number
   totalPages: number
   totalDocs: number
   /** CMS page path — pagination uses ?propertyPage= on this URL */
@@ -19,6 +19,7 @@ type Props = {
 export function PropertyArchiveListing({
   docs,
   page,
+  pageSize,
   totalPages,
   totalDocs,
   paginationQueryOnPath,
@@ -30,7 +31,7 @@ export function PropertyArchiveListing({
         <PageRange
           collection="properties"
           currentPage={page}
-          limit={PROPERTIES_ARCHIVE_PAGE_SIZE}
+          limit={pageSize}
           totalDocs={totalDocs}
         />
       </div>
@@ -38,7 +39,7 @@ export function PropertyArchiveListing({
       <CollectionArchive posts={docs} relationTo="properties" showCategories={false} />
 
       {totalPages > 1 && (
-        <div className="container">
+        <div className="container pb-8">
           <Pagination
             page={page}
             totalPages={totalPages}

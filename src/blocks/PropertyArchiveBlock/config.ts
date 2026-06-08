@@ -42,6 +42,21 @@ export const PropertyArchive: Block = {
       ],
     },
     {
+      name: 'displayMode',
+      type: 'select',
+      defaultValue: 'allPaginated',
+      admin: {
+        condition: (_, siblingData) => siblingData?.populateBy === 'collection',
+        description:
+          'All published: every published property, 12 per page with pagination (?propertyPage=2). Limited: fixed count only on this page.',
+      },
+      options: [
+        { label: 'All published (paginated)', value: 'allPaginated' },
+        { label: 'Limited count', value: 'limited' },
+      ],
+      label: 'Display',
+    },
+    {
       name: 'categories',
       type: 'relationship',
       admin: {
@@ -65,25 +80,10 @@ export const PropertyArchive: Block = {
         condition: (_, siblingData) =>
           siblingData?.populateBy === 'collection' && siblingData?.displayMode === 'limited',
         step: 1,
-        description: 'Number of properties to show in the grid.',
+        description: 'Number of properties to show in the grid (limited mode only).',
       },
       defaultValue: 10,
       label: 'Limit',
-    },
-    {
-      name: 'displayMode',
-      type: 'select',
-      defaultValue: 'limited',
-      admin: {
-        condition: (_, siblingData) => siblingData?.populateBy === 'collection',
-        description:
-          'Limited: fixed count on this page. All published: every published property with pagination on this CMS page (?propertyPage=2).',
-      },
-      options: [
-        { label: 'Limited count', value: 'limited' },
-        { label: 'All published (paginated)', value: 'allPaginated' },
-      ],
-      label: 'Display',
     },
     {
       name: 'viewAllPage',

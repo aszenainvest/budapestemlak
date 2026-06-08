@@ -717,15 +717,15 @@ export interface PropertyArchiveBlock {
     [k: string]: unknown;
   } | null;
   populateBy?: ('collection' | 'selection') | null;
+  /**
+   * All published: every published property, 12 per page with pagination (?propertyPage=2). Limited: fixed count only on this page.
+   */
+  displayMode?: ('allPaginated' | 'limited') | null;
   categories?: (number | Category)[] | null;
   /**
-   * Number of properties to show in the grid.
+   * Number of properties to show in the grid (limited mode only).
    */
   limit?: number | null;
-  /**
-   * Limited: fixed count on this page. All published: every published property with pagination on this CMS page (?propertyPage=2).
-   */
-  displayMode?: ('limited' | 'allPaginated') | null;
   /**
    * Optional. When there are more properties than the limit, show a “View all” button linking to this page (usually a full-list page with Display = All published).
    */
@@ -1725,9 +1725,9 @@ export interface ArchiveBlockSelect<T extends boolean = true> {
 export interface PropertyArchiveBlockSelect<T extends boolean = true> {
   introContent?: T;
   populateBy?: T;
+  displayMode?: T;
   categories?: T;
   limit?: T;
-  displayMode?: T;
   viewAllPage?: T;
   selectedProperties?: T;
   id?: T;
