@@ -45,16 +45,22 @@ type Args = {
   params: Promise<{
     slug?: string
   }>
+  searchParams: Promise<{
+    propertyPage?: string
+  }>
 }
 
-export default async function Page({ params: paramsPromise }: Args) {
+export default async function Page({ params: paramsPromise, searchParams: searchParamsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const params = await paramsPromise
+  const searchParams = await searchParamsPromise
   const { slug } = params
   const isHome = !slug
   const homeSlug = 'home'
   const decodedSlug = decodeURIComponent(slug || homeSlug)
   const url = '/' + (slug ? decodedSlug : '')
+  const pagePath = isHome ? '/' : `/${decodedSlug}`
+  const propertyArchivePage = Math.max(1, Number(searchParams?.propertyPage) || 1)
 
   let page: RequiredDataFromCollectionSlug<'pages'> | null
 
@@ -89,7 +95,12 @@ export default async function Page({ params: paramsPromise }: Args) {
       {draft && <LivePreviewListener />}
 
       {!(hero?.type === 'lowImpact' && !isHome) && <RenderHero {...hero} />}
-      <RenderBlocks blocks={layout} settings={settings} />
+      <RenderBlocks
+        blocks={layout}
+        settings={settings}
+        propertyArchivePage={propertyArchivePage}
+        pagePath={pagePath}
+      />
     </article>
   )
 }

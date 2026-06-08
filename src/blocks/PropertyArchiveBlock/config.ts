@@ -62,11 +62,40 @@ export const PropertyArchive: Block = {
       name: 'limit',
       type: 'number',
       admin: {
-        condition: (_, siblingData) => siblingData?.populateBy === 'collection',
+        condition: (_, siblingData) =>
+          siblingData?.populateBy === 'collection' && siblingData?.displayMode === 'limited',
         step: 1,
+        description: 'Number of properties to show in the grid.',
       },
       defaultValue: 10,
       label: 'Limit',
+    },
+    {
+      name: 'displayMode',
+      type: 'select',
+      defaultValue: 'limited',
+      admin: {
+        condition: (_, siblingData) => siblingData?.populateBy === 'collection',
+        description:
+          'Limited: fixed count on this page. All published: every published property with pagination on this CMS page (?propertyPage=2).',
+      },
+      options: [
+        { label: 'Limited count', value: 'limited' },
+        { label: 'All published (paginated)', value: 'allPaginated' },
+      ],
+      label: 'Display',
+    },
+    {
+      name: 'viewAllPage',
+      type: 'relationship',
+      relationTo: 'pages',
+      admin: {
+        condition: (_, siblingData) =>
+          siblingData?.populateBy === 'collection' && siblingData?.displayMode === 'limited',
+        description:
+          'Optional. When there are more properties than the limit, show a “View all” button linking to this page (usually a full-list page with Display = All published).',
+      },
+      label: 'Full list page',
     },
     {
       name: 'selectedProperties',

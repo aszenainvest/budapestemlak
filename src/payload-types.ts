@@ -718,7 +718,18 @@ export interface PropertyArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   categories?: (number | Category)[] | null;
+  /**
+   * Number of properties to show in the grid.
+   */
   limit?: number | null;
+  /**
+   * Limited: fixed count on this page. All published: every published property with pagination on this CMS page (?propertyPage=2).
+   */
+  displayMode?: ('limited' | 'allPaginated') | null;
+  /**
+   * Optional. When there are more properties than the limit, show a “View all” button linking to this page (usually a full-list page with Display = All published).
+   */
+  viewAllPage?: (number | null) | Page;
   selectedProperties?: (number | Property)[] | null;
   id?: string | null;
   blockName?: string | null;
@@ -1716,6 +1727,8 @@ export interface PropertyArchiveBlockSelect<T extends boolean = true> {
   populateBy?: T;
   categories?: T;
   limit?: T;
+  displayMode?: T;
+  viewAllPage?: T;
   selectedProperties?: T;
   id?: T;
   blockName?: T;

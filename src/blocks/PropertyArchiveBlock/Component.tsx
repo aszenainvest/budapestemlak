@@ -3,78 +3,112 @@ import type { Property, PropertyArchiveBlock as PropertyArchiveBlockProps } from
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
+import Link from 'next/link'
 import RichText from '@/components/RichText'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
-import { CardPostData } from '@/components/Card'
+import { PropertyArchiveListing } from '@/components/PropertyArchiveListing'
+import type { CardPostData } from '@/components/Card'
+import { queryPropertiesArchive } from '@/utilities/queryPropertiesArchive'
 
-export const PropertyArchiveBlock: React.FC<
-  PropertyArchiveBlockProps & {
-    id?: string
-  }
-> = async (props) => {
-  const { id, categories, introContent, limit: limitFromProps, populateBy, selectedProperties } = props
+function pageHref(slug: string | null | undefined): string | null {
+  if (!slug || typeof slug !== 'string') return null
+  return slug === 'home' ? '/' : `/${slug}`
+}
 
-  const limit = limitFromProps || 3
+type Props = PropertyArchiveBlockProps & {
+  id?: string
+  propertyArchivePage?: number
+  /** Current CMS page path, e.g. /current-opportunities */
+  pagePath?: string
+}
+
+export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
+  const {
+    id,
+    categories,
+    introContent,
+    limit: limitFromProps,
+    populateBy,
+    selectedProperties,
+    displayMode = 'limited',
+    viewAllPage,
+    propertyArchivePage = 1,
+    pagePath = '',
+  } = props
+
+  const limit = limitFromProps || 10
+  const cmsPagePath = pagePath || undefined
+
+  const viewAllHref =
+    typeof viewAllPage === 'object' && viewAllPage !== null
+      ? pageHref(viewAllPage.slug)
+      : null
+
+  const flattenedCategories = categories?.map((category) => {
+    if (typeof category === 'object') return category.id
+    return category
+  })
 
   let propertiesList: CardPostData[] = []
+  let paginatedResult: Awaited<ReturnType<typeof queryPropertiesArchive>> | null = null
 
   if (populateBy === 'collection') {
-    const payload = await getPayload({ config: configPromise })
+    if (displayMode === 'allPaginated') {
+      paginatedResult = await queryPropertiesArchive({
+        page: propertyArchivePage,
+        categoryIds: flattenedCategories,
+      })
+      propertiesList = paginatedResult.docs.map((doc) => ({
+        ...doc,
+        _collection: 'properties' as const,
+      })) as CardPostData[]
+    } else {
+      const fetchedDocs = await queryPropertiesArchive({
+        page: 1,
+        limit,
+        categoryIds: flattenedCategories,
+      })
+      propertiesList = fetchedDocs.docs.map((doc) => ({
+        ...doc,
+        _collection: 'properties' as const,
+      })) as CardPostData[]
 
-    const flattenedCategories = categories?.map((category) => {
-      if (typeof category === 'object') return category.id
-      else return category
-    })
-
-    const fetchedDocs = await payload.find({
-      collection: 'properties',
-      depth: 2,
-      locale: 'en',
-      limit,
-      ...(flattenedCategories && flattenedCategories.length > 0
-        ? {
-            where: {
-              categories: {
-                in: flattenedCategories,
-              },
-            },
-          }
-        : {}),
-    })
-
-    propertiesList = fetchedDocs.docs as CardPostData[]
-  } else {
-    if (selectedProperties?.length) {
-      const payload = await getPayload({ config: configPromise })
-      const propertyIds = selectedProperties
-        .map((prop) => {
-          if (typeof prop === 'object' && prop !== null) return prop.id
-          return prop
-        })
-        .filter(Boolean) as (string | number)[]
-
-      if (propertyIds.length > 0) {
-        const fetchedProperties = await payload.find({
-          collection: 'properties',
-          depth: 2,
-          limit: propertyIds.length,
-          where: {
-            id: {
-              in: propertyIds as any[],
-            },
-          },
-        })
-        // Sort them in the order they were selected
-        const mapped = propertyIds
-          .map((id) => fetchedProperties.docs.find((doc) => String(doc.id) === String(id)))
-          .filter(Boolean) as Property[]
-
-        propertiesList = mapped.map((prop) => ({
-          ...prop,
-          _collection: 'properties',
-        })) as CardPostData[]
+      if (fetchedDocs.totalDocs > limit) {
+        paginatedResult = fetchedDocs
       }
+    }
+  } else if (selectedProperties?.length) {
+    const payload = await getPayload({ config: configPromise })
+    const propertyIds = selectedProperties
+      .map((prop) => {
+        if (typeof prop === 'object' && prop !== null) return prop.id
+        return prop
+      })
+      .filter(Boolean) as (string | number)[]
+
+    if (propertyIds.length > 0) {
+      const fetchedProperties = await payload.find({
+        collection: 'properties',
+        depth: 2,
+        locale: 'en',
+        limit: propertyIds.length,
+        overrideAccess: false,
+        where: {
+          id: {
+            in: propertyIds as (string | number)[],
+          },
+        },
+      })
+
+      const mapped = propertyIds
+        .map((propId) => fetchedProperties.docs.find((doc) => String(doc.id) === String(propId)))
+        .filter(Boolean) as Property[]
+
+      propertiesList = mapped.map((prop) => ({
+        ...prop,
+        _collection: 'properties',
+      })) as CardPostData[]
     }
   }
 
@@ -85,7 +119,40 @@ export const PropertyArchiveBlock: React.FC<
           <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
         </div>
       )}
-      <CollectionArchive posts={propertiesList} relationTo="properties" showCategories={false} />
+
+      {displayMode === 'allPaginated' && paginatedResult && populateBy === 'collection' && cmsPagePath && (
+        <PropertyArchiveListing
+          docs={propertiesList}
+          page={paginatedResult.page ?? propertyArchivePage}
+          totalDocs={paginatedResult.totalDocs}
+          totalPages={paginatedResult.totalPages}
+          paginationQueryOnPath={cmsPagePath}
+        />
+      )}
+
+      {displayMode === 'allPaginated' && paginatedResult && populateBy === 'collection' && !cmsPagePath && (
+        <CollectionArchive posts={propertiesList} relationTo="properties" showCategories={false} />
+      )}
+
+      {displayMode === 'limited' && propertiesList.length > 0 && (
+        <>
+          <CollectionArchive posts={propertiesList} relationTo="properties" showCategories={false} />
+          {paginatedResult && paginatedResult.totalDocs > limit && viewAllHref && (
+            <div className="container mt-10 text-center">
+              <Link
+                href={viewAllHref}
+                className="inline-flex items-center gap-2 rounded-full border-2 border-[var(--primary)] px-6 py-3 text-sm font-bold uppercase tracking-wider text-[var(--primary)] transition-colors hover:bg-[var(--primary)] hover:text-white"
+              >
+                View all properties
+              </Link>
+            </div>
+          )}
+        </>
+      )}
+
+      {populateBy === 'selection' && propertiesList.length > 0 && (
+        <CollectionArchive posts={propertiesList} relationTo="properties" showCategories={false} />
+      )}
     </div>
   )
 }
