@@ -1,10 +1,10 @@
-import type { Media, Property } from '@/payload-types'
+import type { Media, Post, Property } from '@/payload-types'
 import type { Payload } from 'payload'
 
 import type { CardPostData } from '@/components/Card'
 import { getServerSideURL, toAbsoluteSiteUrl } from '@/utilities/getURL'
 import { toApiMediaFileUrl, toPublicMinioObjectUrl } from '@/utilities/mediaFileUrl'
-import { resolvePropertyCardImage } from '@/utilities/resolvePropertyCardImage'
+import { resolvePostCardImage, resolvePropertyCardImage } from '@/utilities/resolvePropertyCardImage'
 
 export function hydrateMediaUrl(media: Media): Media {
   if (typeof media.filename === 'string' && media.filename.length > 0) {
@@ -77,6 +77,29 @@ export function toCardPostData(property: Property): CardPostData {
     _collection: 'properties',
     cardImageSrc: resolveMediaSrcAbsolute(image),
     cardImageAlt: image?.alt ?? property.title ?? null,
+  }
+}
+
+export function toCardPostDataFromPost(post: Post): CardPostData {
+  const image = resolvePostCardImage(post)
+  return {
+    ...post,
+    _collection: 'posts',
+    cardImageSrc: resolveMediaSrcAbsolute(image),
+    cardImageAlt: image?.alt ?? post.title ?? null,
+  }
+}
+
+export function enrichPostMediaFields(post: Post, mediaById: Map<number, Media>): Post {
+  return {
+    ...post,
+    heroImage: resolveMediaRef(post.heroImage, mediaById) as Post['heroImage'],
+    meta: post.meta
+      ? {
+          ...post.meta,
+          image: resolveMediaRef(post.meta.image, mediaById) as NonNullable<Post['meta']>['image'],
+        }
+      : post.meta,
   }
 }
 
@@ -167,6 +190,22 @@ export async function enrichPropertiesForCards(
   const mediaById = await fetchMediaByIds(payload, mediaIds)
 
   return properties.map((property) => toCardPostData(enrichPropertyMediaFields(property, mediaById)))
+}
+
+export async function enrichPostsForCards(
+  payload: Payload,
+  posts: Post[],
+): Promise<CardPostData[]> {
+  const mediaIds = new Set<number>()
+
+  for (const post of posts) {
+    collectMediaId(post.heroImage, mediaIds)
+    collectMediaId(post.meta?.image, mediaIds)
+  }
+
+  const mediaById = await fetchMediaByIds(payload, mediaIds)
+
+  return posts.map((post) => toCardPostDataFromPost(enrichPostMediaFields(post, mediaById)))
 }
 
 export async function enrichProjectCardsBlock<T extends { projects?: Array<Record<string, unknown>> | null }>(

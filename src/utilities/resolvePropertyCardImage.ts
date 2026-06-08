@@ -1,6 +1,14 @@
-import type { Media, Property } from '@/payload-types'
+import type { Media, Post, Property } from '@/payload-types'
 
 import { isPopulatedMedia } from '@/utilities/enrichPropertyMedia'
+
+/** Post card image: meta.image → heroImage */
+export function resolvePostCardImage(post: Partial<Post>): Media | null {
+  const metaImage = post.meta?.image
+  if (isPopulatedMedia(metaImage)) return metaImage
+  if (isPopulatedMedia(post.heroImage)) return post.heroImage as Media
+  return null
+}
 
 /** Card/listing image: meta → main → first gallery item. */
 export function resolvePropertyCardImage(property: Partial<Property>): Media | null {
@@ -40,10 +48,5 @@ export function resolveCardImage(
     return resolvePropertyCardImage(doc)
   }
 
-  const metaImage = doc.meta?.image
-  if (isPopulatedMedia(metaImage)) return metaImage
-  if (isPopulatedMedia(doc.heroImage)) return doc.heroImage as Media
-  if (isPopulatedMedia(doc.mainImage)) return doc.mainImage as Media
-
-  return null
+  return resolvePostCardImage(doc as Partial<Post>)
 }

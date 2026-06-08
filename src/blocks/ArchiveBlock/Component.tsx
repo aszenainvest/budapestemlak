@@ -6,7 +6,8 @@ import React from 'react'
 import RichText from '@/components/RichText'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
-import { CardPostData } from '@/components/Card'
+import type { CardPostData } from '@/components/Card'
+import { enrichPostsForCards } from '@/utilities/enrichPropertyMedia'
 
 export const ArchiveBlock: React.FC<
   ArchiveBlockProps & {
@@ -16,12 +17,11 @@ export const ArchiveBlock: React.FC<
   const { id, categories, introContent, limit: limitFromProps, populateBy, selectedPosts } = props
 
   const limit = limitFromProps || 3
+  const payload = await getPayload({ config: configPromise })
 
   let posts: CardPostData[] = []
 
   if (populateBy === 'collection') {
-    const payload = await getPayload({ config: configPromise })
-
     const flattenedCategories = categories?.map((category) => {
       if (typeof category === 'object') return category.id
       else return category
@@ -29,15 +29,11 @@ export const ArchiveBlock: React.FC<
 
     const fetchedDocs = await payload.find({
       collection: 'posts',
-      depth: 1,
+      depth: 3,
       limit,
-      select: {
-        title: true,
-        slug: true,
-        categories: true,
-        meta: true,
-        publishedAt: true,
-      },
+      locale: 'en',
+      overrideAccess: false,
+      sort: '-publishedAt',
       ...(flattenedCategories && flattenedCategories.length > 0
         ? {
             where: {
@@ -49,38 +45,34 @@ export const ArchiveBlock: React.FC<
         : {}),
     })
 
-    posts = fetchedDocs.docs as CardPostData[]
-  } else {
-    if (selectedPosts?.length) {
-      const payload = await getPayload({ config: configPromise })
-      const postIds = selectedPosts
-        .map((post) => {
-          if (typeof post === 'object' && post !== null) return post.id
-          return post
-        })
-        .filter(Boolean) as (string | number)[]
+    posts = await enrichPostsForCards(payload, fetchedDocs.docs)
+  } else if (selectedPosts?.length) {
+    const postIds = selectedPosts
+      .map((post) => {
+        if (typeof post === 'object' && post !== null) return post.id
+        return post
+      })
+      .filter(Boolean) as (string | number)[]
 
-      if (postIds.length > 0) {
-        const fetchedPosts = await payload.find({
-          collection: 'posts',
-          depth: 2,
-          limit: postIds.length,
-          where: {
-            id: {
-              in: postIds as any[],
-            },
+    if (postIds.length > 0) {
+      const fetchedPosts = await payload.find({
+        collection: 'posts',
+        depth: 3,
+        locale: 'en',
+        limit: postIds.length,
+        overrideAccess: false,
+        where: {
+          id: {
+            in: postIds as (string | number)[],
           },
-        })
-        // Sort them in the order they were selected
-        const mapped = postIds
-          .map((id) => fetchedPosts.docs.find((doc) => String(doc.id) === String(id)))
-          .filter(Boolean) as Post[]
+        },
+      })
 
-        posts = mapped.map((post) => ({
-          ...post,
-          _collection: 'posts',
-        })) as CardPostData[]
-      }
+      const mapped = postIds
+        .map((postId) => fetchedPosts.docs.find((doc) => String(doc.id) === String(postId)))
+        .filter(Boolean) as Post[]
+
+      posts = await enrichPostsForCards(payload, mapped)
     }
   }
 
