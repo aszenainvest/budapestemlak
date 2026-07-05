@@ -14,15 +14,9 @@ const getPropertiesSitemap = unstable_cache(
     const results = await payload.find({
       collection: 'properties',
       overrideAccess: false,
-      draft: false,
       depth: 0,
       limit: 1000,
       pagination: false,
-      where: {
-        _status: {
-          equals: 'published',
-        },
-      },
       select: {
         slug: true,
         updatedAt: true,

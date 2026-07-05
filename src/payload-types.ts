@@ -396,6 +396,8 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Changes save immediately. Prefer editing in English (en) locale when possible.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "properties".
  */

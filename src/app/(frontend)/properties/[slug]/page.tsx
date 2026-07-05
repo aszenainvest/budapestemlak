@@ -5,12 +5,10 @@ import { PropertyMediaCollage } from '@/components/PropertyMediaCollage'
 import RichText from '@/components/RichText'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import { cookies, draftMode } from 'next/headers'
 import React, { cache } from 'react'
 
 import type { Media, Property } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
-import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import { PropertyBlogSection } from '@/components/PropertyBlogSection'
 import { normalizeStatusLabels } from '@/utilities/normalizeStatusLabel'
 
@@ -25,7 +23,6 @@ export async function generateStaticParams() {
   for (const locale of localeCodes) {
     const result = await payload.find({
       collection: 'properties',
-      draft: false,
       limit: 500,
       overrideAccess: false,
       pagination: false,
@@ -223,7 +220,6 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 }
 
 const queryPropertyBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
   const preferred = 'en'
 
   const payload = await getPayload({ config: configPromise })
@@ -235,10 +231,9 @@ const queryPropertyBySlug = cache(async ({ slug }: { slug: string }) => {
   for (const locale of tryLocales) {
     const result = await payload.find({
       collection: 'properties',
-      draft,
       limit: 1,
       depth: 2,
-      overrideAccess: draft,
+      overrideAccess: false,
       pagination: false,
       locale: locale as 'en',
       where: {

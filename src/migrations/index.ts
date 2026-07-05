@@ -9,6 +9,7 @@ import * as migration_20260602_194400_add_file_hash_to_media from './20260602_19
 import * as migration_20260604_botim_imo_messenger_buttons from './20260604_botim_imo_messenger_buttons';
 import * as migration_20260604_property_archive_display_mode from './20260604_property_archive_display_mode';
 import * as migration_20260624_properties_publish_all from './20260624_properties_publish_all';
+import * as migration_20260705_properties_backfill_published from './20260705_properties_backfill_published';
 
 export const migrations = [
   {
@@ -65,5 +66,10 @@ export const migrations = [
     up: migration_20260624_properties_publish_all.up,
     down: migration_20260624_properties_publish_all.down,
     name: '20260624_properties_publish_all',
+  },
+  {
+    up: migration_20260705_properties_backfill_published.up,
+    down: migration_20260705_properties_backfill_published.down,
+    name: '20260705_properties_backfill_published',
   },
 ];

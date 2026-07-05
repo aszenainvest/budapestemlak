@@ -9,8 +9,8 @@ import {
   type FeatureProviderServer,
 } from '@payloadcms/richtext-lexical'
 
+import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
-import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
@@ -18,6 +18,7 @@ import { ensureUniqueSlug } from '../../hooks/ensureUniqueSlug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateProperty, revalidatePropertyDelete } from './hooks/revalidateProperty'
+import { mirrorPropertyFieldsToDefaultLocale } from './hooks/mirrorPropertyFieldsToDefaultLocale'
 import { hydrateMediaUrl, isPopulatedMedia } from '../../utilities/enrichPropertyMedia'
 
 import {
@@ -61,6 +62,8 @@ export const Properties: CollectionConfig<'properties'> = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'slug', 'price', 'updatedAt'],
     group: 'Content',
+    description:
+      'Changes save immediately. Prefer editing in English (en) locale when possible.',
     livePreview: {
       url: ({ data, req }: PropertyPreviewArgs) =>
         generatePreviewPath({
@@ -79,7 +82,7 @@ export const Properties: CollectionConfig<'properties'> = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: authenticatedOrPublished,
+    read: anyone,
     update: authenticated,
   },
   defaultPopulate: {
@@ -310,7 +313,7 @@ export const Properties: CollectionConfig<'properties'> = {
     }),
   ],
   hooks: {
-    beforeChange: [populatePublishedAt, ensureUniqueSlug('properties')],
+    beforeChange: [mirrorPropertyFieldsToDefaultLocale, populatePublishedAt, ensureUniqueSlug('properties')],
     afterChange: [revalidateProperty],
     afterDelete: [revalidatePropertyDelete],
     afterRead: [hydratePropertyMediaOnRead],
