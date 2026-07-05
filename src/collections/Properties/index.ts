@@ -17,8 +17,9 @@ import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { ensureUniqueSlug } from '../../hooks/ensureUniqueSlug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
+import { ensurePropertyPublishedStatus } from './hooks/ensurePropertyPublishedStatus'
+import { normalizePropertyLocalizedFields } from './hooks/normalizePropertyLocalizedFields'
 import { revalidateProperty, revalidatePropertyDelete } from './hooks/revalidateProperty'
-import { mirrorPropertyFieldsToDefaultLocale } from './hooks/mirrorPropertyFieldsToDefaultLocale'
 import { hydrateMediaUrl, isPopulatedMedia } from '../../utilities/enrichPropertyMedia'
 
 import {
@@ -313,8 +314,9 @@ export const Properties: CollectionConfig<'properties'> = {
     }),
   ],
   hooks: {
-    beforeChange: [mirrorPropertyFieldsToDefaultLocale, populatePublishedAt, ensureUniqueSlug('properties')],
-    afterChange: [revalidateProperty],
+    beforeValidate: [normalizePropertyLocalizedFields],
+    beforeChange: [populatePublishedAt, ensureUniqueSlug('properties')],
+    afterChange: [ensurePropertyPublishedStatus, revalidateProperty],
     afterDelete: [revalidatePropertyDelete],
     afterRead: [hydratePropertyMediaOnRead],
   },

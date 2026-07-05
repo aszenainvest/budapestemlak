@@ -10,6 +10,7 @@ import * as migration_20260604_botim_imo_messenger_buttons from './20260604_boti
 import * as migration_20260604_property_archive_display_mode from './20260604_property_archive_display_mode';
 import * as migration_20260624_properties_publish_all from './20260624_properties_publish_all';
 import * as migration_20260705_properties_backfill_published from './20260705_properties_backfill_published';
+import * as migration_20260705_220000_properties_cleanup_orphans from './20260705_220000_properties_cleanup_orphans';
 
 export const migrations = [
   {
@@ -71,5 +72,10 @@ export const migrations = [
     up: migration_20260705_properties_backfill_published.up,
     down: migration_20260705_properties_backfill_published.down,
     name: '20260705_properties_backfill_published',
+  },
+  {
+    up: migration_20260705_220000_properties_cleanup_orphans.up,
+    down: migration_20260705_220000_properties_cleanup_orphans.down,
+    name: '20260705_220000_properties_cleanup_orphans',
   },
 ];
