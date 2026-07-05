@@ -44,9 +44,8 @@ function resolveUploadPublicUrl(filename: string): string {
 const storagePlugins: Plugin[] = s3Enabled
   ? [
       s3Storage({
-        acl: 'public-read',
         bucket: process.env.S3_BUCKET!,
-        // Tarayıcı railway.internal / presigned MinIO URL'lerine gitmesin; dosya CMS /api/media üzerinden aksın
+        // MinIO/Railway: bucket policy handles public access; Object ACL often causes PutObject to fail.
         signedDownloads: false,
         collections: {
           media: {

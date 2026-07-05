@@ -194,15 +194,12 @@ export const Media: CollectionConfig = {
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'],
     resizeOptions: {
       width: 1920,
       height: 1920,
       fit: 'inside',
       withoutEnlargement: true,
-    },
-    formatOptions: {
-      format: 'webp',
-      options: { quality: 75 },
     },
     imageSizes: [
       {
