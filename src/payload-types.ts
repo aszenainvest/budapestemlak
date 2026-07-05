@@ -468,7 +468,6 @@ export interface Property {
   slug: string;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * Reusable badges for Current Opportunities and property cards (e.g. Sold, Under negotiation). Add labels here, then assign them on each property.
@@ -542,7 +541,7 @@ export interface ProjectCardsBlock {
         description?: string | null;
         image: number | Media;
         /**
-         * Select a published property for card badges and detail link. Create the property first (Properties), then link it here.
+         * Select a saved property for card badges and detail link. Create and save the property under Properties first.
          */
         property?: (number | null) | Property;
         id?: string | null;
@@ -718,7 +717,7 @@ export interface PropertyArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   /**
-   * All published: every published property, 12 per page with pagination (?propertyPage=2). Limited: fixed count only on this page.
+   * All published: search + 6 per page with pagination. Limited: fixed preview count with optional “View all” link.
    */
   displayMode?: ('allPaginated' | 'limited') | null;
   categories?: (number | Category)[] | null;
@@ -1308,10 +1307,15 @@ export interface Search {
   id: number;
   title?: string | null;
   priority?: number | null;
-  doc: {
-    relationTo: 'posts';
-    value: number | Post;
-  };
+  doc:
+    | {
+        relationTo: 'posts';
+        value: number | Post;
+      }
+    | {
+        relationTo: 'properties';
+        value: number | Property;
+      };
   slug?: string | null;
   meta?: {
     title?: string | null;
@@ -2048,7 +2052,6 @@ export interface PropertiesSelect<T extends boolean = true> {
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

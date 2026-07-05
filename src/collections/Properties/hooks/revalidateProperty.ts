@@ -1,4 +1,9 @@
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'payload'
+import type {
+  CollectionAfterChangeHook,
+  CollectionAfterDeleteHook,
+  Payload,
+  RequestContext,
+} from 'payload'
 
 import { revalidatePath, revalidateTag } from 'next/cache'
 
@@ -6,35 +11,54 @@ import { revalidatePropertyListingPages } from '@/hooks/revalidatePropertyListin
 
 import type { Property } from '@/payload-types'
 
-export const revalidateProperty: CollectionAfterChangeHook<Property> = async ({
-  doc,
-  previousDoc,
-  req: { payload, context },
-}) => {
-  if (!context.disableRevalidate) {
-    if (doc._status === 'published' && doc.slug) {
-      const path = `/properties/${doc.slug}`
-      payload.logger.info(`Revalidating property at path: ${path}`)
-      revalidatePath(path)
-      revalidateTag('properties-sitemap', 'max')
-      await revalidatePropertyListingPages(payload)
-    }
+type RevalidatePropertyArgs = {
+  doc: Property
+  previousDoc: Property
+  req: {
+    payload: Payload
+    context: RequestContext
+  }
+}
 
-    if (previousDoc?._status === 'published' && doc._status !== 'published' && previousDoc.slug) {
-      const oldPath = `/properties/${previousDoc.slug}`
-      payload.logger.info(`Revalidating old property at path: ${oldPath}`)
-      revalidatePath(oldPath)
-      revalidateTag('properties-sitemap', 'max')
-      await revalidatePropertyListingPages(payload)
+type RevalidatePropertyDeleteArgs = {
+  doc: Property
+  req: {
+    payload: Payload
+    context: RequestContext
+  }
+}
+
+export const revalidateProperty: CollectionAfterChangeHook<Property> = async (
+  args: RevalidatePropertyArgs,
+) => {
+  const {
+    doc,
+    previousDoc,
+    req: { payload, context },
+  } = args
+
+  if (!context.disableRevalidate && doc.slug) {
+    const path = `/properties/${doc.slug}`
+    payload.logger.info(`Revalidating property at path: ${path}`)
+    revalidatePath(path)
+    revalidateTag('properties-sitemap', 'max')
+    await revalidatePropertyListingPages(payload)
+
+    if (previousDoc?.slug && previousDoc.slug !== doc.slug) {
+      revalidatePath(`/properties/${previousDoc.slug}`)
     }
   }
   return doc
 }
 
-export const revalidatePropertyDelete: CollectionAfterDeleteHook<Property> = async ({
-  doc,
-  req: { context, payload },
-}) => {
+export const revalidatePropertyDelete: CollectionAfterDeleteHook<Property> = async (
+  args: RevalidatePropertyDeleteArgs,
+) => {
+  const {
+    doc,
+    req: { context, payload },
+  } = args
+
   if (!context.disableRevalidate && doc?.slug) {
     revalidatePath(`/properties/${doc.slug}`)
     revalidateTag('properties-sitemap', 'max')

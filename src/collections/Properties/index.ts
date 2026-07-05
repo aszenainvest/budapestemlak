@@ -6,6 +6,7 @@ import {
   HorizontalRuleFeature,
   InlineToolbarFeature,
   lexicalEditor,
+  type FeatureProviderServer,
 } from '@payloadcms/richtext-lexical'
 
 import { authenticated } from '../../access/authenticated'
@@ -30,6 +31,26 @@ import { slugField } from 'payload'
 
 import type { Property } from '@/payload-types'
 
+type PropertyPreviewArgs = {
+  data?: Partial<Property>
+  req: Parameters<typeof generatePreviewPath>[0]['req']
+}
+
+const hydratePropertyMediaOnRead = ({ doc }: { doc: Property }): Property => {
+  if (isPopulatedMedia(doc.mainImage)) {
+    doc.mainImage = hydrateMediaUrl(doc.mainImage)
+  }
+  if (doc.meta?.image && isPopulatedMedia(doc.meta.image)) {
+    doc.meta.image = hydrateMediaUrl(doc.meta.image)
+  }
+  if (Array.isArray(doc.gallery)) {
+    doc.gallery = doc.gallery.map((item: NonNullable<Property['gallery']>[number]) =>
+      isPopulatedMedia(item) ? hydrateMediaUrl(item) : item,
+    )
+  }
+  return doc
+}
+
 export const Properties: CollectionConfig<'properties'> = {
   slug: 'properties',
   labels: {
@@ -41,14 +62,14 @@ export const Properties: CollectionConfig<'properties'> = {
     defaultColumns: ['title', 'slug', 'price', 'updatedAt'],
     group: 'Content',
     livePreview: {
-      url: ({ data, req }) =>
+      url: ({ data, req }: PropertyPreviewArgs) =>
         generatePreviewPath({
           slug: data?.slug as string,
           collection: 'properties',
           req,
         }),
     },
-    preview: (data, { req }) =>
+    preview: (data: Partial<Property>, { req }: { req: PropertyPreviewArgs['req'] }) =>
       generatePreviewPath({
         slug: data?.slug as string,
         collection: 'properties',
@@ -231,7 +252,7 @@ export const Properties: CollectionConfig<'properties'> = {
               localized: true,
               label: 'Full description',
               editor: lexicalEditor({
-                features: ({ rootFeatures }) => [
+                features: ({ rootFeatures }: { rootFeatures: FeatureProviderServer[] }) => [
                   ...rootFeatures,
                   HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
                   BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
@@ -292,30 +313,6 @@ export const Properties: CollectionConfig<'properties'> = {
     beforeChange: [populatePublishedAt, ensureUniqueSlug('properties')],
     afterChange: [revalidateProperty],
     afterDelete: [revalidatePropertyDelete],
-    afterRead: [
-      ({ doc }) => {
-        if (isPopulatedMedia(doc.mainImage)) {
-          doc.mainImage = hydrateMediaUrl(doc.mainImage)
-        }
-        if (doc.meta?.image && isPopulatedMedia(doc.meta.image)) {
-          doc.meta.image = hydrateMediaUrl(doc.meta.image)
-        }
-    if (Array.isArray(doc.gallery)) {
-      doc.gallery = doc.gallery.map((item: NonNullable<Property['gallery']>[number]) =>
-        isPopulatedMedia(item) ? hydrateMediaUrl(item) : item,
-      )
-    }
-        return doc
-      },
-    ],
-  },
-  versions: {
-    drafts: {
-      autosave: {
-        interval: 500,
-      },
-      validate: false,
-    },
-    maxPerDoc: 50,
+    afterRead: [hydratePropertyMediaOnRead],
   },
 }

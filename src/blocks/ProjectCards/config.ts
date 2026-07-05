@@ -97,7 +97,7 @@ export const ProjectCards: Block = {
           label: 'Link to property detail',
           admin: {
             description:
-              'Select a published property for card badges and detail link. Create the property first (Properties), then link it here.',
+              'Select a saved property for card badges and detail link. Create and save the property under Properties first.',
             allowCreate: false,
           },
         },
