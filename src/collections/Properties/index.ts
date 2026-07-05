@@ -18,6 +18,7 @@ import { ensureUniqueSlug } from '../../hooks/ensureUniqueSlug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { ensurePropertyPublishedStatus } from './hooks/ensurePropertyPublishedStatus'
+import { ensurePropertySlugFromTitle } from './hooks/ensurePropertySlugFromTitle'
 import { normalizePropertyLocalizedFields } from './hooks/normalizePropertyLocalizedFields'
 import { revalidateProperty, revalidatePropertyDelete } from './hooks/revalidateProperty'
 import { hydrateMediaUrl, isPopulatedMedia } from '../../utilities/enrichPropertyMedia'
@@ -314,8 +315,12 @@ export const Properties: CollectionConfig<'properties'> = {
     }),
   ],
   hooks: {
-    beforeValidate: [normalizePropertyLocalizedFields],
-    beforeChange: [populatePublishedAt, ensureUniqueSlug('properties')],
+    beforeChange: [
+      normalizePropertyLocalizedFields,
+      ensurePropertySlugFromTitle,
+      populatePublishedAt,
+      ensureUniqueSlug('properties'),
+    ],
     afterChange: [ensurePropertyPublishedStatus, revalidateProperty],
     afterDelete: [revalidatePropertyDelete],
     afterRead: [hydratePropertyMediaOnRead],

@@ -38,14 +38,18 @@ export const revalidateProperty: CollectionAfterChangeHook<Property> = async (
   } = args
 
   if (!context.disableRevalidate && doc.slug) {
-    const path = `/properties/${doc.slug}`
-    payload.logger.info(`Revalidating property at path: ${path}`)
-    revalidatePath(path)
-    revalidateTag('properties-sitemap', 'max')
-    await revalidatePropertyListingPages(payload)
+    try {
+      const path = `/properties/${doc.slug}`
+      payload.logger.info(`Revalidating property at path: ${path}`)
+      revalidatePath(path)
+      revalidateTag('properties-sitemap', 'max')
+      await revalidatePropertyListingPages(payload)
 
-    if (previousDoc?.slug && previousDoc.slug !== doc.slug) {
-      revalidatePath(`/properties/${previousDoc.slug}`)
+      if (previousDoc?.slug && previousDoc.slug !== doc.slug) {
+        revalidatePath(`/properties/${previousDoc.slug}`)
+      }
+    } catch (err) {
+      payload.logger.warn({ err, id: doc.id }, 'Property revalidation failed')
     }
   }
   return doc
@@ -60,9 +64,13 @@ export const revalidatePropertyDelete: CollectionAfterDeleteHook<Property> = asy
   } = args
 
   if (!context.disableRevalidate && doc?.slug) {
-    revalidatePath(`/properties/${doc.slug}`)
-    revalidateTag('properties-sitemap', 'max')
-    await revalidatePropertyListingPages(payload)
+    try {
+      revalidatePath(`/properties/${doc.slug}`)
+      revalidateTag('properties-sitemap', 'max')
+      await revalidatePropertyListingPages(payload)
+    } catch (err) {
+      payload.logger.warn({ err, id: doc.id }, 'Property delete revalidation failed')
+    }
   }
   return doc
 }

@@ -1,9 +1,6 @@
-import type { CollectionBeforeValidateHook } from 'payload'
+import type { CollectionBeforeChangeHook } from 'payload'
 
 const LOCALIZED_FIELDS = ['title', 'summary', 'location', 'slug', 'content', 'features'] as const
-
-const isLocaleMap = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
 
 const isEmptyLocalizedValue = (value: unknown): boolean => {
   if (value == null || value === '') return true
@@ -11,16 +8,22 @@ const isEmptyLocalizedValue = (value: unknown): boolean => {
   return false
 }
 
-const pickFirstNonEmpty = (map: Record<string, unknown>, localeCodes: string[]): unknown => {
-  for (const locale of localeCodes) {
-    const value = map[locale]
-    if (!isEmptyLocalizedValue(value)) return value
-  }
-  return undefined
+const isLexicalRichText = (value: Record<string, unknown>): boolean =>
+  'root' in value && typeof value.root === 'object' && value.root !== null
+
+/** Only treat values as locale maps when they actually contain locale keys. */
+const isLocalizedFieldMap = (
+  value: unknown,
+  localeCodes: string[],
+): value is Record<string, unknown> => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) return false
+  const record = value as Record<string, unknown>
+  if (isLexicalRichText(record)) return false
+  return Object.keys(record).some((key) => localeCodes.includes(key))
 }
 
-/** Normalize localized payloads so default locale (en) always has list + frontend data. */
-export const normalizePropertyLocalizedFields: CollectionBeforeValidateHook = ({ data, req }) => {
+/** Mirror filled non-default locales into en for admin list + frontend. Never rewrite string values. */
+export const normalizePropertyLocalizedFields: CollectionBeforeChangeHook = ({ data, req }) => {
   const localization = req.payload.config.localization
   if (!localization || !data) return data
 
@@ -31,18 +34,7 @@ export const normalizePropertyLocalizedFields: CollectionBeforeValidateHook = ({
 
   for (const field of LOCALIZED_FIELDS) {
     const value = next[field]
-
-    if (typeof value === 'string' || typeof value === 'number') {
-      if (value === '') continue
-      const map: Record<string, unknown> = { [activeLocale]: value }
-      if (activeLocale !== defaultLocale) {
-        map[defaultLocale] = value
-      }
-      next[field] = map
-      continue
-    }
-
-    if (!isLocaleMap(value)) continue
+    if (!isLocalizedFieldMap(value, localeCodes)) continue
 
     const map = { ...value }
 
@@ -55,12 +47,13 @@ export const normalizePropertyLocalizedFields: CollectionBeforeValidateHook = ({
     }
 
     if (isEmptyLocalizedValue(map[defaultLocale])) {
-      const fallback = pickFirstNonEmpty(
-        map,
-        localeCodes.filter((locale) => locale !== defaultLocale),
-      )
-      if (fallback != null) {
-        map[defaultLocale] = fallback
+      for (const locale of localeCodes) {
+        if (locale === defaultLocale) continue
+        const fallback = map[locale]
+        if (!isEmptyLocalizedValue(fallback)) {
+          map[defaultLocale] = fallback
+          break
+        }
       }
     }
 
