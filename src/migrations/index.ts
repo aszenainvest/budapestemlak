@@ -12,6 +12,7 @@ import * as migration_20260624_properties_publish_all from './20260624_propertie
 import * as migration_20260705_properties_backfill_published from './20260705_properties_backfill_published';
 import * as migration_20260705_220000_properties_cleanup_orphans from './20260705_220000_properties_cleanup_orphans';
 import * as migration_20260705_230000_search_rels_properties_id from './20260705_230000_search_rels_properties_id';
+import * as migration_20260710_settings_social_share_image from './20260710_settings_social_share_image';
 
 export const migrations = [
   {
@@ -83,5 +84,10 @@ export const migrations = [
     up: migration_20260705_230000_search_rels_properties_id.up,
     down: migration_20260705_230000_search_rels_properties_id.down,
     name: '20260705_230000_search_rels_properties_id',
+  },
+  {
+    up: migration_20260710_settings_social_share_image.up,
+    down: migration_20260710_settings_social_share_image.down,
+    name: '20260710_settings_social_share_image',
   },
 ];

@@ -10,6 +10,7 @@ import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { resolveDefaultOgImage } from '@/utilities/resolveDefaultOgImage'
 import { cookies } from 'next/headers'
 import './globals.css'
 import { getCachedGlobal } from '@/utilities/getGlobals'
@@ -62,13 +63,26 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings: Setting = await getCachedGlobal('settings', 1)()
+  const settings: Setting = await getCachedGlobal('settings', 2)()
+  const defaultImageUrl = await resolveDefaultOgImage(settings)
+  const brandName = settings?.brandName || 'Aszena Invest'
+
+  const openGraph = mergeOpenGraph(
+    {
+      title: brandName,
+      description: `${brandName}.`,
+    },
+    { settings, defaultImageUrl },
+  )
 
   return {
     metadataBase: new URL(getServerSideURL()),
-    openGraph: mergeOpenGraph({}, settings),
+    openGraph,
     twitter: {
       card: 'summary_large_image',
+      title: brandName,
+      description: `${brandName}.`,
+      images: defaultImageUrl ? [defaultImageUrl] : undefined,
     },
   }
 }

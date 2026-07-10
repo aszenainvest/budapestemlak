@@ -1241,6 +1241,9 @@ export interface VideoBlock {
   videoSource: 'url' | 'upload';
   videoUrl?: string | null;
   videoUpload?: (number | null) | Media;
+  /**
+   * Shown before playback (poster). Required for YouTube/Vimeo links; optional for uploaded videos.
+   */
   thumbnail?: (number | null) | Media;
   settings?: {
     autoPlay?: boolean | null;
@@ -2532,6 +2535,10 @@ export interface Setting {
   id: number;
   brandName?: string | null;
   logo?: (number | null) | Media;
+  /**
+   * Preview image for WhatsApp, Facebook, LinkedIn, etc. Recommended 1200×630. If empty, logo → homepage SEO image → homepage hero is used.
+   */
+  socialShareImage?: (number | null) | Media;
   favicon?: (number | null) | Media;
   primaryColor?: string | null;
   secondaryColor?: string | null;
@@ -2670,6 +2677,7 @@ export interface FooterSelect<T extends boolean = true> {
 export interface SettingsSelect<T extends boolean = true> {
   brandName?: T;
   logo?: T;
+  socialShareImage?: T;
   favicon?: T;
   primaryColor?: T;
   secondaryColor?: T;

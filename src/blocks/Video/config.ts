@@ -51,7 +51,11 @@ export const Video: Block = {
       name: 'thumbnail',
       type: 'upload',
       relationTo: 'media',
-      required: false,
+      label: 'Cover photo',
+      admin: {
+        description:
+          'Shown before playback (poster). Required for YouTube/Vimeo links; optional for uploaded videos.',
+      },
     },
     {
       name: 'settings',

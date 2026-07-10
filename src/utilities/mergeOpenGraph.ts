@@ -1,28 +1,32 @@
 import type { Metadata } from 'next'
-import { getServerSideURL } from './getURL'
+
 import type { Setting } from '@/payload-types'
+
+type MergeOpenGraphOptions = {
+  settings?: Setting
+  defaultImageUrl?: string | null
+}
 
 export const mergeOpenGraph = (
   og?: Metadata['openGraph'],
-  settings?: Setting,
+  options?: MergeOpenGraphOptions,
 ): Metadata['openGraph'] => {
-  const brandName = settings?.brandName || 'Payload Website Template'
+  const settings = options?.settings
+  const brandName = settings?.brandName || 'Aszena Invest'
 
-  const defaultOpenGraph: Metadata['openGraph'] = {
-    type: 'website',
-    description: `${brandName}.`,
-    images: [
-      {
-        url: `${getServerSideURL()}/website-template-OG.webp`,
-      },
-    ],
-    siteName: brandName,
-    title: brandName,
-  }
+  const images = (() => {
+    if (Array.isArray(og?.images) && og.images.length > 0) return og.images
+    if (og?.images && !Array.isArray(og.images)) return [og.images]
+    if (options?.defaultImageUrl) return [{ url: options.defaultImageUrl }]
+    return undefined
+  })()
 
   return {
-    ...defaultOpenGraph,
+    type: 'website',
+    siteName: brandName,
     ...og,
-    images: og?.images ? og.images : defaultOpenGraph.images,
+    title: og?.title || brandName,
+    description: og?.description || `${brandName}.`,
+    images,
   }
 }

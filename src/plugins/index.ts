@@ -20,7 +20,7 @@ const generateTitle: GenerateTitle<Post | Page> = async ({ doc, req }) => {
     slug: 'settings',
     depth: 0,
   })
-  const brandName = settings?.brandName || 'Payload Website Template'
+  const brandName = settings?.brandName || 'Aszena Invest'
 
   return doc?.title ? `${doc.title} | ${brandName}` : brandName
 }

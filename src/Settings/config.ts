@@ -30,6 +30,16 @@ export const Settings: GlobalConfig = {
               label: 'Main Logo',
             },
             {
+              name: 'socialShareImage',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'Social share image',
+              admin: {
+                description:
+                  'Preview image for WhatsApp, Facebook, LinkedIn, etc. Recommended 1200×630. If empty, logo → homepage SEO image → homepage hero is used.',
+              },
+            },
+            {
               name: 'favicon',
               type: 'upload',
               relationTo: 'media',

@@ -1,15 +1,18 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useRef, useState } from 'react'
 import { cn } from '@/utilities/ui'
 import type { Media, VideoBlock as VideoBlockType } from '@/payload-types'
-import { Play, Pause, Volume2, VolumeX, Maximize, RotateCcw } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Media as MediaComponent } from '@/components/Media'
 
 type Props = VideoBlockType & {
   className?: string
 }
+
+const isPopulatedMedia = (value: unknown): value is Media =>
+  typeof value === 'object' && value !== null && 'url' in value
 
 export const VideoBlock: React.FC<Props> = (props) => {
   const {
@@ -23,22 +26,39 @@ export const VideoBlock: React.FC<Props> = (props) => {
     className,
   } = props
 
-  const [isPlaying, setIsPlaying] = useState(settings?.autoPlay || false)
+  const hasCover = isPopulatedMedia(thumbnail)
+  const shouldAutoplay = Boolean(settings?.autoPlay)
+
+  const [hasStarted, setHasStarted] = useState(shouldAutoplay)
+  const [isPlaying, setIsPlaying] = useState(shouldAutoplay)
   const [isMuted, setIsMuted] = useState(settings?.muted || false)
   const [showControls, setShowControls] = useState(true)
   const [progress, setProgress] = useState(0)
   const videoRef = useRef<HTMLVideoElement>(null)
   const controlsTimeoutRef = useRef<NodeJS.Timeout>(null)
 
-  const togglePlay = () => {
+  const startPlayback = () => {
+    setHasStarted(true)
     if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause()
-      } else {
-        videoRef.current.play()
-      }
-      setIsPlaying(!isPlaying)
+      void videoRef.current.play()
+      setIsPlaying(true)
     }
+  }
+
+  const togglePlay = () => {
+    if (!videoRef.current) return
+
+    if (!hasStarted) {
+      startPlayback()
+      return
+    }
+
+    if (isPlaying) {
+      videoRef.current.pause()
+    } else {
+      void videoRef.current.play()
+    }
+    setIsPlaying(!isPlaying)
   }
 
   const toggleMute = () => {
@@ -64,10 +84,8 @@ export const VideoBlock: React.FC<Props> = (props) => {
   }
 
   const toggleFullscreen = () => {
-    if (videoRef.current) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen()
-      }
+    if (videoRef.current?.requestFullscreen) {
+      void videoRef.current.requestFullscreen()
     }
   }
 
@@ -81,18 +99,19 @@ export const VideoBlock: React.FC<Props> = (props) => {
     }, 3000)
   }
 
-  // Handle YouTube/Vimeo URLs
   const getEmbedUrl = (url: string) => {
     if (!url) return ''
-    
-    // YouTube
-    const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/)
+
+    const ytMatch = url.match(
+      /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/,
+    )
     if (ytMatch) {
       return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=${settings?.autoPlay ? 1 : 0}&mute=${settings?.muted ? 1 : 0}&loop=${settings?.loop ? 1 : 0}&controls=${settings?.controls ? 1 : 0}`
     }
 
-    // Vimeo
-    const vimeoMatch = url.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/)
+    const vimeoMatch = url.match(
+      /vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/(?:[^\/]*)\/videos\/|album\/(?:\d+)\/video\/|video\/|)(\d+)(?:$|\/|\?)/,
+    )
     if (vimeoMatch) {
       return `https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=${settings?.autoPlay ? 1 : 0}&muted=${settings?.muted ? 1 : 0}&loop=${settings?.loop ? 1 : 0}&controls=${settings?.controls ? 1 : 0}`
     }
@@ -100,22 +119,38 @@ export const VideoBlock: React.FC<Props> = (props) => {
     return url
   }
 
+  const CoverPhoto = ({ onPlay }: { onPlay: () => void }) => (
+    <button
+      type="button"
+      aria-label="Play video"
+      onClick={onPlay}
+      className="absolute inset-0 z-20 h-full w-full overflow-hidden"
+    >
+      <MediaComponent resource={thumbnail!} fill imgClassName="object-cover" />
+      <div className="absolute inset-0 flex items-center justify-center bg-black/25 transition-colors hover:bg-black/35">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/90 text-white shadow-xl backdrop-blur-sm">
+          <Play size={40} fill="currentColor" className="ml-2" />
+        </div>
+      </div>
+    </button>
+  )
+
   return (
-    <div className={cn('container max-w-5xl my-16 px-4 md:px-0 mx-auto', className)}>
+    <div className={cn('container mx-auto my-16 max-w-5xl px-4 md:px-0', className)}>
       {(title || subtitle) && (
         <div className="mb-8 max-w-2xl">
           {title && (
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-3xl md:text-4xl font-bold mb-4 tracking-tight"
+              className="mb-4 text-3xl font-bold tracking-tight md:text-4xl"
             >
               {title}
             </motion.h2>
           )}
           {subtitle && (
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -128,104 +163,102 @@ export const VideoBlock: React.FC<Props> = (props) => {
         </div>
       )}
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
-        className="relative aspect-video rounded-3xl overflow-hidden bg-black shadow-2xl group border border-white/10"
+        className="group relative aspect-video overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl"
         onMouseMove={handleMouseMove}
         onMouseLeave={() => isPlaying && setShowControls(false)}
       >
         {videoSource === 'url' && videoUrl ? (
-          <iframe
-            src={getEmbedUrl(videoUrl)}
-            className="w-full h-full border-0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        ) : videoSource === 'upload' && videoUpload ? (
-          <div className="relative w-full h-full">
+          <>
+            {hasCover && !hasStarted && <CoverPhoto onPlay={() => setHasStarted(true)} />}
+            {(!hasCover || hasStarted) && (
+              <iframe
+                src={getEmbedUrl(videoUrl)}
+                className="h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )}
+          </>
+        ) : videoSource === 'upload' && isPopulatedMedia(videoUpload) ? (
+          <div className="relative h-full w-full">
+            {hasCover && !hasStarted && <CoverPhoto onPlay={startPlayback} />}
+
             <video
               ref={videoRef}
-              src={(videoUpload as Media).url || ''}
-              poster={(thumbnail as Media)?.url || ''}
-              className="w-full h-full object-cover"
+              src={videoUpload.url || ''}
+              poster={!hasCover ? thumbnail && isPopulatedMedia(thumbnail) ? thumbnail.url || '' : '' : undefined}
+              className={cn('h-full w-full object-cover', hasCover && !hasStarted && 'invisible')}
               loop={settings?.loop ?? undefined}
               muted={settings?.muted ?? undefined}
-              autoPlay={settings?.autoPlay ?? undefined}
+              autoPlay={shouldAutoplay}
               onTimeUpdate={handleProgress}
               onClick={togglePlay}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
             />
-            
-            {/* Custom Video Controls */}
-            <AnimatePresence>
-              {showControls && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6"
-                >
-                  {/* Progress Bar */}
-                  <div className="w-full mb-4 group/progress relative">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={progress}
-                      onChange={handleSeek}
-                      className="w-full h-1.5 bg-white/20 rounded-full appearance-none cursor-pointer accent-primary hover:h-2 transition-all"
-                    />
-                  </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <button 
-                        onClick={togglePlay}
-                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-colors text-white"
-                      >
-                        {isPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" />}
-                      </button>
-                      <button 
-                        onClick={toggleMute}
-                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-colors text-white"
-                      >
-                        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                      </button>
+            {hasStarted && (
+              <AnimatePresence>
+                {showControls && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 z-10 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6"
+                  >
+                    <div className="group/progress relative mb-4 w-full">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={progress}
+                        onChange={handleSeek}
+                        className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/20 accent-primary transition-all hover:h-2"
+                      />
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <button 
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <button
+                          type="button"
+                          onClick={togglePlay}
+                          className="rounded-full bg-white/10 p-2 text-white backdrop-blur-md transition-colors hover:bg-white/20"
+                        >
+                          {isPlaying ? (
+                            <Pause size={20} fill="currentColor" />
+                          ) : (
+                            <Play size={20} fill="currentColor" />
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={toggleMute}
+                          className="rounded-full bg-white/10 p-2 text-white backdrop-blur-md transition-colors hover:bg-white/20"
+                        >
+                          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+                        </button>
+                      </div>
+
+                      <button
+                        type="button"
                         onClick={toggleFullscreen}
-                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-colors text-white"
+                        className="rounded-full bg-white/10 p-2 text-white backdrop-blur-md transition-colors hover:bg-white/20"
                       >
                         <Maximize size={20} />
                       </button>
                     </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Play Overlay when paused */}
-            <AnimatePresence>
-              {!isPlaying && !showControls && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
-                >
-                  <div className="w-20 h-20 bg-primary/90 rounded-full flex items-center justify-center text-white backdrop-blur-sm shadow-xl">
-                    <Play size={40} fill="currentColor" className="ml-2" />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </div>
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-white/50 bg-neutral-900">
+          <div className="flex h-full w-full items-center justify-center bg-neutral-900 text-white/50">
             <p>No video source selected</p>
           </div>
         )}

@@ -4,11 +4,12 @@ import type { Media, Page, Post, Property, Config, Setting } from '../payload-ty
 
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
+import { resolveDefaultOgImage } from './resolveDefaultOgImage'
 
 import { getCachedGlobal } from './getGlobals'
 
 const joinSite = (serverUrl: string, pathOrAbsolute: string | null | undefined) => {
-  if (!pathOrAbsolute) return serverUrl + '/website-template-OG.webp'
+  if (!pathOrAbsolute) return null
   if (pathOrAbsolute.startsWith('http://') || pathOrAbsolute.startsWith('https://')) {
     return pathOrAbsolute
   }
@@ -18,14 +19,11 @@ const joinSite = (serverUrl: string, pathOrAbsolute: string | null | undefined) 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
-  let url = serverUrl + '/website-template-OG.webp'
-
   if (image && typeof image === 'object' && 'url' in image) {
-    const preferred = image.url
-    url = joinSite(serverUrl, preferred || undefined)
+    return joinSite(serverUrl, image.url || undefined)
   }
 
-  return url
+  return null
 }
 
 export const generateMeta = async (args: {
@@ -35,10 +33,11 @@ export const generateMeta = async (args: {
 }): Promise<Metadata> => {
   const { doc, path: pathOverride } = args
 
-  const ogImage = getImageURL(doc?.meta?.image)
+  const settings: Setting = await getCachedGlobal('settings', 2)()
+  const brandName = settings?.brandName || 'Aszena Invest'
+  const defaultImageUrl = await resolveDefaultOgImage(settings)
 
-  const settings: Setting = await getCachedGlobal('settings', 1)()
-  const brandName = settings?.brandName || 'Payload Website Template'
+  const ogImage = getImageURL(doc?.meta?.image) ?? defaultImageUrl
 
   const title = doc?.meta?.title || brandName
 
@@ -46,24 +45,27 @@ export const generateMeta = async (args: {
   const ogUrl =
     pathOverride ??
     (Array.isArray(slug) ? slug.join('/') : typeof slug === 'string' ? `/${slug}` : '/')
+
+  const openGraph = mergeOpenGraph(
+    {
+      description: doc?.meta?.description || '',
+      images: ogImage ? [{ url: ogImage }] : undefined,
+      title,
+      url: ogUrl,
+      siteName: brandName,
+    },
+    { settings, defaultImageUrl },
+  )
+
   return {
     description: doc?.meta?.description,
-    openGraph: mergeOpenGraph(
-      {
-        description: doc?.meta?.description || '',
-        images: ogImage
-          ? [
-              {
-                url: ogImage,
-              },
-            ]
-          : undefined,
-        title,
-        url: ogUrl,
-        siteName: brandName,
-      },
-      settings,
-    ),
+    openGraph,
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: doc?.meta?.description || undefined,
+      images: ogImage ? [ogImage] : undefined,
+    },
     title,
   }
 }
