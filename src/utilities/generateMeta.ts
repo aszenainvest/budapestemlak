@@ -20,8 +20,20 @@ const joinSite = (serverUrl: string, pathOrAbsolute: string | null | undefined) 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
-  if (image && typeof image === 'object' && 'url' in image) {
-    return joinSite(serverUrl, image.url || undefined)
+  if (image && typeof image === 'object') {
+    // WhatsApp/Meta has a strict 300KB limit for sharing images.
+    // If the original image is > 300KB, try to use a smaller size (like thumbnail).
+    const originalSize = image.filesize || 0
+    if (originalSize > 300000) {
+      const thumb = image.sizes?.thumbnail
+      if (thumb && typeof thumb === 'object' && thumb.url && (thumb.filesize || 0) < 300000) {
+        return joinSite(serverUrl, thumb.url)
+      }
+    }
+
+    if ('url' in image && image.url) {
+      return joinSite(serverUrl, image.url)
+    }
   }
 
   return null
