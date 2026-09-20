@@ -155,7 +155,7 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
                 </div>
 
                 <h3
-                  className="mb-2 line-clamp-2 text-lg font-bold transition-colors duration-300 group-hover:opacity-80 leading-tight"
+                  className="mb-2 text-lg font-bold transition-colors duration-300 group-hover:opacity-80 leading-tight"
                   style={{ color: 'var(--primary)' }}
                 >
                   {item.title}
@@ -185,7 +185,7 @@ export const ProjectCardsBlock: React.FC<ProjectCardsBlockType> = ({ title, proj
                   {item.location}
                 </div>
 
-                <p className="mb-auto line-clamp-2 text-sm leading-relaxed text-gray-500">
+                <p className="text-sm leading-relaxed text-gray-500">
                   {item.description}
                 </p>
               </div>
