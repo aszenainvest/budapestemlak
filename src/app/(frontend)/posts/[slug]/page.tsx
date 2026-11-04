@@ -17,23 +17,12 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 /** Published posts can change after deploy; ISR + revalidatePath on publish keep hero/images fresh. */
 export const revalidate = 60
+export const dynamicParams = true
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const posts = await payload.find({
-    collection: 'posts',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  return (posts.docs ?? [])
-    .filter((doc) => typeof doc.slug === 'string' && doc.slug.length > 0)
-    .map((doc) => ({ slug: doc.slug as string }))
+  // The build must not depend on a live database. Posts are rendered on demand
+  // at runtime and cached by ISR (see `revalidate` above).
+  return []
 }
 
 type Args = {
