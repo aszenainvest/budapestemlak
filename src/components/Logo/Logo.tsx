@@ -44,7 +44,7 @@ export const Logo = (props: Props) => {
 
   return (
     <div className={clsx('text-base font-extrabold tracking-tighter shrink-0', className)} style={{ color: 'var(--primary)' }}>
-      {brandName || 'Aszena Invest'}
+      {brandName || 'Budapest Emlak'}
     </div>
   )
 }

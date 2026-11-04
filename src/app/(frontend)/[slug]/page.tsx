@@ -56,7 +56,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
   const params = await paramsPromise
   const searchParams = await searchParamsPromise
   const { slug } = params
-  const isHome = !slug
+  const isHome = !slug || slug === 'home'
   const homeSlug = 'home'
   const decodedSlug = decodeURIComponent(slug || homeSlug)
   const url = '/' + (slug ? decodedSlug : '')
@@ -111,7 +111,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const params = await paramsPromise
   const { slug } = params
-  const isHome = !slug
+  const isHome = !slug || slug === 'home'
   const homeSlug = 'home'
   const decodedSlug = decodeURIComponent(slug || homeSlug)
 
