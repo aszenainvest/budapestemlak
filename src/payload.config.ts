@@ -22,6 +22,13 @@ import { getPayloadCorsOrigins } from './utilities/serverActionOrigins'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+const databaseUrl =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_PRIVATE_URL ||
+  process.env.DATABASE_PUBLIC_URL ||
+  ''
+
 export default buildConfig({
   serverURL: getServerSideURL(),
   admin: {
@@ -65,7 +72,7 @@ export default buildConfig({
   editor: defaultLexical,
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URL || '',
+      connectionString: databaseUrl,
     },
     /**
      * Drizzle `push` runs ALTER TYPE … ADD VALUE for locales. If `_locales` already
@@ -91,7 +98,7 @@ export default buildConfig({
     fallback: true,
   },
   plugins,
-  secret: process.env.PAYLOAD_SECRET,
+  secret: process.env.PAYLOAD_SECRET || 'budapestemlak-payload-secret-default-key-32-chars',
   sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
