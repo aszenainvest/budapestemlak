@@ -25,21 +25,27 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   if (!Number.isInteger(sanitizedPageNumber)) notFound()
 
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    locale: 'en',
-    page: sanitizedPageNumber,
-    overrideAccess: false,
-    select: {
-      title: true,
-      slug: true,
-      categories: true,
-      heroImage: true,
-      meta: true,
-    },
-  })
+  let posts: any = { docs: [], totalDocs: 0, totalPages: 0, page: sanitizedPageNumber }
+
+  try {
+    posts = await payload.find({
+      collection: 'posts',
+      depth: 1,
+      limit: 12,
+      locale: 'en',
+      page: sanitizedPageNumber,
+      overrideAccess: false,
+      select: {
+        title: true,
+        slug: true,
+        categories: true,
+        heroImage: true,
+        meta: true,
+      },
+    })
+  } catch (error) {
+    console.error('[Posts Page Number] Error fetching posts:', error)
+  }
 
   return (
     <div className="pt-24 pb-24">

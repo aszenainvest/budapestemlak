@@ -201,29 +201,34 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 }
 
 const queryPropertyBySlug = cache(async ({ slug }: { slug: string }) => {
-  const preferred = 'en'
+  try {
+    const preferred = 'en'
 
-  const payload = await getPayload({ config: configPromise })
-  const loc = payload.config.localization
-  const localeCodes: string[] = loc !== false && loc ? loc.localeCodes : ['en']
+    const payload = await getPayload({ config: configPromise })
+    const loc = payload.config.localization
+    const localeCodes: string[] = loc !== false && loc ? loc.localeCodes : ['en']
 
-  const tryLocales = [preferred, ...localeCodes.filter((l: string) => l !== preferred)]
+    const tryLocales = [preferred, ...localeCodes.filter((l: string) => l !== preferred)]
 
-  for (const locale of tryLocales) {
-    const result = await payload.find({
-      collection: 'properties',
-      limit: 1,
-      depth: 2,
-      overrideAccess: false,
-      pagination: false,
-      locale: locale as 'en',
-      where: {
-        slug: { equals: slug },
-      },
-    })
-    const doc = result.docs?.[0]
-    if (doc) return doc
+    for (const locale of tryLocales) {
+      const result = await payload.find({
+        collection: 'properties',
+        limit: 1,
+        depth: 2,
+        overrideAccess: false,
+        pagination: false,
+        locale: locale as 'en',
+        where: {
+          slug: { equals: slug },
+        },
+      })
+      const doc = result.docs?.[0]
+      if (doc) return doc
+    }
+
+    return null
+  } catch (error) {
+    console.error('[queryPropertyBySlug] Error fetching property:', error)
+    return null
   }
-
-  return null
 })

@@ -11,6 +11,7 @@ import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
+import { getCachedGlobal } from '@/utilities/getGlobals'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -66,10 +67,12 @@ export default async function Page({ params: paramsPromise, searchParams: search
 
   const { hero, layout } = page
 
-  const payload = await getPayload({ config: configPromise })
-  const settings = await payload.findGlobal({
-    slug: 'settings',
-  })
+  let settings: any = null
+  try {
+    settings = await getCachedGlobal('settings', 1)('en')
+  } catch (error) {
+    console.warn('[Page] Failed to fetch settings:', error)
+  }
 
   return (
     <article className="pb-24">
@@ -111,33 +114,38 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
 
 const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
-  const locale = 'en'
+  try {
+    const { isEnabled: draft } = await draftMode()
+    const locale = 'en'
 
-  const payload = await getPayload({ config: configPromise })
+    const payload = await getPayload({ config: configPromise })
 
-  const result = await payload.find({
-    collection: 'pages',
-    draft,
-    depth: 4,
-    limit: 1,
-    pagination: false,
-    overrideAccess: draft,
-    locale: locale as any,
-    where: {
-      ...(isHome
-        ? {
-            slug: {
-              equals: 'home',
-            },
-          }
-        : {
-            slug: {
-              equals: slug,
-            },
-          }),
-    },
-  })
+    const result = await payload.find({
+      collection: 'pages',
+      draft,
+      depth: 4,
+      limit: 1,
+      pagination: false,
+      overrideAccess: draft,
+      locale: locale as any,
+      where: {
+        ...(isHome
+          ? {
+              slug: {
+                equals: 'home',
+              },
+            }
+          : {
+              slug: {
+                equals: slug,
+              },
+            }),
+      },
+    })
 
-  return result.docs?.[0] || null
+    return result.docs?.[0] || null
+  } catch (error) {
+    console.error('[queryPageBySlug] Error fetching page:', error)
+    return null
+  }
 })
