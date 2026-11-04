@@ -30,7 +30,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <InitTheme />
         <link
           href={
-            typeof settings.favicon === 'object' && settings.favicon?.url
+            typeof settings?.favicon === 'object' && settings?.favicon?.url
               ? settings.favicon.url
               : '/favicon.ico'
           }
@@ -46,16 +46,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Footer />
         </Providers>
         <SiteIntegrations
-          bodyScripts={settings.bodyScripts}
-          headScripts={settings.headScripts}
-          whatsappEnabled={settings.whatsappEnabled}
-          whatsappPhone={settings.whatsappPhone}
-          botimEnabled={settings.botimEnabled}
-          botimContactUrl={settings.botimContactUrl}
-          botimPhone={settings.botimPhone}
-          imoEnabled={settings.imoEnabled}
-          imoContactUrl={settings.imoContactUrl}
-          imoPhone={settings.imoPhone}
+          bodyScripts={settings?.bodyScripts}
+          headScripts={settings?.headScripts}
+          whatsappEnabled={settings?.whatsappEnabled}
+          whatsappPhone={settings?.whatsappPhone}
+          botimEnabled={settings?.botimEnabled}
+          botimContactUrl={settings?.botimContactUrl}
+          botimPhone={settings?.botimPhone}
+          imoEnabled={settings?.imoEnabled}
+          imoContactUrl={settings?.imoContactUrl}
+          imoPhone={settings?.imoPhone}
         />
       </body>
     </html>
@@ -65,7 +65,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 export async function generateMetadata(): Promise<Metadata> {
   const settings: Setting = await getCachedGlobal('settings', 2)()
   const defaultImageUrl = await resolveDefaultOgImage(settings)
-  const brandName = settings?.brandName || 'Aszena Invest'
+  const brandName = settings?.brandName || 'Budapest Emlak'
 
   const openGraph = mergeOpenGraph(
     {

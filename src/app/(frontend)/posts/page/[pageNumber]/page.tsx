@@ -77,24 +77,14 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { pageNumber } = await paramsPromise
   const settings: Setting = await getCachedGlobal('settings', 1)()
   return {
-    title: `Posts Page ${pageNumber || ''} | ${settings?.brandName || 'Payload Website Template Search'}`,
+    title: `Posts Page ${pageNumber || ''} | ${settings?.brandName || 'Budapest Emlak'}`,
   }
 }
 
+export const dynamicParams = true
+
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const { totalDocs } = await payload.count({
-    collection: 'posts',
-    overrideAccess: false,
-  })
-
-  const totalPages = Math.ceil(totalDocs / 10)
-
-  const pages: { pageNumber: string }[] = []
-
-  for (let i = 1; i <= totalPages; i++) {
-    pages.push({ pageNumber: String(i) })
-  }
-
-  return pages
+  // The build must not depend on a live database. Paginated posts are rendered on demand
+  // at runtime and cached by ISR (see `revalidate` above).
+  return []
 }

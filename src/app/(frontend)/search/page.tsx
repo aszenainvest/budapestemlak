@@ -14,30 +14,38 @@ type Args = {
   }>
 }
 
+export const dynamic = 'force-dynamic'
+
 const SEARCH_RESULTS_MAX = 500
 
 export default async function Page({ searchParams: searchParamsPromise }: Args) {
   const { q: query } = await searchParamsPromise
-  const payload = await getPayload({ config: configPromise })
+  let results: { docs: any[] } = { docs: [] }
 
-  const results = await payload.find({
-    collection: 'search',
-    depth: 3,
-    limit: SEARCH_RESULTS_MAX,
-    pagination: false,
-    ...(query
-      ? {
-          where: {
-            or: [
-              { title: { like: query } },
-              { 'meta.description': { like: query } },
-              { 'meta.title': { like: query } },
-              { slug: { like: query } },
-            ],
-          },
-        }
-      : {}),
-  })
+  try {
+    const payload = await getPayload({ config: configPromise })
+
+    results = await payload.find({
+      collection: 'search',
+      depth: 3,
+      limit: SEARCH_RESULTS_MAX,
+      pagination: false,
+      ...(query
+        ? {
+            where: {
+              or: [
+                { title: { like: query } },
+                { 'meta.description': { like: query } },
+                { 'meta.title': { like: query } },
+                { slug: { like: query } },
+              ],
+            },
+          }
+        : {}),
+    })
+  } catch (error) {
+    console.warn('[Search Page] Failed to execute search query:', error)
+  }
 
   const cards: CardPostData[] = results.docs.flatMap((item) => {
     const doc = item.doc
@@ -82,6 +90,6 @@ import type { Setting } from '@/payload-types'
 export async function generateMetadata(): Promise<Metadata> {
   const settings: Setting = await getCachedGlobal('settings', 1)()
   return {
-    title: `Search | ${settings?.brandName || 'Payload Website Template Search'}`,
+    title: `Search | ${settings?.brandName || 'Budapest Emlak'}`,
   }
 }

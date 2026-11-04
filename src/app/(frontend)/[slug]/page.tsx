@@ -14,28 +14,12 @@ import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
+export const dynamicParams = true
+
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
-
-  const docs = pages.docs ?? []
-
-  return docs
-    .filter((doc) => {
-      const slug = doc.slug
-      if (typeof slug !== 'string' || slug.length === 0) return false
-      return slug !== 'home'
-    })
-    .map((doc) => ({ slug: doc.slug as string }))
+  // The build must not depend on a live database. Pages are rendered on demand
+  // at runtime and cached by ISR (see `revalidate` above).
+  return []
 }
 
 /** Property cards / Project Cards blocks refresh when labels or properties change (see revalidatePropertyListings). */

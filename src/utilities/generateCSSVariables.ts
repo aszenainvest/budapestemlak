@@ -1,6 +1,6 @@
 import type { Setting } from '@/payload-types'
 
-export const generateCSSVariables = (settings: Setting): string => {
+export const generateCSSVariables = (settings?: Setting | null): string => {
   const {
     primaryColor,
     secondaryColor,
@@ -11,7 +11,7 @@ export const generateCSSVariables = (settings: Setting): string => {
     successColor,
     warningColor,
     errorColor,
-  } = settings
+  } = settings || ({} as Partial<Setting>)
 
   return `
     :root {

@@ -17,17 +17,22 @@ async function getGlobal(
   locale?: string,
   options?: FindGlobalForLayoutOptions,
 ) {
-  const payload = await getPayload({ config: configPromise })
+  try {
+    const payload = await getPayload({ config: configPromise })
 
-  const global = await payload.findGlobal({
-    slug,
-    depth,
-    locale: (locale || 'en') as Config['locale'],
-    draft: options?.draft,
-    overrideAccess: options?.overrideAccess,
-  })
+    const global = await payload.findGlobal({
+      slug,
+      depth,
+      locale: (locale || 'en') as Config['locale'],
+      draft: options?.draft,
+      overrideAccess: options?.overrideAccess,
+    })
 
-  return global
+    return global
+  } catch (error) {
+    console.warn(`[getGlobals] Failed to fetch global "${slug}":`, error)
+    return null as any
+  }
 }
 
 /**

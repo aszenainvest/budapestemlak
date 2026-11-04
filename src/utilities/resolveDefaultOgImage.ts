@@ -33,23 +33,28 @@ const mediaUrl = (media: unknown, serverUrl: string): string | null => {
 }
 
 const getHomePageForOg = cache(async (): Promise<Page | null> => {
-  const payload = await getPayload({ config: configPromise })
-  const result = await payload.find({
-    collection: 'pages',
-    depth: 2,
-    draft: false,
-    limit: 1,
-    pagination: false,
-    overrideAccess: false,
-    where: { slug: { equals: 'home' } },
-  })
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const result = await payload.find({
+      collection: 'pages',
+      depth: 2,
+      draft: false,
+      limit: 1,
+      pagination: false,
+      overrideAccess: false,
+      where: { slug: { equals: 'home' } },
+    })
 
-  return result.docs[0] ?? null
+    return result.docs[0] ?? null
+  } catch {
+    return null
+  }
 })
 
 /** Default share image: Settings → logo → homepage SEO → homepage hero. */
-export async function resolveDefaultOgImage(settings: Setting): Promise<string | null> {
+export async function resolveDefaultOgImage(settings?: Setting | null): Promise<string | null> {
   const serverUrl = getServerSideURL()
+  if (!settings) return null
 
   const fromShare = mediaUrl(settings.socialShareImage, serverUrl)
   if (fromShare) return fromShare

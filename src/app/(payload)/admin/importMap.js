@@ -23,10 +23,8 @@ import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from 
 import { RowLabel as RowLabel_35c4f07b94077a54ab0db31fba2fa85b } from '../../../Header/RowLabel'
 import { default as default_5991ccf52506f74424a5998122434f39 } from '../../../components/Logo/Icon'
 import { default as default_2f594692661464c361c9fb763de845e2 } from '../../../components/Logo/Logo'
-import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
-/** @type import('payload').ImportMap */
 export const importMap = {
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
@@ -53,6 +51,5 @@ export const importMap = {
   "/Header/RowLabel#RowLabel": RowLabel_35c4f07b94077a54ab0db31fba2fa85b,
   "./components/Logo/Icon#default": default_5991ccf52506f74424a5998122434f39,
   "./components/Logo/Logo#default": default_2f594692661464c361c9fb763de845e2,
-  "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

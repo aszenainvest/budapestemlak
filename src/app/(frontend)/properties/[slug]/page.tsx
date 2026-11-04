@@ -12,32 +12,13 @@ import { generateMeta } from '@/utilities/generateMeta'
 import { PropertyBlogSection } from '@/components/PropertyBlogSection'
 import { normalizeStatusLabels } from '@/utilities/normalizeStatusLabel'
 
+export const revalidate = 60
+export const dynamicParams = true
+
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const loc = payload.config.localization
-  const localeCodes: string[] = loc !== false && loc ? loc.localeCodes : ['en']
-
-  const seen = new Set<string>()
-  const params: { slug: string }[] = []
-
-  for (const locale of localeCodes) {
-    const result = await payload.find({
-      collection: 'properties',
-      limit: 500,
-      overrideAccess: false,
-      pagination: false,
-      locale: locale as 'en',
-      select: { slug: true },
-    })
-    for (const doc of result.docs ?? []) {
-      if (typeof doc.slug === 'string' && doc.slug.length > 0 && !seen.has(doc.slug)) {
-        seen.add(doc.slug)
-        params.push({ slug: doc.slug })
-      }
-    }
-  }
-
-  return params
+  // The build must not depend on a live database. Properties are rendered on demand
+  // at runtime and cached by ISR (see `revalidate` above).
+  return []
 }
 
 type Args = { params: Promise<{ slug?: string }> }
