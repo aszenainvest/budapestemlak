@@ -11,6 +11,13 @@ export function proxy(request: NextRequest) {
     return new NextResponse('Bad Request', { status: 400 })
   }
 
+  if (request.nextUrl.pathname === '/' && (request.method === 'GET' || request.method === 'HEAD')) {
+    return new NextResponse(null, {
+      status: 307,
+      headers: { Location: '/tr/kurumsal' },
+    })
+  }
+
   const headers = new Headers(request.headers)
   headers.delete('x-site-locale')
   if (request.nextUrl.pathname === '/tr/kurumsal') {
