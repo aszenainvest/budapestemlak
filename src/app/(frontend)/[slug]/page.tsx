@@ -15,16 +15,8 @@ import { getCachedGlobal } from '@/utilities/getGlobals'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
-export const dynamicParams = true
-
-export async function generateStaticParams() {
-  // The build must not depend on a live database. Pages are rendered on demand
-  // at runtime and cached by ISR (see `revalidate` above).
-  return []
-}
-
-/** Property cards / Project Cards blocks refresh when labels or properties change (see revalidatePropertyListings). */
-export const revalidate = 60
+// Draft mode and search filters are resolved from the incoming request.
+export const dynamic = 'force-dynamic'
 
 type Args = {
   params: Promise<{
