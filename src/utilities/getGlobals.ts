@@ -11,7 +11,7 @@ export type FindGlobalForLayoutOptions = {
   overrideAccess?: boolean
 }
 
-async function getGlobal(
+export async function getGlobal(
   slug: Global,
   depth = 0,
   locale?: string,
