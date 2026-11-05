@@ -13,7 +13,11 @@ export function GET(request: NextRequest) {
     }
   }
 
-  const response = NextResponse.redirect(destination)
+  // Keep the redirect relative because the deployment proxy can expose an internal origin.
+  const response = new NextResponse(null, {
+    status: 307,
+    headers: { Location: destination.pathname + destination.search },
+  })
   if (locale === 'en' || locale === 'tr') {
     response.cookies.set('site-language', locale, {
       path: '/',
