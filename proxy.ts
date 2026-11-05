@@ -11,7 +11,16 @@ export function proxy(request: NextRequest) {
     return new NextResponse('Bad Request', { status: 400 })
   }
 
-  return NextResponse.next()
+  const headers = new Headers(request.headers)
+  headers.delete('x-site-locale')
+  if (request.nextUrl.pathname === '/tr/kurumsal') {
+    headers.set('x-site-locale', 'tr')
+    const destination = request.nextUrl.clone()
+    destination.pathname = '/kurumsal'
+    return NextResponse.rewrite(destination, { request: { headers } })
+  }
+
+  return NextResponse.next({ request: { headers } })
 }
 
 export const config = {

@@ -54,6 +54,26 @@ export default async function Page({ params: paramsPromise, searchParams: search
   }
 
   if (!page) {
+    if (decodedSlug === 'kurumsal') {
+      return (
+        <article className="container py-16">
+          <div className="prose max-w-3xl">
+            <h1>Kurumsal</h1>
+            <p>
+              Budapeşte Emlak, Macaristan’da gayrimenkul yatırımı yapmak isteyen müşterilere
+              Budapeşte merkezli danışmanlık sunar. Konut, ticari gayrimenkul ve arsa
+              yatırımlarında fırsatları yerel pazar bilgisiyle değerlendirir.
+            </p>
+            <p>
+              2010’dan bu yana edindiğimiz deneyimle müşterilerimize yatırım sürecinde
+              rehberlik ediyoruz. Hukuk, vergi, muhasebe, finans ve değerleme alanlarında
+              uzman çözüm ortaklarıyla çalışıyoruz.
+            </p>
+            <p>Budapeşte Emlak, Aszena Invest’in bir iştirakidir.</p>
+          </div>
+        </article>
+      )
+    }
     return <PayloadRedirects url={url} />
   }
 
@@ -101,6 +121,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   const path =
     !page?.slug ? '/' : page.slug === 'home' ? '/' : `/${page.slug}`
+  if (!page && decodedSlug === 'kurumsal') return { title: 'Kurumsal | Budapeşte Emlak' }
   return generateMeta({ doc: page, path })
 }
 

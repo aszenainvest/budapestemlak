@@ -11,10 +11,13 @@ export const LocaleSelector: React.FC<{ locale: 'en' | 'tr'; isDark?: boolean }>
     <div className="flex items-center">
       {locales.map((locale, index) => {
         const isActive = currentLocale === locale.value
+        const destination = pathname === '/tr/kurumsal' || pathname === '/kurumsal'
+          ? (locale.value === 'tr' ? '/tr/kurumsal' : '/home')
+          : pathname
         return (
           <React.Fragment key={locale.value}>
             <a
-              href={`/api/set-locale?locale=${locale.value}&path=${encodeURIComponent(pathname)}`}
+              href={`/api/set-locale?locale=${locale.value}&path=${encodeURIComponent(destination)}`}
               aria-current={isActive ? 'true' : undefined}
               className={cn(
                 "text-[10px] font-bold tracking-widest transition-all duration-200 no-underline px-2",

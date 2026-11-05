@@ -2,6 +2,7 @@ import { cookies, headers } from 'next/headers'
 
 export async function resolveFrontendLocale(): Promise<'en' | 'tr'> {
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()])
+  if (requestHeaders.get('x-site-locale') === 'tr') return 'tr'
   const preferred = cookieStore.get('site-language')?.value
   if (preferred === 'en' || preferred === 'tr') return preferred
 
