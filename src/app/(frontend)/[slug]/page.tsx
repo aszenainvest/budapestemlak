@@ -61,7 +61,7 @@ export default async function Page({ params: paramsPromise, searchParams: search
 
   let settings: any = null
   try {
-    settings = await getCachedGlobal('settings', 1)('en')
+    settings = await getCachedGlobal('settings', 1)(await resolveFrontendLocale())
   } catch (error) {
     console.warn('[Page] Failed to fetch settings:', error)
   }
@@ -108,18 +108,18 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug: string }) => {
   try {
     const { isEnabled: draft } = await draftMode()
-    const locale = 'en'
+    const locale = await resolveFrontendLocale()
 
     const payload = await getPayload({ config: configPromise })
 
-    const result = await payload.find({
-      collection: 'pages',
+    const query = {
+      collection: 'pages' as const,
       draft,
       depth: 4,
       limit: 1,
-      pagination: false,
+      pagination: false as const,
       overrideAccess: draft,
-      locale: locale as any,
+      locale,
       where: {
         ...(isHome
           ? {
@@ -133,9 +133,22 @@ const queryPageBySlug = cache(async ({ isHome, slug }: { isHome?: boolean; slug:
               },
             }),
       },
-    })
+    }
+    const result = await payload.find(query)
+    if (result.docs[0]) return result.docs[0]
 
-    return result.docs?.[0] || null
+    // Localized slug filters do not match the fallback locale.
+    const alternate = await payload.find({ ...query, locale: locale === 'tr' ? 'en' : 'tr' })
+    const id = alternate.docs[0]?.id
+    if (!id) return null
+    return await payload.findByID({
+      collection: query.collection,
+      id,
+      depth: query.depth,
+      locale,
+      draft,
+      overrideAccess: draft,
+    })
   } catch (error) {
     console.error('[queryPageBySlug] Error fetching page:', error)
     return null

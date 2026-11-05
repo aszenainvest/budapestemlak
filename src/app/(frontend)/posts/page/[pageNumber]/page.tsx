@@ -1,3 +1,4 @@
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import type { Metadata } from 'next/types'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
@@ -32,7 +33,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       collection: 'posts',
       depth: 1,
       limit: 12,
-      locale: 'en',
+      locale: await resolveFrontendLocale(),
       page: sanitizedPageNumber,
       overrideAccess: false,
       select: {

@@ -11,7 +11,6 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { resolveDefaultOgImage } from '@/utilities/resolveDefaultOgImage'
-import { cookies } from 'next/headers'
 import './globals.css'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
@@ -20,12 +19,14 @@ import type { Setting } from '@/payload-types'
 import { generateCSSVariables } from '@/utilities/generateCSSVariables'
 import { SiteIntegrations } from '@/components/SiteIntegrations'
 
+export const dynamic = 'force-dynamic'
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = 'en'
+  const locale = await resolveFrontendLocale()
   const settings: Setting = await getCachedGlobal('settings', 1)(locale)
 
   return (
-    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
+    <html className={cn(GeistSans.variable, GeistMono.variable)} lang={locale} suppressHydrationWarning>
       <head>
         <InitTheme />
         <link

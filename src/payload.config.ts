@@ -91,8 +91,7 @@ export default buildConfig({
   globals: [Header, Footer, Settings],
   localization: {
     // Keep tr/ar in sync with existing Postgres enum `_locales`. Shrinking to `en` only
-    // breaks `ALTER ... SET DATA TYPE` when rows still hold tr/ar. The frontend forces
-    // English via `resolveFrontendLocale` + `proxy.ts`; cookies are always `en`.
+    // breaks `ALTER ... SET DATA TYPE` when rows still hold tr/ar.
     locales: [
       { label: 'English', code: 'en' },
       { label: 'Turkish', code: 'tr' },

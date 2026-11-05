@@ -1,3 +1,4 @@
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import type { Post, ArchiveBlock as ArchiveBlockProps } from '@/payload-types'
 
 import configPromise from '@payload-config'
@@ -31,7 +32,7 @@ export const ArchiveBlock: React.FC<
       collection: 'posts',
       depth: 3,
       limit,
-      locale: 'en',
+      locale: await resolveFrontendLocale(),
       overrideAccess: false,
       sort: '-publishedAt',
       ...(flattenedCategories && flattenedCategories.length > 0
@@ -58,7 +59,7 @@ export const ArchiveBlock: React.FC<
       const fetchedPosts = await payload.find({
         collection: 'posts',
         depth: 3,
-        locale: 'en',
+        locale: await resolveFrontendLocale(),
         limit: postIds.length,
         overrideAccess: false,
         where: {

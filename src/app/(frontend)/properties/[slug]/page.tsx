@@ -1,3 +1,4 @@
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import type { Metadata } from 'next'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
@@ -202,7 +203,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
 const queryPropertyBySlug = cache(async ({ slug }: { slug: string }) => {
   try {
-    const preferred = 'en'
+    const preferred = await resolveFrontendLocale()
 
     const payload = await getPayload({ config: configPromise })
     const loc = payload.config.localization
@@ -223,7 +224,16 @@ const queryPropertyBySlug = cache(async ({ slug }: { slug: string }) => {
         },
       })
       const doc = result.docs?.[0]
-      if (doc) return doc
+      if (doc) {
+        if (locale === preferred) return doc
+        return await payload.findByID({
+          collection: 'properties',
+          id: doc.id,
+          depth: 2,
+          locale: preferred,
+          overrideAccess: false,
+        })
+      }
     }
 
     return null

@@ -1,3 +1,4 @@
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import type { Property, PropertyArchiveBlock as PropertyArchiveBlockProps } from '@/payload-types'
 
 import configPromise from '@payload-config'
@@ -100,7 +101,7 @@ export const PropertyArchiveBlock: React.FC<Props> = async (props) => {
       const fetchedProperties = await payload.find({
         collection: 'properties',
         depth: 3,
-        locale: 'en',
+        locale: await resolveFrontendLocale(),
         limit: propertyIds.length,
         overrideAccess: false,
         where: {

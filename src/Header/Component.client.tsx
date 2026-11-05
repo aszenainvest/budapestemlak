@@ -14,11 +14,12 @@ import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { getHrefFromCMSLink } from '@/utilities/getHrefFromCMSLink'
 
 interface HeaderClientProps {
+  locale: 'en' | 'tr'
   data: Header
   settings: Setting
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings, locale }) => {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -64,7 +65,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
         {/* Actions */}
         <div className="flex-none flex items-center gap-3 lg:gap-6 ml-auto">
           <div className="hidden md:flex items-center">
-            <LocaleSelector isDark={theme === 'dark'} />
+            <LocaleSelector locale={locale} isDark={theme === 'dark'} />
           </div>
 
           {/* Mobile Burger */}
@@ -169,7 +170,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, settings }) =>
               transition={{ delay: 0.3 }}
               className="mt-auto p-8 flex flex-col gap-6"
             >
-              <LocaleSelector />
+              <LocaleSelector locale={locale} />
             </motion.div>
           </motion.div>
         )}

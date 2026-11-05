@@ -1,3 +1,4 @@
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import type { Metadata } from 'next'
 
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
@@ -80,24 +81,38 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
   try {
     const { isEnabled: draft } = await draftMode()
 
+    const locale = await resolveFrontendLocale()
     const payload = await getPayload({ config: configPromise })
 
-    const result = await payload.find({
-      collection: 'posts',
+    const query = {
+      collection: 'posts' as const,
       depth: 2,
       draft,
       limit: 1,
-      locale: 'en',
+      locale,
       overrideAccess: draft,
-      pagination: false,
+      pagination: false as const,
       where: {
         slug: {
           equals: slug,
         },
       },
-    })
+    }
+    const result = await payload.find(query)
+    if (result.docs[0]) return result.docs[0]
 
-    return result.docs?.[0] || null
+    // Localized slug filters do not match the fallback locale.
+    const alternate = await payload.find({ ...query, locale: locale === 'tr' ? 'en' : 'tr' })
+    const id = alternate.docs[0]?.id
+    if (!id) return null
+    return await payload.findByID({
+      collection: query.collection,
+      id,
+      depth: query.depth,
+      locale,
+      draft,
+      overrideAccess: draft,
+    })
   } catch (error) {
     console.error('[queryPostBySlug] Error fetching post:', error)
     return null

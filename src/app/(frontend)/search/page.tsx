@@ -1,3 +1,4 @@
+import { resolveFrontendLocale } from '@/utilities/resolveFrontendLocale'
 import type { Metadata } from 'next/types'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
@@ -27,6 +28,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
     results = await payload.find({
       collection: 'search',
+      locale: await resolveFrontendLocale(),
       depth: 3,
       limit: SEARCH_RESULTS_MAX,
       pagination: false,

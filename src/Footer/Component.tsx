@@ -40,10 +40,16 @@ const iconMap = {
 }
 
 export async function Footer() {
-  const locale = 'en'
+  const locale = await resolveFrontendLocale()
   const { isEnabled: draft } = await draftMode()
 
-  const footerData = (await getCachedGlobal('footer', 1)(locale)) as Footer
+  const localizedFooter = (await getCachedGlobal('footer', 1)(locale)) as Footer
+  const fallbackFooter = locale === 'tr' && !localizedFooter?.columns?.length
+    ? (await getCachedGlobal('footer', 1)('en')) as Footer
+    : undefined
+  const footerData = fallbackFooter
+    ? { ...fallbackFooter, ...localizedFooter, columns: fallbackFooter.columns }
+    : localizedFooter
   const headerData = (await getCachedGlobal('header', 1, { overrideAccess: true, draft })(
     locale,
   )) as Header

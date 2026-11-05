@@ -1,22 +1,12 @@
 'use client'
 import React from 'react'
+import { usePathname } from 'next/navigation'
 import { cn } from '@/utilities/ui'
 
-/** Single-locale site: language switcher hidden. */
-const locales = [{ label: 'EN', value: 'en' }] as const
+const locales = [{ label: 'EN', value: 'en' }, { label: 'TR', value: 'tr' }] as const
 
-export const LocaleSelector: React.FC<{ isDark?: boolean }> = ({ isDark }) => {
-  const [currentLocale, setCurrentLocale] = React.useState('en')
-
-  React.useEffect(() => {
-    const match = document.cookie.match(/(^| )payload-locale=([^;]+)/)
-    if (match) setCurrentLocale(match[2])
-  }, [])
-
-  if (locales.length <= 1) {
-    return null
-  }
-
+export const LocaleSelector: React.FC<{ locale: 'en' | 'tr'; isDark?: boolean }> = ({ locale: currentLocale, isDark }) => {
+  const pathname = usePathname()
   return (
     <div className="flex items-center">
       {locales.map((locale, index) => {
@@ -24,7 +14,8 @@ export const LocaleSelector: React.FC<{ isDark?: boolean }> = ({ isDark }) => {
         return (
           <React.Fragment key={locale.value}>
             <a
-              href={`/api/set-locale?locale=${locale.value}&path=/`}
+              href={`/api/set-locale?locale=${locale.value}&path=${encodeURIComponent(pathname)}`}
+              aria-current={isActive ? 'true' : undefined}
               className={cn(
                 "text-[10px] font-bold tracking-widest transition-all duration-200 no-underline px-2",
                 isActive 

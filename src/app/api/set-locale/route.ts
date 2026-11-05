@@ -1,18 +1,26 @@
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
+export function GET(request: NextRequest) {
+  const { searchParams, origin } = request.nextUrl
+  const locale = searchParams.get('locale')
   const path = searchParams.get('path') || '/'
-  const cookieStore = await cookies()
-  // English-only site; ignore ?locale= to avoid stale tr/ar cookies.
-  cookieStore.set('payload-locale', 'en', {
-    path: '/',
-    maxAge: 31536000,
-    sameSite: 'lax',
-  })
+  const destination = new URL('/', origin)
+  if (path.startsWith('/') && !path.startsWith('//') && !path.includes('\\')) {
+    const candidate = new URL(path, origin)
+    if (candidate.origin === origin) {
+      destination.pathname = candidate.pathname
+      destination.search = candidate.search
+    }
+  }
 
-  // Use a hard redirect to bypass Next.js client-side fetch mechanism
-  redirect(path)
+  const response = NextResponse.redirect(destination)
+  if (locale === 'en' || locale === 'tr') {
+    response.cookies.set('site-language', locale, {
+      path: '/',
+      maxAge: 31536000,
+      sameSite: 'lax',
+      httpOnly: true,
+    })
+  }
+  return response
 }
