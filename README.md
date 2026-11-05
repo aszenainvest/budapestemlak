@@ -194,6 +194,18 @@ If your database is pointed to production you will want to set `push: false` oth
 
 #### Migrations
 
+For a new, empty PostgreSQL database, run the initial schema migration from a
+source checkout with dependencies installed and `DATABASE_URL` set to the new
+database:
+
+```sh
+PAYLOAD_BOOTSTRAP=true PAYLOAD_DATABASE_PUSH=false pnpm payload migrate
+```
+
+Use this same migration directory for future migrations on databases initialized
+this way. The legacy migrations in `src/migrations` assume an existing schema.
+The initial migration creates tables only. Restore or import site content separately.
+
 [Migrations](https://payloadcms.com/docs/database/migrations) are essentially SQL code versions that keeps track of your schema. When deploy with Postgres you will need to make sure you create and then run your migrations.
 
 Locally create a migration

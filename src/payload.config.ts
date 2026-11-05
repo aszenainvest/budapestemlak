@@ -71,6 +71,10 @@ export default buildConfig({
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: postgresAdapter({
+    migrationDir:
+      process.env.PAYLOAD_BOOTSTRAP === 'true'
+        ? path.resolve(dirname, 'bootstrap-migrations')
+        : undefined,
     pool: {
       connectionString: databaseUrl,
     },
